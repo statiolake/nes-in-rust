@@ -1,0 +1,14 @@
+{
+  "name": "Debian Trixie",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "."
+  },
+  "remoteUser": "vscode",
+  "features": {},
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-vscode.cpptools", "rust-lang.rust-analyzer"]
+    }
+  }
+}
