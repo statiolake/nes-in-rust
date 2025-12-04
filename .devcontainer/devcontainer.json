@@ -4,7 +4,8 @@
     "dockerfile": "Dockerfile",
     "context": "."
   },
-  "remoteUser": "vscode",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "root",
   "features": {},
   "customizations": {
     "vscode": {

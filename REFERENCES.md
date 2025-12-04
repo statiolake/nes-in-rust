@@ -1,2 +1,5 @@
 - cc65 の初期セットアップと動作確認
   - https://muto.world.coocan.jp/nesapp/nesapp-build.html
+- mrustc
+  - https://github.com/thepowersgang/mrustc
+  - commit: 4276e5c35bf3d6bdeb06a6b0194c594681fbea0e
