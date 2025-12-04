@@ -36,4 +36,4 @@ for arg in "${args_to_process[@]}"; do
 done
 
 # フィルタリング後の引数をcl65に渡す（@ ファイル形式は展開して渡す）
-exec cl65 "${filtered_args[@]}"
+exec cl65 -t nes "${filtered_args[@]}"

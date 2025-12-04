@@ -497,12 +497,14 @@ int main(int argc, char *argv[])
                     // 1.39 has the default (system) allocator in liballoc
                     allocator_crate_loaded = true;
                 }
-                if( !allocator_crate_loaded )
+                // Don't load alloc_system if no_core is specified
+                if( !allocator_crate_loaded && crate.m_load_std != ::AST::Crate::LOAD_NONE )
                 {
                     crate.load_extern_crate(Span(), "alloc_system");
                 }
 
-                if( panic_runtime_needed /*&& !panic_runtime_loaded*/ )
+                // Don't load panic runtime if no_core is specified
+                if( panic_runtime_needed && crate.m_load_std != ::AST::Crate::LOAD_NONE /*&& !panic_runtime_loaded*/ )
                 {
                     // TODO: Get a panic method from the command line
                     // - Fall back to abort by default, because mrustc doesn't do unwinding yet.

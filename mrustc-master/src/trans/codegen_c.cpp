@@ -423,7 +423,7 @@ namespace {
             if( out_ty == CodegenOutput::Executable )
             {
                 // TODO: Define this function in MIR?
-                m_of << "int main(int argc, const char* argv[]) {\n";
+                m_of << "int main(int argc, uint8_t* argv[]) {\n";
                 auto c_start_path = m_resolve.m_crate.get_lang_item_path_opt("mrustc-start");
                 if( c_start_path == ::HIR::SimplePath() )
                 {
@@ -1231,10 +1231,10 @@ namespace {
                 emit_type_fn(ty); m_of << "\n";
                 }
             TU_ARMA(NamedFunction, te) {
-                // m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
                 }
             TU_ARMA(Array, te) {
-                // m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
                 }
             TU_ARMA(Path, te) {
                 TU_MATCH_HDRA( (te.binding), {)
@@ -2419,7 +2419,11 @@ namespace {
             {
                 m_of << "extern ";
             }
-            emit_function_header(p, item, params);
+            if( item.m_linkage.name != "") {
+                emit_function_header(p, item, params, &item.m_linkage.name);
+            } else {
+                emit_function_header(p, item, params);
+            }
             // if( item.m_linkage.name != "" )
             // {
             //     switch(m_compiler)
@@ -2437,12 +2441,20 @@ namespace {
             m_of << ";\n";
 
             // for emulating linkage name
-            if (item.m_linkage.name != "memcmp") {
-                emit_function_header(p, item, params, &item.m_linkage.name);
-                m_of
-                    << " { return "
-                    << Trans_Mangle(p)
-                    << "(";
+            if (item.m_linkage.name != "") {
+                emit_function_header(p, item, params);
+                ::HIR::TypeRef  tmp;
+
+                const auto& ret_ty = monomorphise_fcn_return(tmp, item, params);
+                if ( ret_ty == ::HIR::TypeRef::new_unit() )
+                {
+                    m_of << " { ";
+                }
+                else
+                {
+                    m_of << " { return ";
+                }
+                m_of << item.m_linkage.name << "(";
                 bool first = true;
                 for (unsigned int i = 0; i < item.m_args.size(); i ++)
                 {
