@@ -3,3 +3,6 @@
 - mrustc
   - https://github.com/thepowersgang/mrustc
   - commit: 4276e5c35bf3d6bdeb06a6b0194c594681fbea0e
+- rs-on-c64
+  - https://github.com/xTibor/rs-on-c64?tab=readme-ov-file
+  - やればできそうってことか

@@ -1,0 +1,4 @@
+- inline 削除
+- stdatomic.h, math.h 削除
+- \_\_thread 削除
+- static 削除
