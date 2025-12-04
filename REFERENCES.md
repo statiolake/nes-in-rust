@@ -1,0 +1,2 @@
+- cc65 の初期セットアップと動作確認
+  - https://muto.world.coocan.jp/nesapp/nesapp-build.html
