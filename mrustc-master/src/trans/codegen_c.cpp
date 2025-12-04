@@ -1268,13 +1268,23 @@ namespace {
             m_emitted_fn_types.insert(ty.clone());
 
             const auto& te = ty.data().as_Function();
+            bool return_by_pointer = type_should_return_by_pointer(te.m_rettype);
+
             m_of << "typedef ";
             // TODO: ABI marker, need an ABI enum?
-            if( te.m_rettype == ::HIR::TypeRef::new_unit() )
+            if( return_by_pointer )
+            {
                 m_of << "void";
+            }
+            else if( te.m_rettype == ::HIR::TypeRef::new_unit() )
+            {
+                m_of << "void";
+            }
             else
+            {
                 // TODO: Better emit_ctype call for return type?
                 emit_ctype(te.m_rettype);
+            }
             m_of << " (";
             if( m_compiler == Compiler::Msvc )
             {
@@ -1290,7 +1300,17 @@ namespace {
                 }
             }
             m_of << "*"; emit_ctype(ty); m_of << ")(";
-            if( te.m_arg_types.size() == 0 )
+
+            // If returning by pointer, add return pointer as first argument
+            bool has_args = te.m_arg_types.size() > 0 || return_by_pointer;
+            if( return_by_pointer )
+            {
+                this->emit_ctype( te.m_rettype, FMT_CB(os, os << "*";) );
+                if( te.m_arg_types.size() > 0 || te.is_variadic )
+                    m_of << ",";
+            }
+
+            if( !has_args )
             {
                 m_of << "void)";
             }
@@ -2798,9 +2818,19 @@ namespace {
                 TU_ARMA(Return, e) {
                     // If the return type is (), don't return a value.
                     if( ret_type == ::HIR::TypeRef::new_unit() )
+                    {
                         m_of << "\treturn ;\n";
+                    }
+                    else if( type_should_return_by_pointer(ret_type) )
+                    {
+                        // Return by pointer: copy rv to *ret and return void
+                        m_of << "\t*ret = rv;\n";
+                        m_of << "\treturn ;\n";
+                    }
                     else
+                    {
                         m_of << "\treturn rv;\n";
+                    }
                     }
                 TU_ARMA(Diverge, e) {
                     m_of << "\t_Unwind_Resume();\n";
@@ -2920,7 +2950,15 @@ namespace {
                         TU_ARMA(Return, te) {
                             // TODO: If the return type is (), just emit "return"
                             assert(i == e.nodes.size()-1 && "Return");
-                            m_of << indent << "return rv;\n";
+                            if( type_should_return_by_pointer(mir_res.m_ret_type) )
+                            {
+                                m_of << indent << "*ret = rv;\n";
+                                m_of << indent << "return ;\n";
+                            }
+                            else
+                            {
+                                m_of << indent << "return rv;\n";
+                            }
                             }
                         TU_ARMA(Goto, te) {
                             // Ignore (handled by caller)
@@ -3052,6 +3090,21 @@ namespace {
             // NOTE: Uses the Size+Align version because that doesn't panic on unsized
             MIR_ASSERT(*m_mir_res, Target_GetSizeAndAlignOf(sp, m_resolve, ty, size, align), "Unexpected generic? " << ty);
             return align >Target_GetPointerBits() / 8;
+        }
+
+        bool type_should_return_by_pointer(const ::HIR::TypeRef& ty) const
+        {
+            // cc65 doesn't support returning structs by value
+            // For now, return all non-primitive types by pointer
+            if( ty == ::HIR::TypeRef::new_unit() || ty.data().is_Diverge() )
+                return false;
+
+            // Primitives and pointers can be returned by value
+            if( ty.data().is_Primitive() || ty.data().is_Pointer() || ty.data().is_Borrow() || ty.data().is_Function() )
+                return false;
+
+            // Everything else (structs, enums, tuples, arrays) should be returned by pointer
+            return true;
         }
 
         void emit_borrow(const ::MIR::TypeResolve& mir_res, HIR::BorrowType bt, const MIR::LValue& val)
@@ -4166,19 +4219,28 @@ namespace {
             }
 
             bool omit_assign = false;
+            bool return_by_pointer = false;
 
             // If the return type is `()`, omit the assignment (all `()` returning functions are marked as returning
             // void)
             {
                 ::HIR::TypeRef  tmp;
-                if( m_mir_res->get_lvalue_type(tmp, e.ret_val) == ::HIR::TypeRef::new_unit() )
+                const auto& ret_val_ty = m_mir_res->get_lvalue_type(tmp, e.ret_val);
+                if( ret_val_ty == ::HIR::TypeRef::new_unit() )
                 {
                     omit_assign = true;
                 }
 
-                if( this->type_is_bad_zst( m_mir_res->get_lvalue_type(tmp, e.ret_val) ) )
+                if( this->type_is_bad_zst( ret_val_ty ) )
                 {
                     omit_assign = true;
+                }
+
+                // Check if we should return by pointer
+                return_by_pointer = type_should_return_by_pointer(ret_val_ty);
+                if( return_by_pointer )
+                {
+                    omit_assign = true;  // Don't use assignment, we'll pass a pointer instead
                 }
             }
 
@@ -4191,7 +4253,7 @@ namespace {
 
                     const auto& ret_ty = ty.data().as_Function().m_rettype;
                     omit_assign |= ret_ty.data().is_Diverge();
-                    if( !omit_assign )
+                    if( !omit_assign && !return_by_pointer )
                     {
                         emit_lvalue(e.ret_val); m_of << " = ";
                     }
@@ -4249,7 +4311,7 @@ namespace {
                         }
                         }
                     }
-                    if(!omit_assign)
+                    if(!omit_assign && !return_by_pointer)
                     {
                         emit_lvalue(e.ret_val); m_of << " = ";
                     }
@@ -4269,6 +4331,16 @@ namespace {
                 }
             }
             m_of << "(";
+
+            // If returning by pointer, pass return value address as first argument
+            if( return_by_pointer )
+            {
+                m_of << " &";
+                emit_lvalue(e.ret_val);
+                if( e.args.size() > 0 )
+                    m_of << ",";
+            }
+
             for(unsigned int j = 0; j < e.args.size(); j ++) {
                 if(j != 0)  m_of << ",";
                 m_of << " ";
@@ -5224,6 +5296,8 @@ namespace {
         {
             ::HIR::TypeRef  tmp;
             const auto& ret_ty = monomorphise_fcn_return(tmp, item, params);
+            bool return_by_pointer = type_should_return_by_pointer(ret_ty);
+
             auto cb = FMT_CB(ss,
                 // TODO: Cleaner ABI handling
                 if( item.m_abi == "system" && m_compiler == Compiler::Msvc )
@@ -5235,7 +5309,18 @@ namespace {
                 } else {
                     ss << " " << Trans_Mangle(p) << "(";
                 }
-                if( item.m_args.size() == 0 )
+
+                // If returning by pointer, add return pointer as first argument
+                bool has_args = item.m_args.size() > 0 || return_by_pointer;
+                if( return_by_pointer )
+                {
+                    ss << "\n\t\t";
+                    this->emit_ctype( ret_ty, FMT_CB(os, os << "*ret";) );
+                    if( item.m_args.size() > 0 || item.m_variadic )    m_of << ",";
+                    m_of << " // return value (by pointer)";
+                }
+
+                if( !has_args )
                 {
                     ss << "void)";
                 }
@@ -5257,7 +5342,12 @@ namespace {
                     ss << "\n\t\t)";
                 }
                 );
-            if( ret_ty != ::HIR::TypeRef::new_unit() )
+
+            if( return_by_pointer )
+            {
+                m_of << "void " << cb;
+            }
+            else if( ret_ty != ::HIR::TypeRef::new_unit() )
             {
                 emit_ctype( ret_ty, cb );
             }
