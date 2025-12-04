@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# cl65 wrapper - removes unsupported GCC-style options and passes the rest to cl65
+
+declare -a args_to_process
+
+# @ファイルの場合は、ファイルを読み込んで処理
+if [[ $# -eq 1 && "$1" == @* ]]; then
+    cmd_file="${1:1}"
+    # ファイルの内容を読み込んで引数に変換
+    mapfile -t file_args < <(sed 's/"//g' "$cmd_file" | xargs -n1)
+    args_to_process=("${file_args[@]}")
+else
+    args_to_process=("$@")
+fi
+
+# オプションのフィルタリング
+declare -a filtered_args
+
+for arg in "${args_to_process[@]}"; do
+    case "$arg" in
+        # フィルタリングするオプション
+        "-ffunction-sections" | \
+        "-pthread" | \
+        "-Wno-psabi" | \
+        "-O1" | \
+        "-fno-tree-sra" | \
+        "-fPIC")
+            # これらのオプションはスキップ
+            ;;
+        *)
+            # その他のオプションは保持
+            filtered_args+=("$arg")
+            ;;
+    esac
+done
+
+# フィルタリング後の引数をcl65に渡す（@ ファイル形式は展開して渡す）
+exec cl65 "${filtered_args[@]}"

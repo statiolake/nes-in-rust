@@ -4,7 +4,7 @@
  *
  * trans/mangling_v2.cpp
  * - Name mangling (encoding of rust paths into symbols)
- * 
+ *
  * Ensures that symbols contain only alpha-numerics and `_`
  * NOTE: `$` is used ONLY for shortening excessively long symbols
  */
@@ -30,7 +30,7 @@ public:
     // Used to encode values that might be have trailing digits
     void fmt_base26_int(unsigned val)
     {
-        // Lower-case: 
+        // Lower-case:
         while(val >= 26) {
             m_os << char('a' + (val%26));
             val /= 26;
@@ -377,11 +377,11 @@ namespace {
         std::stringstream   ss;
         ss << v;
         auto s = ss.str();
-        static const size_t MAX_LEN = 128;
-        if( s.size() > 128 ) {
+        static const size_t MAX_LEN = 48;
+        if( s.size() > MAX_LEN ) {
             size_t hash = ::std::hash<std::string>()(s);
             ss.str("");
-            ss << s.substr(0, MAX_LEN-9) << "$" << ::std::hex << hash;
+            ss << s.substr(0, MAX_LEN-9) << "_" << ::std::hex << hash;
             DEBUG("Over-long symbol '" << s << "' -> '" << ss.str() << "'");
             s = ss.str();
         }

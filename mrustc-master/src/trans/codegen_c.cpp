@@ -287,10 +287,8 @@ namespace {
             {
             case Compiler::Gcc:
                 m_of
-                    << "#include <stdatomic.h>\n"   // atomic_*
                     << "#include <stdlib.h>\n"  // abort
                     << "#include <string.h>\n"  // mem*
-                    << "#include <math.h>\n"  // round, ...
                     << "#include <setjmp.h>\n"  // setjmp/jmp_buf
                     ;
                 break;
@@ -307,9 +305,9 @@ namespace {
             m_of
                 << "typedef uint32_t RUST_CHAR;\n"
                 << "typedef uint8_t RUST_BOOL;\n"
-                << "typedef struct { void* PTR; size_t META; } SLICE_PTR;\n"
+                << "typedef struct { void* PTR; int META; } SLICE_PTR;\n"
                 << "typedef struct { void* PTR; void* META; } TRAITOBJ_PTR;\n"
-                << "typedef struct { void (*drop)(void*); size_t size; size_t align; } VTABLE_HDR;\n"
+                << "typedef struct { void (*drop)(void*); int size; int align; } VTABLE_HDR;\n"
                 ;
             if( m_options.disallow_empty_structs )
             {
@@ -328,7 +326,7 @@ namespace {
                     ;
             }
             m_of
-                << "static inline size_t ALIGN_TO(size_t s, size_t a) { return (s + a-1) / a * a; }\n"
+                << "static int ALIGN_TO(int s, int a) { return (s + a-1) / a * a; }\n"
                 << "\n"
                 ;
             switch(m_compiler)
@@ -352,442 +350,42 @@ namespace {
             {
             case Compiler::Gcc:
                 m_of
-                    << "extern __thread jmp_buf*    mrustc_panic_target;\n"
-                    << "extern __thread void* mrustc_panic_value;\n"
+                    << "extern jmp_buf*    mrustc_panic_target;\n"
+                    << "extern void* mrustc_panic_value;\n"
                     ;
-                // 64-bit bit ops (gcc intrinsics)
-                m_of
-                    << "static inline uint64_t __builtin_clz64(uint64_t v) {\n"
-                    << "\treturn ( (v >> 32) != 0 ? __builtin_clz(v>>32) : 32 + __builtin_clz(v));\n"
-                    << "}\n"
-                    << "static inline uint64_t __builtin_ctz64(uint64_t v) {\n"
-                    << "\treturn ((v&0xFFFFFFFF) == 0 ? __builtin_ctz(v>>32) + 32 : __builtin_ctz(v));\n"
-                    << "}\n"
-                    ;
-                // Atomic hackery
-                for(int sz = 8; sz <= 64; sz *= 2)
-                {
-                    m_of
-                        << "static inline uint"<<sz<<"_t __mrustc_atomicloop"<<sz<<"(volatile uint"<<sz<<"_t* slot, uint"<<sz<<"_t param, int ordering, uint"<<sz<<"_t (*cb)(uint"<<sz<<"_t, uint"<<sz<<"_t)) {"
-                        << " int ordering_load = (ordering == memory_order_release || ordering == memory_order_acq_rel ? memory_order_relaxed : ordering);" // If Release, Load with Relaxed
-                        << " for(;;) {"
-                        << " uint"<<sz<<"_t v = atomic_load_explicit((_Atomic uint"<<sz<<"_t*)slot, ordering_load);"
-                        << " if( atomic_compare_exchange_strong_explicit((_Atomic uint"<<sz<<"_t*)slot, &v, cb(v, param), ordering, ordering_load) ) return v;"
-                        << " }"
-                        << "}\n"
-                        ;
-                }
                 break;
             case Compiler::Msvc:
-                m_of
-                    << "static inline int32_t __builtin_popcountll(uint64_t v) {\n"
-                    << "\treturn __popcnt(v & 0xFFFFFFFF) + __popcnt(v >> 32);\n"
-                    << "}\n"
-                    << "static inline int __builtin_ctz(uint32_t v) { int rv; _BitScanForward(&rv, v); return rv; }\n"
-                    << "static inline int __builtin_clz(uint32_t v) { int rv; _BitScanReverse(&rv, v); return 31 - rv; }\n"
-                    << "static inline uint64_t __builtin_clz64(uint64_t v) {\n"
-                    << "\treturn ( (v >> 32) != 0 ? __builtin_clz(v>>32) : 32 + __builtin_clz(v) );\n"
-                    << "}\n"
-                    << "static inline uint64_t __builtin_ctz64(uint64_t v) {\n"
-                    << "\treturn ((v&0xFFFFFFFF) == 0 ? __builtin_ctz(v>>32) + 32 : __builtin_ctz(v));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_u8(uint8_t a, uint8_t b, uint8_t* out) {\n"
-                    << "\t*out = a*b;\n"
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > UINT8_MAX/b)  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_i8(int8_t a, int8_t b, int8_t* out) {\n"
-                    << "\t*out = a*b;\n"    // Wait, this isn't valid?
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > INT8_MAX/b)  return true;\n"
-                    << "\tif(a < INT8_MIN/b)  return true;\n"
-                    << "\tif( (a == -1) && (b == INT8_MIN))  return true;\n"
-                    << "\tif( (b == -1) && (a == INT8_MIN))  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_u16(uint16_t a, uint16_t b, uint16_t* out) {\n"
-                    << "\t*out = a*b;\n"
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > UINT16_MAX/b)  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_i16(int16_t a, int16_t b, int16_t* out) {\n"
-                    << "\t*out = a*b;\n"    // Wait, this isn't valid?
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > INT16_MAX/b)  return true;\n"
-                    << "\tif(a < INT16_MIN/b)  return true;\n"
-                    << "\tif( (a == -1) && (b == INT16_MIN))  return true;\n"
-                    << "\tif( (b == -1) && (a == INT16_MIN))  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_u32(uint32_t a, uint32_t b, uint32_t* out) {\n"
-                    << "\t*out = a*b;\n"
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > UINT32_MAX/b)  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_i32(int32_t a, int32_t b, int32_t* out) {\n"
-                    << "\t*out = a*b;\n"    // Wait, this isn't valid?
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > INT32_MAX/b)  return true;\n"
-                    << "\tif(a < INT32_MIN/b)  return true;\n"
-                    << "\tif( (a == -1) && (b == INT32_MIN))  return true;\n"
-                    << "\tif( (b == -1) && (a == INT32_MIN))  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_u64(uint64_t a, uint64_t b, uint64_t* out) {\n"
-                    << "\t*out = a*b;\n"
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > UINT64_MAX/b)  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_i64(int64_t a, int64_t b, int64_t* out) {\n"
-                    << "\t*out = a*b;\n"    // Wait, this isn't valid?
-                    << "\tif(b == 0) return false;\n"
-                    << "\tif(a > INT64_MAX/b)  return true;\n"
-                    << "\tif(a < INT64_MIN/b)  return true;\n"
-                    << "\tif( (a == -1) && (b == INT64_MIN))  return true;\n"
-                    << "\tif( (b == -1) && (a == INT64_MIN))  return true;\n"
-                    << "\treturn false;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_usize(uintptr_t a, uintptr_t b, uintptr_t* out) {\n"
-                    << "\treturn __builtin_mul_overflow_u" << Target_GetCurSpec().m_arch.m_pointer_bits << "(a, b, out);\n"
-                    << "}\n"
-                    << "static inline bool __builtin_mul_overflow_isize(intptr_t a, intptr_t b, intptr_t* out) {\n"
-                    << "\treturn __builtin_mul_overflow_i" << Target_GetCurSpec().m_arch.m_pointer_bits << "(a, b, out);\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_u64(uint64_t a, uint64_t b, uint64_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return a < b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_u32(uint32_t a, uint32_t b, uint32_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return a < b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_u16(uint16_t a, uint16_t b, uint16_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return a < b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_u8(uint8_t a, uint8_t b, uint8_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return a < b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_usize(uintptr_t a, uintptr_t b, uintptr_t* out) {\n"
-                    << "\treturn __builtin_sub_overflow_u" << Target_GetCurSpec().m_arch.m_pointer_bits << "(a, b, out);\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_u64(uint64_t a, uint64_t b, uint64_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return a > UINT64_MAX - b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_u32(uint32_t a, uint32_t b, uint32_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return a > UINT32_MAX - b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_u16(uint16_t a, uint16_t b, uint16_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return a > UINT16_MAX - b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_u8(uint8_t a, uint8_t b, uint8_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return a > UINT8_MAX - b;\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_usize(uintptr_t a, uintptr_t b, uintptr_t* out) {\n"
-                    << "\treturn __builtin_add_overflow_u" << Target_GetCurSpec().m_arch.m_pointer_bits << "(a, b, out);\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_i64(int64_t a, int64_t b, int64_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return ((b < 0) && (a > INT64_MAX + b)) || ((b > 0) && (a < INT64_MIN + b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_i32(int32_t a, int32_t b, int32_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return ((b < 0) && (a > INT32_MAX + b)) || ((b > 0) && (a < INT32_MIN + b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_i16(int16_t a, int16_t b, int16_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return ((b < 0) && (a > INT16_MAX + b)) || ((b > 0) && (a < INT16_MIN + b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_i8(int8_t a, int8_t b, int8_t* o) {\n"
-                    << "\t""*o = a - b;\n"
-                    << "\t""return ((b < 0) && (a > INT8_MAX + b)) || ((b > 0) && (a < INT8_MIN + b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_sub_overflow_isize(intptr_t a, intptr_t b, intptr_t* out) {\n"
-                    << "\treturn __builtin_sub_overflow_i" << Target_GetCurSpec().m_arch.m_pointer_bits << "(a, b, out);\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_i64(int64_t a, int64_t b, int64_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return ((b > 0) && (a > INT64_MAX - b)) || ((b < 0) && (a < INT64_MIN - b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_i32(int32_t a, int32_t b, int32_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return ((b > 0) && (a > INT32_MAX - b)) || ((b < 0) && (a < INT32_MIN - b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_i16(int16_t a, int16_t b, int16_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return ((b > 0) && (a > INT16_MAX - b)) || ((b < 0) && (a < INT16_MIN - b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_i8(int8_t a, int8_t b, int8_t* o) {\n"
-                    << "\t""*o = a + b;\n"
-                    << "\t""return ((b > 0) && (a > INT8_MAX - b)) || ((b < 0) && (a < INT8_MIN - b));\n"
-                    << "}\n"
-                    << "static inline bool __builtin_add_overflow_isize(intptr_t a, intptr_t b, intptr_t* out) {\n"
-                    << "\treturn __builtin_add_overflow_i" << Target_GetCurSpec().m_arch.m_pointer_bits << "(a, b, out);\n"
-                    << "}\n"
-                    << "static inline uint64_t __builtin_bswap64(uint64_t v) { return _byteswap_uint64(v); }\n"
-                    << "#define InterlockedCompareExchange8Acquire _InterlockedCompareExchange8\n"
-                    << "#define InterlockedCompareExchange8Release _InterlockedCompareExchange8\n"
-                    << "#define InterlockedCompareExchange8NoFence _InterlockedCompareExchange8\n"
-                    << "#define InterlockedCompareExchange8 _InterlockedCompareExchange8\n"
-                    << "#define InterlockedCompareExchange16Acquire InterlockedCompareExchangeAcquire16\n"
-                    << "#define InterlockedCompareExchange16Release InterlockedCompareExchangeRelease16\n"
-                    << "#define InterlockedCompareExchange16NoFence InterlockedCompareExchangeNoFence16\n"
-                    << "#define InterlockedCompareExchange64Acquire InterlockedCompareExchangeAcquire64\n"
-                    << "#define InterlockedCompareExchange32 InterlockedCompareExchange\n"
-                    << "#define InterlockedCompareExchange64Release InterlockedCompareExchangeRelease64\n"
-                    << "#define InterlockedCompareExchange64NoFence InterlockedCompareExchangeNoFence64\n"
-                    << "#define InterlockedExchangeAdd8Acquire InterlockedExchangeAdd8\n"
-                    << "#define InterlockedExchangeAdd8Release InterlockedExchangeAdd8\n"
-                    << "#define InterlockedExchangeAdd8NoFence InterlockedExchangeAdd8\n"
-                    << "#define InterlockedExchangeAdd16Acquire _InterlockedExchangeAdd16\n"
-                    << "#define InterlockedExchangeAdd16Release _InterlockedExchangeAdd16\n"
-                    << "#define InterlockedExchangeAdd16NoFence _InterlockedExchangeAdd16\n"
-                    << "#define InterlockedExchangeAdd16 _InterlockedExchangeAdd16\n"
-                    << "#define InterlockedExchangeAdd64Acquire InterlockedExchangeAddAcquire64\n"
-                    << "#define InterlockedExchangeAdd64Release InterlockedExchangeAddRelease64\n"
-                    << "#define InterlockedExchangeAdd64NoFence InterlockedExchangeAddNoFence64\n"
-                    << "#define InterlockedExchange8Acquire InterlockedExchange8\n"
-                    << "#define InterlockedExchange8Release InterlockedExchange8\n"
-                    << "#define InterlockedExchange8NoFence InterlockedExchange8\n"
-                    << "#define InterlockedExchange16Acquire InterlockedExchange16\n"
-                    << "#define InterlockedExchange16Release InterlockedExchange16\n"
-                    << "#define InterlockedExchange16NoFence InterlockedExchange16\n"
-                    << "#define InterlockedExchangeRelease InterlockedExchange\n"
-                    << "#define InterlockedExchange64Acquire InterlockedExchangeAcquire64\n"
-                    << "#define InterlockedExchange64Release InterlockedExchange64\n"
-                    << "#define InterlockedExchange64NoFence InterlockedExchangeNoFence64\n"
-                    << "#define InterlockedAnd8Acquire InterlockedAnd8\n"
-                    << "#define InterlockedAnd8Release InterlockedAnd8\n"
-                    << "#define InterlockedAnd8NoFence InterlockedAnd8\n"
-                    << "#define InterlockedAnd16Acquire InterlockedAnd16\n"
-                    << "#define InterlockedAnd16Release InterlockedAnd16\n"
-                    << "#define InterlockedAnd16NoFence InterlockedAnd16\n"
-                    << "#define InterlockedOr8Acquire InterlockedOr8\n"
-                    << "#define InterlockedOr8Release InterlockedOr8\n"
-                    << "#define InterlockedOr8NoFence InterlockedOr8\n"
-                    << "#define InterlockedOr16Acquire InterlockedOr16\n"
-                    << "#define InterlockedOr16Release InterlockedOr16\n"
-                    << "#define InterlockedOr16NoFence InterlockedOr16\n"
-                    << "#define InterlockedXor8Acquire InterlockedXor8\n"
-                    << "#define InterlockedXor8Release InterlockedXor8\n"
-                    << "#define InterlockedXor8NoFence InterlockedXor8\n"
-                    << "#define InterlockedXor16Acquire InterlockedXor16\n"
-                    << "#define InterlockedXor16Release InterlockedXor16\n"
-                    << "#define InterlockedXor16NoFence InterlockedXor16\n"
-                    ;
-                // Atomic hackery
-                for(int sz = 8; sz <= 64; sz *= 2)
-                {
-                    m_of
-                        << "static inline uint"<<sz<<"_t __mrustc_atomicloop"<<sz<<"(volatile uint"<<sz<<"_t* slot, uint"<<sz<<"_t param, uint"<<sz<<"_t (*cb)(uint"<<sz<<"_t, uint"<<sz<<"_t)) {"
-                        << " for(;;) {"
-                        << " uint"<<sz<<"_t v = InterlockedCompareExchange" << sz << "(slot, 0,0);"
-                        << " if( InterlockedCompareExchange" << sz << "(slot, v, cb(v, param)) == v ) return v;"
-                        << " }"
-                        << "}\n"
-                        ;
-                }
                 break;
             }
 
-            if( m_options.emulated_i128 )
-            {
-                m_of
-                    << "typedef struct { uint64_t lo, hi; } uint128_t;\n"
-                    << "typedef struct { uint64_t lo, hi; } int128_t;\n"
-                    << "static inline uint128_t intrinsic_ctlz_u128(uint128_t v);\n"
-                    << "static inline uint128_t shl128(uint128_t a, uint32_t b);\n"
-                    << "static inline uint128_t shr128(uint128_t a, uint32_t b);\n"
-                    << "static inline float make_float(int is_neg, int exp, uint32_t mantissa_bits) { float rv; uint32_t vi=(mantissa_bits&((1<<23)-1))|((exp+127)<<23);if(is_neg)vi|=1<<31; memcpy(&rv, &vi, 4); return rv; }\n"
-                    << "static inline double make_double(int is_neg, int exp, uint32_t mantissa_bits) { double rv; uint64_t vi=(mantissa_bits&((1ull<<52)-1))|((uint64_t)(exp+1023)<<52);if(is_neg)vi|=1ull<<63; memcpy(&rv, &vi, 4); return rv; }\n"
-                    << "static inline uint128_t make128_raw(uint64_t hi, uint64_t lo) { uint128_t rv = { lo, hi }; return rv; }\n"
-                    << "static inline uint128_t make128(uint64_t v) { uint128_t rv = { v, 0 }; return rv; }\n"
-                    // https://blog.m-ou.se/floats/
-                    << "static inline float cast128_float(uint128_t v) {"
-                    << " int n = intrinsic_ctlz_u128(v).lo;"
-                    << " uint128_t y = shl128(v, n);"
-                    << " uint64_t a = (y.hi >> ((128-(23+1))-64));" // Base mantissa (top 24 bits)
-                    << " uint64_t b = shr128(y, (64-(23+1))).lo | (y.lo & 0xFFFFFFFFFF);" // Were any discarded bits set? (shift right by 40 to get 64 bits with the top just before the last mantissa bit, then extract 40 bits from low)
-                    << " uint64_t m = a + ((b - ((b >> 63) & ~a)) >> 63);"    // Account for rounding
-                    << " uint64_t e = (v.lo == 0 && v.hi == 0) ? 0 : (127 - n)+127-1;"  // Exponent, with the -1 to fudge the 24th bit in mantissa
-                    << " uint32_t vi = (e << 23) + m;"  // Add is like or, but the final bit of the mantissa can propagate through the exponent (intended)
-                    //<< " printf(\"%016llx:%016llx n=%i,a=%#llx,b=%#llx  e=%lli,m=%#llx vi=%#lx\\n\", v.hi,v.lo, n, a, b, e, m, vi);"
-                    << " float rv;"
-                    << " memcpy(&rv, &vi, sizeof(rv));"
-                    << " return rv;"
-                    << " }\n"
-                    << "static inline double cast128_double(uint128_t v) {"
-                    << " int n = intrinsic_ctlz_u128(v).lo;"
-                    << " uint128_t y = shl128(v, n);"
-                    << " uint64_t a = (y.hi >> ((128-(52+1))-64));"
-                    << " uint64_t b = shr128(y, (64-(52+1))).lo | (y.lo & 0x7FF);"
-                    << " uint64_t m = a + ((b - (b >> 63 & ~a)) >> 63);"
-                    << " uint64_t e = (v.lo == 0 && v.hi == 0) ? 0 : (127 - n)+1023-1;"
-                    << " uint64_t vi = (e << 52) + m;"
-                    << " double rv;"
-                    << " memcpy(&rv, &vi, sizeof(rv));"
-                    << " return rv;"
-                    << " }\n"
-                    << "static inline int cmp128(uint128_t a, uint128_t b) { if(a.hi != b.hi) return a.hi < b.hi ? -1 : 1; if(a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }\n"
-                    // Returns true if overflow happens (res < a)
-                    << "static inline bool add128_o(uint128_t a, uint128_t b, uint128_t* o) { o->lo = a.lo + b.lo; o->hi = a.hi + b.hi + (o->lo < a.lo ? 1 : 0); return (o->hi < a.hi); }\n"
-                    // Returns true if overflow happens (res > a)
-                    << "static inline bool sub128_o(uint128_t a, uint128_t b, uint128_t* o) { o->lo = a.lo - b.lo; o->hi = a.hi - b.hi - (a.lo < b.lo ? 1 : 0); return (o->hi > a.hi); }\n"
-                    // Serial shift+add
-                    << "static inline bool mul128_o(uint128_t a, uint128_t b, uint128_t* o) {"
-                    << " bool of = false;"
-                    << " o->hi = 0; o->lo = 0;"
-                    << " for(int i=0;i<128;i++){"
-                    <<  " uint64_t m = (1ull << (i % 64));"
-                    <<  " if(a.hi==0&&a.lo<m)   break;"
-                    <<  " if(i>=64&&a.hi<m) break;"
-                    <<  " if( m & (i >= 64 ? a.hi : a.lo) ) of |= add128_o(*o, b, o);"
-                    <<  " b.hi = (b.hi << 1) | (b.lo >> 63);"
-                    <<  " b.lo = (b.lo << 1);"
-                    << " }"
-                    << " return of;"
-                    << "}\n"
-                    // Long division
-                    << "static inline bool div128_o(uint128_t a, uint128_t b, uint128_t* q, uint128_t* r) {"
-                    << " if(a.hi == 0 && b.hi == 0) { if(q) { q->hi=0; q->lo = a.lo / b.lo; } if(r) { r->hi=0; r->lo = a.lo % b.lo; } return false; }"
-                    << " if(cmp128(a, b) < 0) { if(q) { q->hi=0; q->lo=0; } if(r) *r = a; return false; }"
-                    << " uint128_t a_div_2 = {(a.lo>>1)|(a.hi << 63), a.hi>>1};"
-                    << " int shift = 0;"
-                    << " while( cmp128(a_div_2, b) >= 0 && shift < 128 ) {"
-                    <<  " shift += 1;"
-                    <<  " b.hi = (b.hi<<1)|(b.lo>>63); b.lo <<= 1;"
-                    <<  " }"
-                    << " if(shift == 128) return true;" // true = overflowed
-                    << " uint128_t mask = { /*lo=*/(shift >= 64 ? 0 : (1ull << shift)), /*hi=*/(shift < 64 ? 0 : 1ull << (shift-64)) };"
-                    << " shift ++;"
-                    << " if(q) { q->hi = 0; q->lo = 0; }"
-                    << " while(shift--) {"
-                    <<  " if( cmp128(a, b) >= 0 ) { if(q) add128_o(*q, mask, q); sub128_o(a, b, &a); }"
-                    <<  " mask.lo = (mask.lo >> 1) | (mask.hi << 63); mask.hi >>= 1;"
-                    <<  " b.lo = (b.lo >> 1) | (b.hi << 63); b.hi >>= 1;"
-                    << " }"
-                    << " if(r) *r = a;"
-                    << " return false;"
-                    << "}\n"
-                    << "static inline uint128_t add128(uint128_t a, uint128_t b) { uint128_t v; add128_o(a, b, &v); return v; }\n"
-                    << "static inline uint128_t sub128(uint128_t a, uint128_t b) { uint128_t v; sub128_o(a, b, &v); return v; }\n"
-                    << "static inline uint128_t mul128(uint128_t a, uint128_t b) { uint128_t v; mul128_o(a, b, &v); return v; }\n"
-                    << "static inline uint128_t div128(uint128_t a, uint128_t b) { uint128_t v; div128_o(a, b, &v, NULL); return v; }\n"
-                    << "static inline uint128_t mod128(uint128_t a, uint128_t b) { uint128_t v; div128_o(a, b, NULL, &v); return v;}\n"
-                    << "static inline uint128_t and128(uint128_t a, uint128_t b) { uint128_t v = { a.lo & b.lo, a.hi & b.hi }; return v; }\n"
-                    << "static inline uint128_t or128 (uint128_t a, uint128_t b) { uint128_t v = { a.lo | b.lo, a.hi | b.hi }; return v; }\n"
-                    << "static inline uint128_t xor128(uint128_t a, uint128_t b) { uint128_t v = { a.lo ^ b.lo, a.hi ^ b.hi }; return v; }\n"
-                    << "static inline uint128_t shl128(uint128_t a, uint32_t b) { uint128_t v; if(b == 0) { return a; } else if(b < 64) { v.lo = a.lo << b; v.hi = (a.hi << b) | (a.lo >> (64 - b)); } else { v.hi = a.lo << (b - 64); v.lo = 0; } return v; }\n"
-                    << "static inline uint128_t shr128(uint128_t a, uint32_t b) { uint128_t v; if(b == 0) { return a; } else if(b < 64) { v.lo = (a.lo >> b)|(a.hi << (64 - b)); v.hi = a.hi >> b; } else { v.lo = a.hi >> (b - 64); v.hi = 0; } return v; }\n"
-                    << "static inline uint128_t popcount128(uint128_t a) { uint128_t v = { __builtin_popcountll(a.lo) + __builtin_popcountll(a.hi), 0 }; return v; }\n"
-                    << "static inline uint128_t __builtin_bswap128(uint128_t v) { uint128_t rv = { __builtin_bswap64(v.hi), __builtin_bswap64(v.lo) }; return rv; }\n"
-                    << "static inline uint128_t intrinsic_ctlz_u128(uint128_t v) {\n"
-                    << "\tuint128_t rv = { (v.hi != 0 ? __builtin_clz64(v.hi) : (v.lo != 0 ? 64 + __builtin_clz64(v.lo) : 128)), 0 };\n"
-                    << "\treturn rv;\n"
-                    << "}\n"
-                    << "static inline uint128_t intrinsic_cttz_u128(uint128_t v) {\n"
-                    << "\tuint128_t rv = { (v.lo == 0 ? (v.hi == 0 ? 128 : __builtin_ctz64(v.hi) + 64) : __builtin_ctz64(v.lo)), 0 };\n"
-                    << "\treturn rv;\n"
-                    << "}\n"
-                    << "static inline int128_t make128s_raw(uint64_t hi, uint64_t lo) { int128_t rv = { lo, hi }; return rv; }\n"
-                    << "static inline int128_t make128s(int64_t v) { int128_t rv = { v, (v < 0 ? -1 : 0) }; return rv; }\n"
-                    << "static inline int128_t neg128s(int128_t v) { int128_t rv = { ~v.lo+1, ~v.hi + (v.lo == 0) }; return rv; }\n"
-                    << "static inline float cast128s_float(int128_t v) {"
-                    << " int sgn = (v.hi >> 63);"
-                    << " int128_t abs = sgn ? neg128s(v) : v;"
-                    << " return (sgn ? -1.0 : 1.0) * cast128_float(make128_raw(v.hi,v.lo));"
-                    << " }\n"
-                    << "static inline double cast128s_double(int128_t v) {"
-                    << " int sgn = (v.hi >> 63);"
-                    << " int128_t abs = sgn ? neg128s(v) : v;"
-                    << " return (sgn ? -1.0 : 1.0) * cast128_double(make128_raw(v.hi,v.lo));"
-                    << " }\n"
-                    << "static inline int cmp128s(int128_t a, int128_t b) { if(a.hi != b.hi) return (int64_t)a.hi < (int64_t)b.hi ? -1 : 1; if(a.lo != b.lo) return a.lo < b.lo ? -1 : 1; return 0; }\n"
-                    // Returns true if overflow happens (if negative with pos,pos or positive with neg,neg)
-                    << "static inline bool add128s_o(int128_t a, int128_t b, int128_t* o) { bool sgna=a.hi>>63; bool sgnb=b.hi>>63; add128_o(*(uint128_t*)&a, *(uint128_t*)&b, (uint128_t*)o); bool sgno = o->hi>>63; return (sgna==sgnb && sgno != sgna); }\n"
-                    // Returns true if overflow happens (if neg with pos,neg or pos with neg,pos)
-                    << "static inline bool sub128s_o(int128_t a, int128_t b, int128_t* o) { bool sgna=a.hi>>63; bool sgnb=b.hi>>63; sub128_o(*(uint128_t*)&a, *(uint128_t*)&b, (uint128_t*)o); bool sgno = o->hi>>63; return (sgna!=sgnb && sgno != sgna); }\n"
-                    << "static inline bool mul128s_o(int128_t a, int128_t b, int128_t* o) {"
-                    << " bool sgna = (a.hi >> 63);"
-                    << " bool sgnb = (b.hi >> 63);"
-                    << " if(sgna) a = neg128s(a);"
-                    << " if(sgnb) b = neg128s(b);"
-                    << " bool rv = mul128_o(*(uint128_t*)&a, *(uint128_t*)&b, (uint128_t*)o);"
-                    << " if(sgna != sgnb) *o = neg128s(*o);"
-                    << " return rv;"
-                    << " }\n"
-                    << "static inline bool div128s_o(int128_t a, int128_t b, int128_t* q, int128_t* r) {"
-                    << " bool sgna = (a.hi >> 63) != 0;"
-                    << " bool sgnb = (b.hi >> 63) != 0;"
-                    << " if(sgna) a = neg128s(a);"
-                    << " if(sgnb) b = neg128s(b);"
-                    << " bool rv = div128_o(*(uint128_t*)&a, *(uint128_t*)&b, (uint128_t*)q, (uint128_t*)r);"
-                    << " if(sgna != sgnb && q) *q = neg128s(*q);"
-                    << " if(sgna && r) *r = neg128s(*r);"    // Remainder has the same sign as the dividend (a)
-                    << " return rv;"
-                    << " }\n"
-                    << "static inline int128_t add128s(int128_t a, int128_t b) { int128_t v; add128s_o(a, b, &v); return v; }\n"
-                    << "static inline int128_t sub128s(int128_t a, int128_t b) { int128_t v; sub128s_o(a, b, &v); return v; }\n"
-                    << "static inline int128_t mul128s(int128_t a, int128_t b) { int128_t v; mul128s_o(a, b, &v); return v; }\n"
-                    << "static inline int128_t div128s(int128_t a, int128_t b) { int128_t v; div128s_o(a, b, &v, NULL); return v; }\n"
-                    << "static inline int128_t mod128s(int128_t a, int128_t b) { int128_t v; div128s_o(a, b, NULL, &v); return v; }\n"
-                    << "static inline int128_t and128s(int128_t a, int128_t b) { int128_t v = { a.lo & b.lo, a.hi & b.hi }; return v; }\n"
-                    << "static inline int128_t or128s (int128_t a, int128_t b) { int128_t v = { a.lo | b.lo, a.hi | b.hi }; return v; }\n"
-                    << "static inline int128_t xor128s(int128_t a, int128_t b) { int128_t v = { a.lo ^ b.lo, a.hi ^ b.hi }; return v; }\n"
-                    << "static inline int128_t shl128s(int128_t a, uint32_t b) { int128_t v; if(b == 0) { return a; } else if(b < 64) { v.lo = a.lo << b; v.hi = (a.hi << b) | (a.lo >> (64 - b)); } else { v.hi = a.lo << (b - 64); v.lo = 0; } return v; }\n"
-                    << "static inline int128_t shr128s(int128_t a, uint32_t b) { int128_t v; if(b == 0) { return a; } else if(b < 64) { v.lo = (a.lo >> b)|(a.hi << (64 - b)); v.hi = (int64_t)a.hi >> b; } else { v.lo = (int64_t)a.hi >> (b - 64); v.hi = (int64_t)a.hi < 0 ? -1 : 0; } return v; }\n"
-                    << "static inline uint128_t int128_to_uint128(int128_t a) { return make128_raw(a.lo, a.hi); }\n"
-                    << "static inline int128_t uint128_to_int128(uint128_t a) { return make128s_raw(a.lo, a.hi); }\n"
-                    ;
-            }
-            else
-            {
-                // GCC-only
-                m_of
-                    << "typedef unsigned __int128 uint128_t;\n"
-                    << "typedef signed __int128 int128_t;\n"
-                    << "static inline uint128_t __builtin_bswap128(uint128_t v) {\n"
-                    << "\tuint64_t lo = __builtin_bswap64((uint64_t)v);\n"
-                    << "\tuint64_t hi = __builtin_bswap64((uint64_t)(v>>64));\n"
-                    << "\treturn ((uint128_t)lo << 64) | (uint128_t)hi;\n"
-                    << "}\n"
-                    << "static inline uint128_t intrinsic_ctlz_u128(uint128_t v) {\n"
-                    << "\treturn (v == 0 ? 128 : (v >> 64 != 0 ? __builtin_clz64(v>>64) : 64 + __builtin_clz64(v)));\n"
-                    << "}\n"
-                    << "static inline uint128_t intrinsic_cttz_u128(uint128_t v) {\n"
-                    << "\treturn (v == 0 ? 128 : ((v&0xFFFFFFFFFFFFFFFF) == 0 ? __builtin_ctz64(v>>64) + 64 : __builtin_ctz64(v)));\n"
-                    << "}\n"
-                    ;
-            }
+            // dummy types - they are useless basically
+            m_of
+                << "typedef int int64_t;\n"
+                << "typedef int uint64_t;\n"
+                << "typedef int int128_t;\n"
+                << "typedef int uint128_t;\n"
+                << "\n";
 
             // Common helpers
             m_of
                 << "\n"
-                << "static inline int slice_cmp(SLICE_PTR l, SLICE_PTR r) {\n"
+                << "static int slice_cmp(SLICE_PTR l, SLICE_PTR r) {\n"
                 << "\tint rv = memcmp(l.PTR, r.PTR, l.META < r.META ? l.META : r.META);\n"
                 << "\tif(rv != 0) return rv;\n"
                 << "\tif(l.META < r.META) return -1;\n"
                 << "\tif(l.META > r.META) return 1;\n"
                 << "\treturn 0;\n"
                 << "}\n"
-                << "static inline SLICE_PTR make_sliceptr(void* ptr, size_t s) { SLICE_PTR rv = { ptr, s }; return rv; }\n"
-                << "static inline TRAITOBJ_PTR make_traitobjptr(void* ptr, void* vt) { TRAITOBJ_PTR rv = { ptr, vt }; return rv; }\n"
+                << "static SLICE_PTR make_sliceptr(void* ptr, int s) { SLICE_PTR rv; rv.PTR = ptr; rv.META = s; return rv; }\n"
+                << "static TRAITOBJ_PTR make_traitobjptr(void* ptr, void* vt) { TRAITOBJ_PTR rv; rv.PTR = ptr; rv.META = vt; return rv; }\n"
                 << "\n"
-                << "static inline size_t mrustc_max(size_t a, size_t b) { return a < b ? b : a; }\n"
-                << "static inline void noop_drop(tUNIT *p) { }\n"
+                << "static int mrustc_max(int a, int b) { return a < b ? b : a; }\n"
+                << "static void noop_drop(tUNIT *p) { }\n"
                 << "\n"
                 // A linear (fast-fail) search of a list of strings
-                << "static inline size_t mrustc_string_search_linear(SLICE_PTR val, size_t count, SLICE_PTR* options) {\n"
-                << "\tfor(size_t i = 0; i < count; i ++) {\n"
+                << "static int mrustc_string_search_linear(SLICE_PTR val, int count, SLICE_PTR* options) {\n"
+                << "\tint i;\n"
+                << "\tfor(i = 0; i < count; i ++) {\n"
                 << "\t\tint cmp = slice_cmp(val, options[i]);\n"
                 << "\t\tif(cmp < 0) break;\n"
                 << "\t\tif(cmp == 0) return i;\n"
@@ -796,33 +394,19 @@ namespace {
                 << "}\n"
                 // Map of reversed nibbles                       0  1  2  3  4  5  6  7   8  9 10 11 12 14 15
                 << "static const uint8_t __mrustc_revmap[16] = { 0, 8, 4,12, 2,10, 6,14,  1, 9, 5,13, 3, 7,15};\n"
-                << "static inline uint8_t __mrustc_bitrev8(uint8_t v) { if(v==0||v==0xFF) return v; return __mrustc_revmap[v>>4]|(__mrustc_revmap[v&15]<<4); }\n"
-                << "static inline uint16_t __mrustc_bitrev16(uint16_t v) { if(v==0) return 0; return ((uint16_t)__mrustc_bitrev8(v>>8))|((uint16_t)__mrustc_bitrev8(v)<<8); }\n"
-                << "static inline uint32_t __mrustc_bitrev32(uint32_t v) { if(v==0) return 0; return ((uint32_t)__mrustc_bitrev16(v>>16))|((uint32_t)__mrustc_bitrev16(v)<<16); }\n"
-                << "static inline uint64_t __mrustc_bitrev64(uint64_t v) { if(v==0) return 0; return ((uint64_t)__mrustc_bitrev32(v>>32))|((uint64_t)__mrustc_bitrev32(v)<<32); }\n"
+                << "static uint8_t __mrustc_bitrev8(uint8_t v) { if(v==0||v==0xFF) return v; return __mrustc_revmap[v>>4]|(__mrustc_revmap[v&15]<<4); }\n"
+                << "static uint16_t __mrustc_bitrev16(uint16_t v) { if(v==0) return 0; return ((uint16_t)__mrustc_bitrev8(v>>8))|((uint16_t)__mrustc_bitrev8(v)<<8); }\n"
+                << "static uint32_t __mrustc_bitrev32(uint32_t v) { if(v==0) return 0; return ((uint32_t)__mrustc_bitrev16(v>>16))|((uint32_t)__mrustc_bitrev16(v)<<16); }\n"
                 // TODO: 128
                 ;
-            if( m_options.emulated_i128 )
-            {
-                m_of << "static inline uint128_t __mrustc_bitrev128(uint128_t v) { uint128_t rv = { __mrustc_bitrev64(v.hi), __mrustc_bitrev64(v.lo) }; return rv; }\n";
-            }
-            else
-            {
-                m_of << "static inline uint128_t __mrustc_bitrev128(uint128_t v) {"
-                    << " if(v==0) return 0;"
-                    << " uint128_t rv = ((uint128_t)__mrustc_bitrev64(v>>64))|((uint128_t)__mrustc_bitrev64(v)<<64);"
-                    << " return rv;"
-                    << " }\n"
-                    ;
-            }
-            for(int sz = 8; sz <= 64; sz *= 2)
+            for(int sz = 8; sz <= 32; sz *= 2)
             {
                 m_of
-                    << "static inline uint"<<sz<<"_t __mrustc_op_umax"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return (a > b ? a : b); }\n"
-                    << "static inline uint"<<sz<<"_t __mrustc_op_umin"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return (a < b ? a : b); }\n"
-                    << "static inline uint"<<sz<<"_t __mrustc_op_imax"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return ((int"<<sz<<"_t)a > (int"<<sz<<"_t)b ? a : b); }\n"
-                    << "static inline uint"<<sz<<"_t __mrustc_op_imin"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return ((int"<<sz<<"_t)a < (int"<<sz<<"_t)b ? a : b); }\n"
-                    << "static inline uint"<<sz<<"_t __mrustc_op_and_not"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return ~(a & b); }\n"
+                    << "static uint"<<sz<<"_t __mrustc_op_umax"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return (a > b ? a : b); }\n"
+                    << "static uint"<<sz<<"_t __mrustc_op_umin"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return (a < b ? a : b); }\n"
+                    << "static uint"<<sz<<"_t __mrustc_op_imax"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return ((int"<<sz<<"_t)a > (int"<<sz<<"_t)b ? a : b); }\n"
+                    << "static uint"<<sz<<"_t __mrustc_op_imin"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return ((int"<<sz<<"_t)a < (int"<<sz<<"_t)b ? a : b); }\n"
+                    << "static uint"<<sz<<"_t __mrustc_op_and_not"<<sz<<"(uint"<<sz<<"_t a, uint"<<sz<<"_t b) { return ~(a & b); }\n"
                     ;
             }
         }
@@ -873,8 +457,8 @@ namespace {
                 if( m_compiler == Compiler::Gcc )
                 {
                     m_of
-                        << "__thread jmp_buf* mrustc_panic_target;\n"
-                        << "__thread void* mrustc_panic_value;\n"
+                        << "jmp_buf* mrustc_panic_target;\n"
+                        << "void* mrustc_panic_value;\n"
                         ;
                 }
 
@@ -1638,19 +1222,19 @@ namespace {
             default:
                 // No prototype required
             TU_ARMA(Tuple, te) {
-                if( te.size() > 0 )
-                {
-                    m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
-                }
+                // if( te.size() > 0 )
+                // {
+                //     m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                // }
                 }
             TU_ARMA(Function, te) {
                 emit_type_fn(ty); m_of << "\n";
                 }
             TU_ARMA(NamedFunction, te) {
-                m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                // m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
                 }
             TU_ARMA(Array, te) {
-                m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                // m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
                 }
             TU_ARMA(Path, te) {
                 TU_MATCH_HDRA( (te.binding), {)
@@ -1834,15 +1418,15 @@ namespace {
                 m_of << "\t";
                 m_of << "/*@" << offset << "*/";
                 if( const auto* te = ty.data().opt_Slice() ) {
-                    emit_ctype( te->inner, FMT_CB(ss, ss << "_" << fld << "[0]";) );
+                    emit_ctype( te->inner, FMT_CB(ss, ss << "_" << fld << "[1]";) );
                     has_unsized = true;
                 }
                 else if( ty.data().is_TraitObject() ) {
-                    m_of << "unsigned char _" << fld << "[0]";
+                    m_of << "unsigned char _" << fld << "[1]";
                     has_unsized = true;
                 }
                 else if( ty == ::HIR::CoreType::Str ) {
-                    m_of << "uint8_t _" << fld << "[0]";
+                    m_of << "uint8_t _" << fld << "[1]";
                     has_unsized = true;
                 }
                 else if( TU_TEST1(ty.data(), Path, .binding.is_ExternType()) ) {
@@ -1885,10 +1469,10 @@ namespace {
                     m_of << "\n";
                     break;
                 case Compiler::Gcc:
-                    m_of << " __attribute__((";
-                    if( has_manual_align )
-                        m_of << "__aligned__(" << repr->align << "),";
-                    m_of << "))";
+                    // m_of << " __attribute__((";
+                    // if( has_manual_align )
+                    //     m_of << "__aligned__(" << repr->align << "),";
+                    // m_of << "))";
                     m_of << " ";
                     if( ty.data().is_Tuple() )
                     {
@@ -1932,10 +1516,10 @@ namespace {
 
                     emit_struct_inner(ty, repr, /*packing_max_align=*/0);
 
-                    if( repr->size > 0 )
-                    {
-                        m_of << "typedef char sizeof_assert_"; emit_ctype(ty); m_of << "[ (sizeof("; emit_ctype(ty); m_of << ") == " << repr->size << ") ? 1 : -1 ];\n";
-                    }
+                    // if( repr->size > 0 )
+                    // {
+                    //     m_of << "typedef char sizeof_assert_"; emit_ctype(ty); m_of << "[ (sizeof("; emit_ctype(ty); m_of << ") == " << repr->size << ") ? 1 : -1 ];\n";
+                    // }
                 }
                 }
             TU_ARMA(Function, te) {
@@ -1985,7 +1569,7 @@ namespace {
                 }
                 else
                 {
-                    emit_ctype(te.inner); m_of << " DATA[" << te.size.as_Known() << "];";
+                    emit_ctype(te.inner); m_of << " DATA[" << std::min(static_cast<size_t>(128), te.size.as_Known()) << "];";
                 }
                 m_of << " } ";
                 if( te.size.as_Known() == 0 ) {
@@ -1994,9 +1578,9 @@ namespace {
                     case Compiler::Msvc:
                         break;
                     case Compiler::Gcc:
-                        m_of << " __attribute__((";
-                        m_of << "__aligned__(" << align << "),";
-                        m_of << "))";
+                        // m_of << " __attribute__((";
+                        // m_of << "__aligned__(" << align << "),";
+                        // m_of << "))";
                         break;
                     }
                 }
@@ -2031,9 +1615,9 @@ namespace {
             if(repr->size > 0 && repr->size != SIZE_MAX )
             {
                 // TODO: Handle unsized (should check the size of the fixed-size region)
-                m_of << "typedef char sizeof_assert_" << Trans_Mangle(p) << "[ (sizeof(struct s_" << Trans_Mangle(p) << ") == " << repr->size << ") ? 1 : -1 ];\n";
+                // m_of << "typedef char sizeof_assert_" << Trans_Mangle(p) << "[ (sizeof(struct s_" << Trans_Mangle(p) << ") == " << repr->size << ") ? 1 : -1 ];\n";
             }
-            m_of << "typedef char alignof_assert_" << Trans_Mangle(p) << "[ (ALIGNOF(struct s_" << Trans_Mangle(p) << ") == " << repr->align << ") ? 1 : -1 ];\n";
+            // m_of << "typedef char alignof_assert_" << Trans_Mangle(p) << "[ (ALIGNOF(struct s_" << Trans_Mangle(p) << ") == " << repr->align << ") ? 1 : -1 ];\n";
 
             m_mir_res = nullptr;
         }
@@ -2057,7 +1641,7 @@ namespace {
             m_of << "};\n";
             if( true && repr->size > 0 )
             {
-                m_of << "typedef char sizeof_assert_" << Trans_Mangle(p) << "[ (sizeof(union u_" << Trans_Mangle(p) << ") == " << repr->size << ") ? 1 : -1 ];\n";
+                // m_of << "typedef char sizeof_assert_" << Trans_Mangle(p) << "[ (sizeof(union u_" << Trans_Mangle(p) << ") == " << repr->size << ") ? 1 : -1 ];\n";
             }
 
             m_mir_res = nullptr;
@@ -2197,7 +1781,7 @@ namespace {
                     // Leading & external tag: repr(C)
                     assert(union_fields.size() + 1 == repr->fields.size());
                     assert( is_enum_tag(repr, repr->fields.size()-1) );
-                    
+
                     assert( repr->fields.back().offset == 0 );
                     DEBUG("Tag present at offset " << repr->fields.back().offset << " - " << repr->fields.back().ty);
 
@@ -2257,7 +1841,7 @@ namespace {
             m_of << "};\n";
 
             size_t exp_size = (repr->size > 0 ? repr->size : (m_options.disallow_empty_structs ? 1 : 0));
-            m_of << "typedef char sizeof_assert_" << Trans_Mangle(p) << "[ (sizeof(struct e_" << Trans_Mangle(p) << ") == " << exp_size << ") ? 1 : -1 ];\n";
+            // m_of << "typedef char sizeof_assert_" << Trans_Mangle(p) << "[ (sizeof(struct e_" << Trans_Mangle(p) << ") == " << exp_size << ") ? 1 : -1 ];\n";
 
             m_mir_res = nullptr;
         }
@@ -2372,13 +1956,15 @@ namespace {
             bool rv = ( align * 8 >= Target_GetCurSpec().m_arch.m_pointer_bits );
             m_of << "union u_static_" << Trans_Mangle(p);
             if(is_proto) {
-                m_of << "{ "; emit_ctype( type, FMT_CB(ss, ss << "val";) ); m_of << "; ";
+                m_of << "{ ";
                 if( rv ) {
-                    m_of << "uintptr_t raw[" << (size / (Target_GetCurSpec().m_arch.m_pointer_bits / 8)) << "];";
+                    m_of << "uintptr_t raw[" << std::max(static_cast<size_t>(1), (size / (Target_GetCurSpec().m_arch.m_pointer_bits / 8))) << "];";
                 }
                 else {
-                    m_of << "uint8_t raw[" << size << "];";
+                    m_of << "uint8_t raw[" << std::max(static_cast<size_t>(1), size) << "];";
                 }
+                emit_ctype( type, FMT_CB(ss, ss << "val";) );
+                m_of << "; ";
                 m_of << " }";
             }
             m_of << " " << Trans_Mangle(p);
@@ -2404,7 +1990,7 @@ namespace {
                 ASSERT_BUG(sp, linkage_name != "", "");
                 m_of << "extern char " << linkage_name << "[0];\n";
                 emit_static_ty(type, p, /*is_proto=*/true);
-                m_of << " = { .raw = { (uintptr_t)" << linkage_name << " } };";
+                m_of << " = { { (uintptr_t)" << linkage_name << " } };";
                 m_of << "\t// static " << p << " : " << type;
                 m_of << "\n";
                 return;
@@ -2459,7 +2045,7 @@ namespace {
                 switch(m_compiler)
                 {
                 case Compiler::Gcc:
-                    m_of << "__attribute__((weak)) ";
+                    // m_of << "__attribute__((weak)) ";
                     break;
                 case Compiler::Msvc:
                     m_of << "__declspec(selectany) ";
@@ -2474,7 +2060,7 @@ namespace {
                 switch(m_compiler)
                 {
                 case Compiler::Gcc:
-                    m_of << "__attribute__((section(\"" << item.m_linkage.section << "\"))) ";
+                    // m_of << "__attribute__((section(\"" << item.m_linkage.section << "\"))) ";
                     break;
                 case Compiler::Msvc:
                     m_of << "#pragma section(\"" << item.m_linkage.section << "\", read)\n";
@@ -2509,7 +2095,7 @@ namespace {
                 bool is_packed = emit_static_ty(type, p, /*is_proto=*/false);
                 m_of << " = ";
 
-                m_of << "{ .raw = {";
+                m_of << "{ {";
                 if( is_packed ) {
                     DEBUG("encoded.bytes = `" << FMT_CB(ss, for(auto& b: encoded.bytes) ss << std::setw(2) << std::setfill('0') << std::hex << unsigned(b) << (int(&b - encoded.bytes.data()) % 8 == 7 ? " " : "");) << "`");
                     DEBUG("encoded.relocations = " << encoded.relocations);
@@ -2557,7 +2143,7 @@ namespace {
                             ++ reloc_it;
                         }
                         else {
-                            m_of << "0x" << std::hex << v << "ull" << std::dec;
+                            m_of << "0x" << std::hex << v << "u" << std::dec;
                         }
                     }
                 }
@@ -2598,13 +2184,13 @@ namespace {
                     m_of.precision(::std::numeric_limits<double>::max_digits10 + 1);
                     m_of << ::std::scientific << v;
                 }
-                else if( ty == HIR::CoreType::F32 ) {
-                    m_of.precision(::std::numeric_limits<float>::max_digits10 + 1);
-                    m_of << ::std::scientific << v << "f";
-                } else {
-                    m_of.precision(::std::numeric_limits<double>::max_digits10 + 1);
-                    m_of << ::std::scientific << v;
-                }
+                // else if( ty == HIR::CoreType::F32 ) {
+                //     m_of.precision(::std::numeric_limits<float>::max_digits10 + 1);
+                //     m_of << ::std::scientific << v << "f";
+                // } else {
+                //     m_of.precision(::std::numeric_limits<double>::max_digits10 + 1);
+                //     m_of << ::std::scientific << v;
+                // }
             }
         }
 
@@ -2756,17 +2342,17 @@ namespace {
                     m_of << "\treturn rv;\n";
                 }
                 else if( item.m_linkage.name == "llvm.x86.xgetbv" ) {
-                    switch(m_compiler)
-                    {
-                    case Compiler::Gcc:
-                        m_of << "\tuint32_t lo, hi;\n";
-                        m_of << "\t__asm__ __volatile__ (\"xgetbv\" : \"=a\" (lo), \"=d\" (hi) : \"c\" (arg0) );\n";
-                        m_of << "\treturn lo | ((uint64_t)hi << 32);\n";
-                        break;
-                    case Compiler::Msvc:
-                        m_of << "\treturn _xgetbv(arg0);\n";
-                        break;
-                    }
+                    // switch(m_compiler)
+                    // {
+                    // case Compiler::Gcc:
+                    //     m_of << "\tuint32_t lo, hi;\n";
+                    //     m_of << "\t__asm__ __volatile__ (\"xgetbv\" : \"=a\" (lo), \"=d\" (hi) : \"c\" (arg0) );\n";
+                    //     m_of << "\treturn lo | ((uint64_t)hi << 32);\n";
+                    //     break;
+                    // case Compiler::Msvc:
+                    //     m_of << "\treturn _xgetbv(arg0);\n";
+                    //     break;
+                    // }
                 }
                 else if( item.m_linkage.name == "llvm.x86.sse2.pause" ) {
                     // Just a `PAUSE` instruciton, which is effectively a nop
@@ -2814,21 +2400,41 @@ namespace {
                 m_of << "extern ";
             }
             emit_function_header(p, item, params);
-            if( item.m_linkage.name != "" )
-            {
-                switch(m_compiler)
-                {
-                case Compiler::Gcc:
-                    if (Target_GetCurSpec().m_os_name == "macos") // Not macOS only, but all Apple platforms.
-                        m_of << " asm(\"_" << item.m_linkage.name << "\")";
-                    else
-                        m_of << " asm(\"" << item.m_linkage.name << "\")";
-                    break;
-                case Compiler::Msvc:
-                    break;
-                }
-            }
+            // if( item.m_linkage.name != "" )
+            // {
+            //     switch(m_compiler)
+            //     {
+            //     case Compiler::Gcc:
+            //         if (Target_GetCurSpec().m_os_name == "macos") // Not macOS only, but all Apple platforms.
+            //             m_of << " asm(\"_" << item.m_linkage.name << "\")";
+            //         else
+            //             m_of << " asm(\"" << item.m_linkage.name << "\")";
+            //         break;
+            //     case Compiler::Msvc:
+            //         break;
+            //     }
+            // }
             m_of << ";\n";
+
+            // for emulating linkage name
+            if (item.m_linkage.name != "memcmp") {
+                emit_function_header(p, item, params, &item.m_linkage.name);
+                m_of
+                    << " { return "
+                    << Trans_Mangle(p)
+                    << "(";
+                bool first = true;
+                for (unsigned int i = 0; i < item.m_args.size(); i ++)
+                {
+                    if (!first)
+                        m_of << ", ";
+                    first = false;
+                    m_of << "arg" << i;
+                }
+                m_of << "); }\n";
+
+                m_of << ";\n";
+            }
 
             m_mir_res = nullptr;
         }
@@ -3842,11 +3448,11 @@ namespace {
                         break;
                     }
                     else if( ve.op == ::MIR::eBinOp::MOD && (ty == ::HIR::CoreType::F32 || ty == ::HIR::CoreType::F64) ) {
-                        if( ty == ::HIR::CoreType::F32 )
-                            m_of << "remainderf";
-                        else
-                            m_of << "remainder";
-                        m_of << "("; emit_param(ve.val_l); m_of << ", "; emit_param(ve.val_r); m_of << ")";
+                        // if( ty == ::HIR::CoreType::F32 )
+                        //     m_of << "remainderf";
+                        // else
+                        //     m_of << "remainder";
+                        // m_of << "("; emit_param(ve.val_l); m_of << ", "; emit_param(ve.val_r); m_of << ")";
                         break;
                     }
                     else if( type_is_emulated_i128(ty) )
@@ -4194,36 +3800,36 @@ namespace {
                         MIR_BUG(mir_res, "Unreachable");
                     }
                     break;
-                case ::HIR::CoreType::F32:
-                    emit_lvalue(dst);
-                    m_of << " = ";
-                    switch (ty.data().as_Primitive())
-                    {
-                    case ::HIR::CoreType::U128:
-                        m_of << "cast128_float("; emit_lvalue(ve.val); m_of << ")";
-                        break;
-                    case ::HIR::CoreType::I128:
-                        m_of << "cast128s_float("; emit_lvalue(ve.val); m_of << ")";
-                        break;
-                    default:
-                        MIR_BUG(mir_res, "Unreachable");
-                    }
-                    break;
-                case ::HIR::CoreType::F64:
-                    emit_lvalue(dst);
-                    m_of << " = ";
-                    switch (ty.data().as_Primitive())
-                    {
-                    case ::HIR::CoreType::U128:
-                        m_of << "cast128_double("; emit_lvalue(ve.val); m_of << ")";
-                        break;
-                    case ::HIR::CoreType::I128:
-                        m_of << "cast128s_double("; emit_lvalue(ve.val); m_of << ")";
-                        break;
-                    default:
-                        MIR_BUG(mir_res, "Unreachable");
-                    }
-                    break;
+                // case ::HIR::CoreType::F32:
+                //     emit_lvalue(dst);
+                //     m_of << " = ";
+                //     switch (ty.data().as_Primitive())
+                //     {
+                //     case ::HIR::CoreType::U128:
+                //         m_of << "cast128_float("; emit_lvalue(ve.val); m_of << ")";
+                //         break;
+                //     case ::HIR::CoreType::I128:
+                //         m_of << "cast128s_float("; emit_lvalue(ve.val); m_of << ")";
+                //         break;
+                //     default:
+                //         MIR_BUG(mir_res, "Unreachable");
+                //     }
+                //     break;
+                // case ::HIR::CoreType::F64:
+                //     emit_lvalue(dst);
+                //     m_of << " = ";
+                //     switch (ty.data().as_Primitive())
+                //     {
+                //     case ::HIR::CoreType::U128:
+                //         m_of << "cast128_double("; emit_lvalue(ve.val); m_of << ")";
+                //         break;
+                //     case ::HIR::CoreType::I128:
+                //         m_of << "cast128s_double("; emit_lvalue(ve.val); m_of << ")";
+                //         break;
+                //     default:
+                //         MIR_BUG(mir_res, "Unreachable");
+                //     }
+                //     break;
                 default:
                     MIR_BUG(mir_res, "Bad i128/u128 cast - " << ty << " to " << ve.type);
                 }
@@ -4432,7 +4038,7 @@ namespace {
                     }
                     else {
                         m_of << e.values[odd_arm];
-                        m_of << "ull";
+                        m_of << "u";
                     }
                     m_of << ") {"; cb(odd_arm); m_of << "} else {"; cb(odd_arm == 0 ? 1 : 0); m_of << "}\n";
                     return ;
@@ -4446,7 +4052,7 @@ namespace {
                         m_of << indent << "case " << static_cast<int64_t>(e.values[j]) << "ll: ";
                     }
                     else {
-                        m_of << indent << "case " << e.values[j] << "ull: ";
+                        m_of << indent << "case " << e.values[j] << "u: ";
                     }
                     cb(j);
                     m_of << "break;\n";
@@ -4488,7 +4094,7 @@ namespace {
                 m_of << ") {\n";
                 for(size_t i = 0; i < ve->size(); i++)
                 {
-                    m_of << indent << "\tcase " << (*ve)[i] << "ull: "; cb(i); m_of << " break;\n";
+                    m_of << indent << "\tcase " << (*ve)[i] << "u: "; cb(i); m_of << " break;\n";
                 }
                 m_of << indent << "\tdefault: "; cb(SIZE_MAX); m_of << "\n";
                 m_of << indent << "}\n";
@@ -4912,11 +4518,11 @@ namespace {
             }
             else if( matches_template("xgetbv", /*input=*/{"{ecx}"}, /*output=*/{"={eax}", "={edx}"}) )
             {
-                m_of << indent << "{";
-                m_of << " unsigned __int64 v = _xgetbv("; emit_lvalue(e.inputs[0].second); m_of << ");";
-                m_of << " "; emit_lvalue(e.outputs[0].second); m_of << " = (uint32_t)(v & 0xFFFFFFFF);";
-                m_of << " "; emit_lvalue(e.outputs[1].second); m_of << " = (uint32_t)(v >> 32);";
-                m_of << " }\n";
+                // m_of << indent << "{";
+                // m_of << " unsigned __int64 v = _xgetbv("; emit_lvalue(e.inputs[0].second); m_of << ");";
+                // m_of << " "; emit_lvalue(e.outputs[0].second); m_of << " = (uint32_t)(v & 0xFFFFFFFF);";
+                // m_of << " "; emit_lvalue(e.outputs[1].second); m_of << " = (uint32_t)(v >> 32);";
+                // m_of << " }\n";
                 return ;
             }
             // parking_lot src/elision.rs
@@ -4959,7 +4565,7 @@ namespace {
             else if( matches_template("xrelease; lock; xaddq $2, $1", /*input=*/{"0"}, /*output=*/{"=r", "+*m"}) )
             {
                 m_of << indent;
-                emit_lvalue(e.outputs[0].second); m_of << " = "; 
+                emit_lvalue(e.outputs[0].second); m_of << " = ";
                 m_of << "InterlockedExchangeAddRelease64(";
                 emit_lvalue(e.outputs[1].second); m_of << ",";
                 emit_lvalue(e.inputs[0].second);
@@ -5165,7 +4771,7 @@ namespace {
             auto indent = RepeatLitStr{ "\t", static_cast<int>(indent_level) };
             Asm2TplMatch    m { mir_res, stmt };
 
-            if( stmt.as_Asm2().lines.empty() ) 
+            if( stmt.as_Asm2().lines.empty() )
             {
                 // Ignore?
             }
@@ -5614,7 +5220,7 @@ namespace {
             }
         }
 
-        void emit_function_header(const ::HIR::Path& p, const ::HIR::Function& item, const Trans_Params& params)
+        void emit_function_header(const ::HIR::Path& p, const ::HIR::Function& item, const Trans_Params& params, const std::string* linkage_name = nullptr)
         {
             ::HIR::TypeRef  tmp;
             const auto& ret_ty = monomorphise_fcn_return(tmp, item, params);
@@ -5624,7 +5230,11 @@ namespace {
                 {
                     ss << " __stdcall";
                 }
-                ss << " " << Trans_Mangle(p) << "(";
+                if (linkage_name) {
+                    ss << " " << *linkage_name << "(";
+                } else {
+                    ss << " " << Trans_Mangle(p) << "(";
+                }
                 if( item.m_args.size() == 0 )
                 {
                     ss << "void)";
@@ -6108,7 +5718,7 @@ namespace {
                         case MetadataType::Unknown: assert(!"Impossible");
                         case MetadataType::None: assert(!"Impossible");
                         case MetadataType::Zero: assert(!"Impossible");
-                        case MetadataType::Slice:   m_of << "(size_t)"; break;
+                        case MetadataType::Slice:   m_of << "(int)"; break;
                         case MetadataType::TraitObject: m_of << "(const void*)"; break;
                         }
                         emit_param(e.args.at(0)); m_of << ".META";
@@ -6345,11 +5955,11 @@ namespace {
                             break;
                         case ::HIR::CoreType::U64:
                         case ::HIR::CoreType::I64:
-                            m_of << "_byteswap_uint64";
+                            // m_of << "_byteswap_uint64";
                             break;
                         case ::HIR::CoreType::U128:
                         case ::HIR::CoreType::I128:
-                            m_of << "__builtin_bswap128";
+                            // m_of << "__builtin_bswap128";
                             break;
                         default:
                             MIR_TODO(mir_res, "bswap<" << ty << ">");
@@ -6588,18 +6198,18 @@ namespace {
                         m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? -0x8000000l : 0x7FFFFFFFl)";
                         break;
                     case ::HIR::CoreType::I64:
-                        m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? -0x8000000""00000000ll : 0x7FFFFFFF""FFFFFFFFll)";
-                        break;
+                        // m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? -0x8000000""00000000ll : 0x7FFFFFFF""FFFFFFFFll)";
+                        // break;
                     case ::HIR::CoreType::I128:
-                        if( m_options.emulated_i128 )
-                        {
-                            m_of << "( (int64_t)("; emit_param(e.args.at(0)); m_of << ".hi) < 0 ? make128s_raw(-0x8000000""00000000ll, 0) : make128s_raw(0x7FFFFFFF""FFFFFFFFll, -1))";
-                        }
-                        else
-                        {
-                            m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? ((uint128_t)1 << 127) : (((uint128_t)1 << 127) - 1))";
-                        }
-                        break;
+                        // if( m_options.emulated_i128 )
+                        // {
+                        //     m_of << "( (int64_t)("; emit_param(e.args.at(0)); m_of << ".hi) < 0 ? make128s_raw(-0x8000000""00000000ll, 0) : make128s_raw(0x7FFFFFFF""FFFFFFFFll, -1))";
+                        // }
+                        // else
+                        // {
+                        //     m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? ((uint128_t)1 << 127) : (((uint128_t)1 << 127) - 1))";
+                        // }
+                        // break;
                     default:
                         MIR_TODO(mir_res, "saturating_add - " << ty);
                     }
@@ -6676,18 +6286,18 @@ namespace {
                         m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? -0x8000000l : 0x7FFFFFFFl)";
                         break;
                     case ::HIR::CoreType::I64:
-                        m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? -0x8000000""00000000ll : 0x7FFFFFFF""FFFFFFFFll)";
-                        break;
+                        // m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? -0x8000000""00000000ll : 0x7FFFFFFF""FFFFFFFFll)";
+                        // break;
                     case ::HIR::CoreType::I128:
-                        if( m_options.emulated_i128 )
-                        {
-                            m_of << "( (int64_t)("; emit_param(e.args.at(0)); m_of << ".hi) < 0 ? make128s_raw(-0x8000000""00000000ll, 0) : make128s_raw(0x7FFFFFFF""FFFFFFFFll, -1))";
-                        }
-                        else
-                        {
-                            m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? ((uint128_t)1 << 127) : (((uint128_t)1 << 127) - 1))";
-                        }
-                        break;
+                        // if( m_options.emulated_i128 )
+                        // {
+                        //     m_of << "( (int64_t)("; emit_param(e.args.at(0)); m_of << ".hi) < 0 ? make128s_raw(-0x8000000""00000000ll, 0) : make128s_raw(0x7FFFFFFF""FFFFFFFFll, -1))";
+                        // }
+                        // else
+                        // {
+                        //     m_of << "("; emit_param(e.args.at(0)); m_of << " < 0 ? ((uint128_t)1 << 127) : (((uint128_t)1 << 127) - 1))";
+                        // }
+                        // break;
                     default:
                         MIR_TODO(mir_res, "saturating_sub - " << ty);
                     }
@@ -6824,33 +6434,33 @@ namespace {
                     break;
                 case ::HIR::CoreType::I64:
                 case ::HIR::CoreType::U64:
-                    m_of << "{";
-                    m_of << " uint64_t v = "; emit_param(e.args.at(0)); m_of << ";";
-                    m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << ";";
-                    m_of << " "; emit_lvalue(e.ret_val); m_of << " = (v << shift) | (v >> (64 - shift));";
-                    m_of << "}";
+                    // m_of << "{";
+                    // m_of << " uint64_t v = "; emit_param(e.args.at(0)); m_of << ";";
+                    // m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << ";";
+                    // m_of << " "; emit_lvalue(e.ret_val); m_of << " = (v << shift) | (v >> (64 - shift));";
+                    // m_of << "}";
                     break;
                 case ::HIR::CoreType::I128:
                 case ::HIR::CoreType::U128:
-                    m_of << "{";
-                    m_of << " uint128_t v = "; emit_param(e.args.at(0)); m_of << ";";
-                    m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << (m_options.emulated_i128 ? ".lo" : "") << ";";
-                    if( m_options.emulated_i128 )
-                    {
-                        m_of << " if(shift < 64) {";
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.lo << shift) | (v.hi >> (64 - shift));";
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.hi << shift) | (v.lo >> (64 - shift));";
-                        m_of << " } else {";
-                        m_of << " shift -= 64;";    // Swap order and reduce shift
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.hi << shift) | (v.lo >> (64 - shift));";
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.lo << shift) | (v.hi >> (64 - shift));";
-                        m_of << " }";
-                    }
-                    else
-                    {
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << " = (v << shift) | (v >> (128 - shift));";
-                    }
-                    m_of << "}";
+                    // m_of << "{";
+                    // m_of << " uint128_t v = "; emit_param(e.args.at(0)); m_of << ";";
+                    // m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << (m_options.emulated_i128 ? ".lo" : "") << ";";
+                    // if( m_options.emulated_i128 )
+                    // {
+                    //     m_of << " if(shift < 64) {";
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.lo << shift) | (v.hi >> (64 - shift));";
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.hi << shift) | (v.lo >> (64 - shift));";
+                    //     m_of << " } else {";
+                    //     m_of << " shift -= 64;";    // Swap order and reduce shift
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.hi << shift) | (v.lo >> (64 - shift));";
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.lo << shift) | (v.hi >> (64 - shift));";
+                    //     m_of << " }";
+                    // }
+                    // else
+                    // {
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << " = (v << shift) | (v >> (128 - shift));";
+                    // }
+                    // m_of << "}";
                     break;
                 default:
                     MIR_TODO(mir_res, "rotate_left - " << ty);
@@ -6889,34 +6499,34 @@ namespace {
                     break;
                 case ::HIR::CoreType::I64:
                 case ::HIR::CoreType::U64:
-                    m_of << "{";
-                    m_of << " uint64_t v = "; emit_param(e.args.at(0)); m_of << ";";
-                    m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << ";";
-                    m_of << " uint64_t rv = (v >> shift) | (v << (64 - shift));";
-                    m_of << " "; emit_lvalue(e.ret_val); m_of << " = rv;";
-                    m_of << "}";
+                    // m_of << "{";
+                    // m_of << " uint64_t v = "; emit_param(e.args.at(0)); m_of << ";";
+                    // m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << ";";
+                    // m_of << " uint64_t rv = (v >> shift) | (v << (64 - shift));";
+                    // m_of << " "; emit_lvalue(e.ret_val); m_of << " = rv;";
+                    // m_of << "}";
                     break;
                 case ::HIR::CoreType::I128:
                 case ::HIR::CoreType::U128:
-                    m_of << "{";
-                    m_of << " uint128_t v = "; emit_param(e.args.at(0)); m_of << ";";
-                    m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << (m_options.emulated_i128 ? ".lo" : "") << ";";
-                    if( m_options.emulated_i128 )
-                    {
-                        m_of << " if(shift < 64) {";
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.lo >> shift) | (v.hi << (64 - shift));";
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.hi >> shift) | (v.lo << (64 - shift));";
-                        m_of << " } else {";
-                        m_of << " shift -= 64;";    // Swap order and reduce shift
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.hi >> shift) | (v.lo << (64 - shift));";
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.lo >> shift) | (v.hi << (64 - shift));";
-                        m_of << " }";
-                    }
-                    else
-                    {
-                        m_of << " "; emit_lvalue(e.ret_val); m_of << " = (v >> shift) | (v << (128 - shift));";
-                    }
-                    m_of << "}";
+                    // m_of << "{";
+                    // m_of << " uint128_t v = "; emit_param(e.args.at(0)); m_of << ";";
+                    // m_of << " unsigned shift = "; emit_param(e.args.at(1)); m_of << (m_options.emulated_i128 ? ".lo" : "") << ";";
+                    // if( m_options.emulated_i128 )
+                    // {
+                    //     m_of << " if(shift < 64) {";
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.lo >> shift) | (v.hi << (64 - shift));";
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.hi >> shift) | (v.lo << (64 - shift));";
+                    //     m_of << " } else {";
+                    //     m_of << " shift -= 64;";    // Swap order and reduce shift
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".lo = (v.hi >> shift) | (v.lo << (64 - shift));";
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << ".hi = (v.lo >> shift) | (v.hi << (64 - shift));";
+                    //     m_of << " }";
+                    // }
+                    // else
+                    // {
+                    //     m_of << " "; emit_lvalue(e.ret_val); m_of << " = (v >> shift) | (v << (128 - shift));";
+                    // }
+                    // m_of << "}";
                     break;
                 default:
                     MIR_TODO(mir_res, "rotate_right - " << ty);
@@ -6931,27 +6541,11 @@ namespace {
                 emit_lvalue(e.ret_val); m_of << " = (";
                 if( ty == ::HIR::CoreType::U128 || ty == ::HIR::CoreType::I128 )
                 {
-                    if( ty == ::HIR::CoreType::I128 ) {
-                        if( m_options.emulated_i128 ) {
-                            m_of << "uint128_to_int128(";
-                        }
-                        else {
-                            m_of << "(int128_t)";
-                        }
-                    }
                     if( name == "ctlz" || name == "ctlz_nonzero" ) {
                         m_of << "intrinsic_ctlz_u128(";
                     }
                     else {
                         m_of << "intrinsic_cttz_u128(";
-                    }
-                    if( ty == ::HIR::CoreType::I128 ) {
-                        if( m_options.emulated_i128 ) {
-                            m_of << "int128_to_uint128(";
-                        }
-                        else {
-                            m_of << "(uint128_t)";
-                        }
                     }
                     emit_param(e.args.at(0)); m_of << ")";
                     if( ty == ::HIR::CoreType::I128 && m_options.emulated_i128 ) {
@@ -7306,8 +6900,8 @@ namespace {
                         case ::HIR::CoreType::U32:  rv.ty = Unsigned; break;
                         case ::HIR::CoreType::U64:  rv.ty = Unsigned; break;
                         //case ::HIR::CoreType::U128: rv.ty = Unsigned; break;
-                        case ::HIR::CoreType::F32:  rv.ty = Float;  break;
-                        case ::HIR::CoreType::F64:  rv.ty = Float;  break;
+                        // case ::HIR::CoreType::F32:  rv.ty = Float;  break;
+                        // case ::HIR::CoreType::F64:  rv.ty = Float;  break;
                         default:
                             MIR_BUG(*self.m_mir_res, "Invalid SIMD type inner - " << ty_val);
                         }
@@ -7519,7 +7113,7 @@ namespace {
 
         /// slot :: The value to drop
         /// ty :: Type of value to be dropped
-        /// unsized_valid :: 
+        /// unsized_valid ::
         /// indent_level :: (formatting) Current amount of indenting
         void emit_destructor_call(const ::MIR::LValue& slot, const ::HIR::TypeRef& ty, bool unsized_valid, unsigned indent_level)
         {
@@ -7665,7 +7259,7 @@ namespace {
             case ::HIR::CoreType::I32:
             case ::HIR::CoreType::I64:
             case ::HIR::CoreType::Isize:
-                m_of << static_cast<int64_t>(ve.values[idx]) << "ll";
+                m_of << static_cast<int64_t>(ve.values[idx]) << "l";
                 break;
             case ::HIR::CoreType::Bool:
             case ::HIR::CoreType::U8:
@@ -7674,7 +7268,7 @@ namespace {
             case ::HIR::CoreType::U64:
             case ::HIR::CoreType::Usize:
             case ::HIR::CoreType::Char:
-                m_of << ve.values[idx] << "ull";
+                m_of << ve.values[idx] << "u";
                 break;
             case ::HIR::CoreType::I128: // TODO: Emulation
             case ::HIR::CoreType::U128: // TODO: Emulation
@@ -7837,39 +7431,39 @@ namespace {
                     m_of << static_cast<int>( static_cast<int8_t>(c.v.truncate_i64()) );   // cast to int, because `int8_t` is printed as a `char`
                     break;
                 case ::HIR::CoreType::I16:
+                case ::HIR::CoreType::Isize:
                     m_of << static_cast<int16_t>(c.v.truncate_i64());
                     break;
                 case ::HIR::CoreType::I32:
                     m_of << static_cast<int32_t>(c.v.truncate_i64());
                     break;
                 case ::HIR::CoreType::I64:
-                case ::HIR::CoreType::Isize:
-                    if( c.v.truncate_i64() == INT64_MIN ) {
-                        m_of << "INT64_MIN";
-                    }
-                    else if( c.v.truncate_i64() == INT64_MAX ) {
-                        m_of << "INT64_MAX";
-                    }
-                    else {
-                        m_of << c.v.truncate_i64();
-                        m_of << "ll";
-                    }
+                    // if( c.v.truncate_i64() == INT64_MIN ) {
+                    //     m_of << "INT64_MIN";
+                    // }
+                    // else if( c.v.truncate_i64() == INT64_MAX ) {
+                    //     m_of << "INT64_MAX";
+                    // }
+                    // else {
+                    //     m_of << c.v.truncate_i64();
+                    //     m_of << "ll";
+                    // }
                     break;
                 case ::HIR::CoreType::I128:
-                    if( m_options.emulated_i128 )
-                    {
-                        m_of << "make128s_raw(" << c.v.get_inner().get_hi() << "ull, " << c.v.get_inner().get_lo() << "ull)";
-                    }
-                    else if( c.v.is_i64() && c.v.truncate_i64() != INT64_MIN )
-                    {
-                        m_of << "(int128_t)";
-                        m_of << c.v;
-                        m_of << "ll";
-                    }
-                    else
-                    {
-                        m_of << "(int128_t)( ((uint128_t)" << c.v.get_inner().get_hi() << "ull << 64) | (uint128_t)" << c.v.get_inner().get_lo() << "ull)";
-                    }
+                    // if( m_options.emulated_i128 )
+                    // {
+                    //     m_of << "make128s_raw(" << c.v.get_inner().get_hi() << "ull, " << c.v.get_inner().get_lo() << "ull)";
+                    // }
+                    // else if( c.v.is_i64() && c.v.truncate_i64() != INT64_MIN )
+                    // {
+                    //     m_of << "(int128_t)";
+                    //     m_of << c.v;
+                    //     m_of << "ll";
+                    // }
+                    // else
+                    // {
+                    //     m_of << "(int128_t)( ((uint128_t)" << c.v.get_inner().get_hi() << "ull << 64) | (uint128_t)" << c.v.get_inner().get_lo() << "ull)";
+                    // }
                     break;
                 default:
                     m_of << c.v;
@@ -7883,29 +7477,29 @@ namespace {
                     m_of << ::std::hex << "0x" << (c.v.truncate_u64() & 0xFF) << ::std::dec;
                     break;
                 case ::HIR::CoreType::U16:
+                case ::HIR::CoreType::Usize:
                     m_of << ::std::hex << "0x" << (c.v.truncate_u64() & 0xFFFF) << ::std::dec;
                     break;
                 case ::HIR::CoreType::U32:
                     m_of << ::std::hex << "0x" << (c.v.truncate_u64() & 0xFFFFFFFF) << ::std::dec;
                     break;
                 case ::HIR::CoreType::U64:
-                case ::HIR::CoreType::Usize:
-                    m_of << ::std::hex << "0x" << c.v.truncate_u64() << "ull" << ::std::dec;
+                    // m_of << ::std::hex << "0x" << c.v.truncate_u64() << "ull" << ::std::dec;
                     break;
                 case ::HIR::CoreType::U128:
-                    if( m_options.emulated_i128 )
-                    {
-                        m_of << "make128_raw(" << c.v.get_hi() << "ull, " << c.v.get_lo() << "ull)";
-                    }
-                    else if( c.v.is_u64() )
-                    {
-                        m_of << "(uint128_t)";
-                        m_of << ::std::hex << "0x" << c.v << "ull" << ::std::dec;
-                    }
-                    else
-                    {
-                        m_of << std::hex << "( ((uint128_t)0x" << c.v.get_hi() << "ull << 64) | (uint128_t)0x" << c.v.get_lo() << "ull)" << std::dec;
-                    }
+                    // if( m_options.emulated_i128 )
+                    // {
+                    //     m_of << "make128_raw(" << c.v.get_hi() << "ull, " << c.v.get_lo() << "ull)";
+                    // }
+                    // else if( c.v.is_u64() )
+                    // {
+                    //     m_of << "(uint128_t)";
+                    //     m_of << ::std::hex << "0x" << c.v << "ull" << ::std::dec;
+                    // }
+                    // else
+                    // {
+                    //     m_of << std::hex << "( ((uint128_t)0x" << c.v.get_hi() << "ull << 64) | (uint128_t)0x" << c.v.get_lo() << "ull)" << std::dec;
+                    // }
                     break;
                 case ::HIR::CoreType::Char:
                     assert(c.v <= 0x10FFFF);
@@ -8001,13 +7595,16 @@ namespace {
                 case ::HIR::CoreType::U128: m_of << "uint128_t"; break;
                 case ::HIR::CoreType::I128: m_of << "int128_t"; break;
 
-                case ::HIR::CoreType::F32: m_of << "float"; break;
-                case ::HIR::CoreType::F64: m_of << "double"; break;
+                case ::HIR::CoreType::F32: m_of << "int"; break;
+                case ::HIR::CoreType::F64: m_of << "int"; break;
 
                 case ::HIR::CoreType::Bool: m_of << "RUST_BOOL"; break;
                 case ::HIR::CoreType::Char: m_of << "RUST_CHAR";  break;
                 case ::HIR::CoreType::Str:
                     MIR_BUG(*m_mir_res, "Raw str");
+                default:
+                    // ignore unsupported types
+                    break;
                 }
                 m_of << " " << inner;
                 }

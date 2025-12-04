@@ -3,6 +3,13 @@
 
 const char message[] = "Hello cc65!";
 
+union u_x {
+    int value;
+    unsigned raw[4];
+};
+
+union u_x x = { { 1, 2, 3, 4 } };
+
 int main(void)
 {
     unsigned int frame = 0;
