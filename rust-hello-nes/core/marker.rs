@@ -40,17 +40,17 @@ use hash::Hasher;
 /// [ub]: ../../reference/behavior-considered-undefined.html
 #[stable(feature = "rust1", since = "1.0.0")]
 #[rustc_on_unimplemented(
-    message="`{Self}` cannot be sent between threads safely",
-    label="`{Self}` cannot be sent between threads safely"
+    message = "`{Self}` cannot be sent between threads safely",
+    label = "`{Self}` cannot be sent between threads safely"
 )]
 pub unsafe auto trait Send {
     // empty.
 }
 
 #[stable(feature = "rust1", since = "1.0.0")]
-impl<T: ?Sized> !Send for *const T { }
+impl<T: ?Sized> !Send for *const T {}
 #[stable(feature = "rust1", since = "1.0.0")]
-impl<T: ?Sized> !Send for *mut T { }
+impl<T: ?Sized> !Send for *mut T {}
 
 /// Types with a constant size known at compile time.
 ///
@@ -92,10 +92,10 @@ impl<T: ?Sized> !Send for *mut T { }
 #[stable(feature = "rust1", since = "1.0.0")]
 #[lang = "sized"]
 #[rustc_on_unimplemented(
-    message="the size for values of type `{Self}` cannot be known at compilation time",
-    label="doesn't have a size known at compile-time",
-    note="to learn more, visit <https://doc.rust-lang.org/book/second-edition/\
-          ch19-04-advanced-types.html#dynamically-sized-types-and-sized>",
+    message = "the size for values of type `{Self}` cannot be known at compilation time",
+    label = "doesn't have a size known at compile-time",
+    note = "to learn more, visit <https://doc.rust-lang.org/book/second-edition/\
+          ch19-04-advanced-types.html#dynamically-sized-types-and-sized>"
 )]
 #[fundamental] // for Default, for example, which requires that `[T]: !Default` be evaluatable
 pub trait Sized {
@@ -293,7 +293,7 @@ pub trait Unsize<T: ?Sized> {
 /// [impls]: #implementors
 #[stable(feature = "rust1", since = "1.0.0")]
 #[lang = "copy"]
-pub trait Copy : Clone {
+pub trait Copy: Clone {
     // Empty.
 }
 
@@ -368,8 +368,8 @@ pub trait Copy : Clone {
 #[stable(feature = "rust1", since = "1.0.0")]
 #[lang = "sync"]
 #[rustc_on_unimplemented(
-    message="`{Self}` cannot be shared between threads safely",
-    label="`{Self}` cannot be shared between threads safely"
+    message = "`{Self}` cannot be shared between threads safely",
+    label = "`{Self}` cannot be shared between threads safely"
 )]
 pub unsafe auto trait Sync {
     // FIXME(estebank): once support to add notes in `rustc_on_unimplemented`
@@ -386,61 +386,59 @@ pub unsafe auto trait Sync {
 }
 
 #[stable(feature = "rust1", since = "1.0.0")]
-impl<T: ?Sized> !Sync for *const T { }
+impl<T: ?Sized> !Sync for *const T {}
 #[stable(feature = "rust1", since = "1.0.0")]
-impl<T: ?Sized> !Sync for *mut T { }
+impl<T: ?Sized> !Sync for *mut T {}
 
-macro_rules! impls{
-    ($t: ident) => (
+macro_rules! impls {
+    ($t: ident) => {
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> Hash for $t<T> {
+        impl<T: ?Sized> Hash for $t<T> {
             #[inline]
-            fn hash<H: Hasher>(&self, _: &mut H) {
-            }
+            fn hash<H: Hasher>(&self, _: &mut H) {}
         }
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> cmp::PartialEq for $t<T> {
+        impl<T: ?Sized> cmp::PartialEq for $t<T> {
             fn eq(&self, _other: &$t<T>) -> bool {
                 true
             }
         }
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> cmp::Eq for $t<T> {
-        }
+        impl<T: ?Sized> cmp::Eq for $t<T> {}
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> cmp::PartialOrd for $t<T> {
+        impl<T: ?Sized> cmp::PartialOrd for $t<T> {
             fn partial_cmp(&self, _other: &$t<T>) -> Option<cmp::Ordering> {
                 Option::Some(cmp::Ordering::Equal)
             }
         }
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> cmp::Ord for $t<T> {
+        impl<T: ?Sized> cmp::Ord for $t<T> {
             fn cmp(&self, _other: &$t<T>) -> cmp::Ordering {
                 cmp::Ordering::Equal
             }
         }
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> Copy for $t<T> { }
+        impl<T: ?Sized> Copy for $t<T> {}
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> Clone for $t<T> {
+        impl<T: ?Sized> Clone for $t<T> {
             fn clone(&self) -> $t<T> {
                 $t
             }
         }
 
         #[stable(feature = "rust1", since = "1.0.0")]
-        impl<T:?Sized> Default for $t<T> {
+        impl<T: ?Sized> Default for $t<T> {
             fn default() -> $t<T> {
                 $t
             }
         }
-        )
+    };
 }
 
 /// Zero-sized type used to mark things that "act like" they own a `T`.
@@ -578,7 +576,7 @@ macro_rules! impls{
 /// [drop check]: ../../nomicon/dropck.html
 #[lang = "phantom_data"]
 #[stable(feature = "rust1", since = "1.0.0")]
-pub struct PhantomData<T:?Sized>;
+pub struct PhantomData<T: ?Sized>;
 
 impls! { PhantomData }
 
@@ -649,9 +647,8 @@ mod copy_impls {
     }
 
     impl_copy! {
-        usize u8 u16 u32 u64 u128
-        isize i8 i16 i32 i64 i128
-        f32 f64
+        usize u8 u16 u32
+        isize i8 i16 i32
         bool char
     }
 
@@ -667,5 +664,4 @@ mod copy_impls {
     // Shared references can be copied, but mutable references *cannot*!
     #[stable(feature = "rust1", since = "1.0.0")]
     impl<'a, T: ?Sized> Copy for &'a T {}
-
 }

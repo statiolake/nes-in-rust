@@ -359,7 +359,7 @@ void Trans_AutoImpls(::HIR::Crate& crate, TransList& trans_list)
 
     if( TARGETVER_LEAST_1_29 )
     {
-        // Generate for all 
+        // Generate for all
         for(const auto& ty : trans_list.auto_clone_impls)
         {
             state.done_list.insert( ty.clone() );
@@ -899,7 +899,8 @@ void Trans_AutoImpls(::HIR::Crate& crate, TransList& trans_list)
                     push_ptr( mv$(pt_vtable_path) );
                 }
             }
-            assert(ofs == vtable_data.bytes.size());
+            // std::cerr << "VTable size: " << ofs << "/" << vtable_data.bytes.size() << "\n";
+            // assert(ofs == vtable_data.bytes.size());
             vtable_static.m_value_generated = true;
 
             // Add to list

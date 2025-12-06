@@ -22,9 +22,9 @@ use future::{Future, UnsafeFutureObj};
 use hash;
 use intrinsics;
 use marker::{Copy, PhantomData, Sized, Unpin, Unsize};
+use ops::{CoerceUnsized, Deref, DerefMut};
 use ptr;
 use task::{Context, Poll};
-use ops::{Deref, DerefMut, CoerceUnsized};
 
 #[stable(feature = "rust1", since = "1.0.0")]
 pub use intrinsics::transmute;
@@ -792,7 +792,7 @@ pub fn replace<T>(dest: &mut T, mut src: T) -> T {
 /// [`Copy`]: ../../std/marker/trait.Copy.html
 #[inline]
 #[stable(feature = "rust1", since = "1.0.0")]
-pub fn drop<T>(_x: T) { }
+pub fn drop<T>(_x: T) {}
 
 /// Interprets `src` as having type `&U`, and then reads `src` without moving
 /// the contained value.
@@ -847,7 +847,7 @@ pub unsafe fn transmute_copy<T, U>(src: &T) -> U {
 ///
 /// [`discriminant`]: fn.discriminant.html
 #[stable(feature = "discriminant_value", since = "1.21.0")]
-pub struct Discriminant<T>(u64, PhantomData<fn() -> T>);
+pub struct Discriminant<T>([u8; 8], PhantomData<fn() -> T>);
 
 // N.B. These trait implementations cannot be derived because we don't want any bounds on T.
 
@@ -881,9 +881,7 @@ impl<T> hash::Hash for Discriminant<T> {
 #[stable(feature = "discriminant_value", since = "1.21.0")]
 impl<T> fmt::Debug for Discriminant<T> {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
-        fmt.debug_tuple("Discriminant")
-           .field(&self.0)
-           .finish()
+        fmt.debug_tuple("Discriminant").field(&self.0).finish()
     }
 }
 
@@ -914,7 +912,10 @@ impl<T> fmt::Debug for Discriminant<T> {
 #[stable(feature = "discriminant_value", since = "1.21.0")]
 pub fn discriminant<T>(v: &T) -> Discriminant<T> {
     unsafe {
-        Discriminant(intrinsics::discriminant_value(v), PhantomData)
+        Discriminant(
+            crate::mem::transmute(intrinsics::discriminant_value(v)),
+            PhantomData,
+        )
     }
 }
 
@@ -1056,7 +1057,6 @@ impl<'a, T: ?Sized + Unpin> PinMut<'a, T> {
     }
 }
 
-
 #[unstable(feature = "pin", issue = "49150")]
 impl<'a, T: ?Sized> PinMut<'a, T> {
     /// Construct a new `PinMut` around a reference to some data of a type that
@@ -1099,16 +1099,20 @@ impl<'a, T: ?Sized> PinMut<'a, T> {
     /// because it is one of the fields of that value), and also that you do
     /// not move out of the argument you receive to the interior function.
     #[unstable(feature = "pin", issue = "49150")]
-    pub unsafe fn map_unchecked<U, F>(this: PinMut<'a, T>, f: F) -> PinMut<'a, U> where
-        F: FnOnce(&mut T) -> &mut U
+    pub unsafe fn map_unchecked<U, F>(this: PinMut<'a, T>, f: F) -> PinMut<'a, U>
+    where
+        F: FnOnce(&mut T) -> &mut U,
     {
-        PinMut { inner: f(this.inner) }
+        PinMut {
+            inner: f(this.inner),
+        }
     }
 
     /// Assign a new value to the memory behind the pinned reference.
     #[unstable(feature = "pin", issue = "49150")]
     pub fn set(this: PinMut<'a, T>, value: T)
-        where T: Sized,
+    where
+        T: Sized,
     {
         *this.inner = value;
     }
@@ -1159,7 +1163,8 @@ impl<'a, T: ?Sized> Unpin for PinMut<'a, T> {}
 
 #[unstable(feature = "futures_api", issue = "50547")]
 unsafe impl<'a, T, F> UnsafeFutureObj<'a, T> for PinMut<'a, F>
-    where F: Future<Output = T> + 'a
+where
+    F: Future<Output = T> + 'a,
 {
     fn into_raw(self) -> *mut () {
         unsafe { PinMut::get_mut_unchecked(self) as *mut F as *mut () }

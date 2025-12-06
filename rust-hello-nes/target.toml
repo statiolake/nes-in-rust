@@ -1,0 +1,14 @@
+[target]
+family = "unknown"
+os-name = "unknown"
+env-name = "cc65"
+
+[arch]
+name = "x86"  # Fake
+pointer-bits = 16
+is-big-endian = false
+has-atomic-u8 = false
+has-atomic-u16 = false
+has-atomic-u32 = false
+has-atomic-u64 = false
+has-atomic-ptr = false

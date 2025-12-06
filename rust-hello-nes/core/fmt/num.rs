@@ -12,24 +12,22 @@
 
 #![allow(deprecated)]
 
-
 use fmt;
-use ops::{Div, Rem, Sub};
-use str;
-use slice;
-use ptr;
 use mem;
+use ops::{Div, Rem, Sub};
+use ptr;
+use slice;
+use str;
 
 #[doc(hidden)]
-trait Int: PartialEq + PartialOrd + Div<Output=Self> + Rem<Output=Self> +
-           Sub<Output=Self> + Copy {
+trait Int:
+    PartialEq + PartialOrd + Div<Output = Self> + Rem<Output = Self> + Sub<Output = Self> + Copy
+{
     fn zero() -> Self;
     fn from_u8(u: u8) -> Self;
     fn to_u8(&self) -> u8;
     fn to_u16(&self) -> u16;
     fn to_u32(&self) -> u32;
-    fn to_u64(&self) -> u64;
-    fn to_u128(&self) -> u128;
 }
 
 macro_rules! doit {
@@ -39,11 +37,9 @@ macro_rules! doit {
         fn to_u8(&self) -> u8 { *self as u8 }
         fn to_u16(&self) -> u16 { *self as u16 }
         fn to_u32(&self) -> u32 { *self as u32 }
-        fn to_u64(&self) -> u64 { *self as u64 }
-        fn to_u128(&self) -> u128 { *self as u128 }
     })*)
 }
-doit! { i8 i16 i32 i64 i128 isize u8 u16 u32 u64 u128 usize }
+doit! { i8 i16 i32 isize u8 u16 u32 usize }
 
 /// A type that represents a specific radix
 #[doc(hidden)]
@@ -63,32 +59,32 @@ trait GenericRadix {
         // characters for a base 2 number.
         let zero = T::zero();
         let is_nonnegative = x >= zero;
-        let mut buf: [u8; 128] = unsafe { mem::uninitialized() };
+        let mut buf: [u8; 16] = unsafe { mem::uninitialized() };
         let mut curr = buf.len();
         let base = T::from_u8(Self::BASE);
         if is_nonnegative {
             // Accumulate each digit of the number from the least significant
             // to the most significant figure.
             for byte in buf.iter_mut().rev() {
-                let n = x % base;               // Get the current place value.
-                x = x / base;                   // Deaccumulate the number.
+                let n = x % base; // Get the current place value.
+                x = x / base; // Deaccumulate the number.
                 *byte = Self::digit(n.to_u8()); // Store the digit in the buffer.
                 curr -= 1;
                 if x == zero {
                     // No more digits left to accumulate.
-                    break
+                    break;
                 };
             }
         } else {
             // Do the same as above, but accounting for two's complement.
             for byte in buf.iter_mut().rev() {
-                let n = zero - (x % base);      // Get the current place value.
-                x = x / base;                   // Deaccumulate the number.
+                let n = zero - (x % base); // Get the current place value.
+                x = x / base; // Deaccumulate the number.
                 *byte = Self::digit(n.to_u8()); // Store the digit in the buffer.
                 curr -= 1;
                 if x == zero {
                     // No more digits left to accumulate.
-                    break
+                    break;
                 };
             }
         }
@@ -131,9 +127,9 @@ macro_rules! radix {
 radix! { Binary,    2, "0b", x @  0 ..=  1 => b'0' + x }
 radix! { Octal,     8, "0o", x @  0 ..=  7 => b'0' + x }
 radix! { LowerHex, 16, "0x", x @  0 ..=  9 => b'0' + x,
-                             x @ 10 ..= 15 => b'a' + (x - 10) }
+x @ 10 ..= 15 => b'a' + (x - 10) }
 radix! { UpperHex, 16, "0x", x @  0 ..=  9 => b'0' + x,
-                             x @ 10 ..= 15 => b'A' + (x - 10) }
+x @ 10 ..= 15 => b'A' + (x - 10) }
 
 macro_rules! int_base {
     ($Trait:ident for $T:ident as $U:ident -> $Radix:ident) => {
@@ -143,7 +139,7 @@ macro_rules! int_base {
                 $Radix.fmt_int(*self as $U, f)
             }
         }
-    }
+    };
 }
 
 macro_rules! debug {
@@ -161,7 +157,7 @@ macro_rules! debug {
                 }
             }
         }
-    }
+    };
 }
 
 macro_rules! integer {
@@ -177,17 +173,14 @@ macro_rules! integer {
         int_base! { LowerHex for $Uint as $Uint -> LowerHex }
         int_base! { UpperHex for $Uint as $Uint -> UpperHex }
         debug! { $Uint }
-    }
+    };
 }
 integer! { isize, usize }
 integer! { i8, u8 }
 integer! { i16, u16 }
 integer! { i32, u32 }
-integer! { i64, u64 }
-integer! { i128, u128 }
 
-const DEC_DIGITS_LUT: &'static[u8] =
-    b"0001020304050607080910111213141516171819\
+const DEC_DIGITS_LUT: &'static [u8] = b"0001020304050607080910111213141516171819\
       2021222324252627282930313233343536373839\
       4041424344454647484950515253545556575859\
       6061626364656667686970717273747576777879\
@@ -259,11 +252,4 @@ macro_rules! impl_Display {
 }
 
 impl_Display!(i8, u8, i16, u16, i32, u32: to_u32);
-impl_Display!(i64, u64: to_u64);
-impl_Display!(i128, u128: to_u128);
-#[cfg(target_pointer_width = "16")]
 impl_Display!(isize, usize: to_u16);
-#[cfg(target_pointer_width = "32")]
-impl_Display!(isize, usize: to_u32);
-#[cfg(target_pointer_width = "64")]
-impl_Display!(isize, usize: to_u64);

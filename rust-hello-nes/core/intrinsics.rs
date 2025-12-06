@@ -39,16 +39,20 @@
 //!   guaranteed to happen in order. This is the standard mode for working
 //!   with atomic types and is equivalent to Java's `volatile`.
 
-#![unstable(feature = "core_intrinsics",
-            reason = "intrinsics are unlikely to ever be stabilized, instead \
+#![unstable(
+    feature = "core_intrinsics",
+    reason = "intrinsics are unlikely to ever be stabilized, instead \
                       they should be used through stabilized interfaces \
                       in the rest of the standard library",
-            issue = "0")]
+    issue = "0"
+)]
 #![allow(missing_docs)]
 
 #[stable(feature = "drop_in_place", since = "1.8.0")]
-#[rustc_deprecated(reason = "no longer an intrinsic - use `ptr::drop_in_place` directly",
-                   since = "1.18.0")]
+#[rustc_deprecated(
+    reason = "no longer an intrinsic - use `ptr::drop_in_place` directly",
+    since = "1.18.0"
+)]
 pub use ptr::drop_in_place;
 
 extern "rust-intrinsic" {
@@ -690,7 +694,7 @@ extern "rust-intrinsic" {
     pub fn min_align_of_val<T: ?Sized>(_: &T) -> usize;
 
     /// Obtain the length of a slice pointer
-    #[cfg(rust_compiler="mrustc")]
+    #[cfg(rust_compiler = "mrustc")]
     pub fn mrustc_slice_len<T>(pointer: *const [T]) -> usize;
 
     /// Gets a static string slice containing the name of a type.
@@ -1063,8 +1067,7 @@ extern "rust-intrinsic" {
     ///
     /// The volatile parameter is set to `true`, so it will not be optimized out
     /// unless size is equal to zero.
-    pub fn volatile_copy_nonoverlapping_memory<T>(dst: *mut T, src: *const T,
-                                                  count: usize);
+    pub fn volatile_copy_nonoverlapping_memory<T>(dst: *mut T, src: *const T, count: usize);
     /// Equivalent to the appropriate `llvm.memmove.p0i8.0i8.*` intrinsic, with
     /// a size of `count` * `size_of::<T>()` and an alignment of
     /// `min_align_of::<T>()`
@@ -1214,7 +1217,6 @@ extern "rust-intrinsic" {
     /// Float remainder that allows optimizations based on algebraic rules.
     /// May assume inputs are finite.
     pub fn frem_fast<T>(a: T, b: T) -> T;
-
 
     /// Returns the number of bits set in an integer type `T`
     pub fn ctpop<T>(x: T) -> T;

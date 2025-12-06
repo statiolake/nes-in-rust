@@ -14,7 +14,7 @@ use ops::*;
 
 #[allow(unused_macros)]
 macro_rules! sh_impl_signed {
-    ($t:ident, $f:ident) => (
+    ($t:ident, $f:ident) => {
         #[stable(feature = "rust1", since = "1.0.0")]
         impl Shl<$f> for Wrapping<$t> {
             type Output = Wrapping<$t>;
@@ -22,9 +22,15 @@ macro_rules! sh_impl_signed {
             #[inline]
             fn shl(self, other: $f) -> Wrapping<$t> {
                 if other < 0 {
-                    Wrapping(self.0.wrapping_shr((-other & self::shift_max::$t as $f) as u32))
+                    Wrapping(
+                        self.0
+                            .wrapping_shr((-other & self::shift_max::$t as $f) as u32),
+                    )
                 } else {
-                    Wrapping(self.0.wrapping_shl((other & self::shift_max::$t as $f) as u32))
+                    Wrapping(
+                        self.0
+                            .wrapping_shl((other & self::shift_max::$t as $f) as u32),
+                    )
                 }
             }
         }
@@ -45,9 +51,15 @@ macro_rules! sh_impl_signed {
             #[inline]
             fn shr(self, other: $f) -> Wrapping<$t> {
                 if other < 0 {
-                    Wrapping(self.0.wrapping_shl((-other & self::shift_max::$t as $f) as u32))
+                    Wrapping(
+                        self.0
+                            .wrapping_shl((-other & self::shift_max::$t as $f) as u32),
+                    )
                 } else {
-                    Wrapping(self.0.wrapping_shr((other & self::shift_max::$t as $f) as u32))
+                    Wrapping(
+                        self.0
+                            .wrapping_shr((other & self::shift_max::$t as $f) as u32),
+                    )
                 }
             }
         }
@@ -60,18 +72,21 @@ macro_rules! sh_impl_signed {
             }
         }
         forward_ref_op_assign! { impl ShrAssign, shr_assign for Wrapping<$t>, $f }
-    )
+    };
 }
 
 macro_rules! sh_impl_unsigned {
-    ($t:ident, $f:ident) => (
+    ($t:ident, $f:ident) => {
         #[stable(feature = "rust1", since = "1.0.0")]
         impl Shl<$f> for Wrapping<$t> {
             type Output = Wrapping<$t>;
 
             #[inline]
             fn shl(self, other: $f) -> Wrapping<$t> {
-                Wrapping(self.0.wrapping_shl((other & self::shift_max::$t as $f) as u32))
+                Wrapping(
+                    self.0
+                        .wrapping_shl((other & self::shift_max::$t as $f) as u32),
+                )
             }
         }
 
@@ -90,7 +105,10 @@ macro_rules! sh_impl_unsigned {
 
             #[inline]
             fn shr(self, other: $f) -> Wrapping<$t> {
-                Wrapping(self.0.wrapping_shr((other & self::shift_max::$t as $f) as u32))
+                Wrapping(
+                    self.0
+                        .wrapping_shr((other & self::shift_max::$t as $f) as u32),
+                )
             }
         }
 
@@ -102,7 +120,7 @@ macro_rules! sh_impl_unsigned {
             }
         }
         forward_ref_op_assign! { impl ShrAssign, shr_assign for Wrapping<$t>, $f }
-    )
+    };
 }
 
 // FIXME (#23545): uncomment the remaining impls
@@ -124,7 +142,7 @@ macro_rules! sh_impl_all {
     )*)
 }
 
-sh_impl_all! { u8 u16 u32 u64 u128 usize i8 i16 i32 i64 i128 isize }
+sh_impl_all! { u8 u16 u32 usize i8 i16 i32 isize }
 
 // FIXME(30524): impl Op<T> for Wrapping<T>, impl OpAssign<T> for Wrapping<T>
 macro_rules! wrapping_impl {
@@ -323,7 +341,7 @@ macro_rules! wrapping_impl {
     )*)
 }
 
-wrapping_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
+wrapping_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 macro_rules! wrapping_int_impl {
     ($($t:ty)*) => ($(
@@ -685,7 +703,7 @@ assert_eq!(Wrapping(3i8).pow(6), Wrapping(-39));
     )*)
 }
 
-wrapping_int_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
+wrapping_int_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 macro_rules! wrapping_int_impl_signed {
     ($($t:ty)*) => ($(
@@ -814,7 +832,7 @@ assert!(!Wrapping(10", stringify!($t), ").is_negative());
     )*)
 }
 
-wrapping_int_impl_signed! { isize i8 i16 i32 i64 i128 }
+wrapping_int_impl_signed! { isize i8 i16 i32 }
 
 macro_rules! wrapping_int_impl_unsigned {
     ($($t:ty)*) => ($(
@@ -891,40 +909,23 @@ assert_eq!(Wrapping(200_u8).next_power_of_two(), Wrapping(0));
     )*)
 }
 
-wrapping_int_impl_unsigned! { usize u8 u16 u32 u64 u128 }
+wrapping_int_impl_unsigned! { usize u8 u16 u32 }
 
 mod shift_max {
     #![allow(non_upper_case_globals)]
 
-    #[cfg(target_pointer_width = "16")]
     mod platform {
         pub const usize: u32 = super::u16;
         pub const isize: u32 = super::i16;
     }
 
-    #[cfg(target_pointer_width = "32")]
-    mod platform {
-        pub const usize: u32 = super::u32;
-        pub const isize: u32 = super::i32;
-    }
-
-    #[cfg(target_pointer_width = "64")]
-    mod platform {
-        pub const usize: u32 = super::u64;
-        pub const isize: u32 = super::i64;
-    }
-
     pub const i8: u32 = (1 << 3) - 1;
     pub const i16: u32 = (1 << 4) - 1;
     pub const i32: u32 = (1 << 5) - 1;
-    pub const i64: u32 = (1 << 6) - 1;
-    pub const i128: u32 = (1 << 7) - 1;
     pub use self::platform::isize;
 
     pub const u8: u32 = i8;
     pub const u16: u32 = i16;
     pub const u32: u32 = i32;
-    pub const u64: u32 = i64;
-    pub const u128: u32 = i128;
     pub use self::platform::usize;
 }

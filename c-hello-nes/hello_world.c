@@ -3,15 +3,19 @@
 
 const char message[] = "Hello cc65!";
 
-union u_x {
-    int value;
-    unsigned raw[4];
-};
+struct s_x;
 
-union u_x x = { { 1, 2, 3, 4 } };
+typedef struct s_x s_x;
+struct s_x
+{
+    int a;
+    int b;
+};
 
 int main(void)
 {
+    s_x sx = {1, 2};
+
     unsigned int frame = 0;
 
     // 画面の消去

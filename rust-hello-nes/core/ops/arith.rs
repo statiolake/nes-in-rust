@@ -77,18 +77,18 @@
 #[stable(feature = "rust1", since = "1.0.0")]
 #[rustc_on_unimplemented(
     on(
-        all(_Self="{integer}", RHS="{float}"),
-        message="cannot add a float to an integer",
+        all(_Self = "{integer}", RHS = "{float}"),
+        message = "cannot add a float to an integer",
     ),
     on(
-        all(_Self="{float}", RHS="{integer}"),
-        message="cannot add an integer to a float",
+        all(_Self = "{float}", RHS = "{integer}"),
+        message = "cannot add an integer to a float",
     ),
-    message="cannot add `{RHS}` to `{Self}`",
-    label="no implementation for `{Self} + {RHS}`",
+    message = "cannot add `{RHS}` to `{Self}`",
+    label = "no implementation for `{Self} + {RHS}`"
 )]
 #[doc(alias = "+")]
-pub trait Add<RHS=Self> {
+pub trait Add<RHS = Self> {
     /// The resulting type after applying the `+` operator.
     #[stable(feature = "rust1", since = "1.0.0")]
     type Output;
@@ -114,7 +114,7 @@ macro_rules! add_impl {
     )*)
 }
 
-add_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+add_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The subtraction operator `-`.
 ///
@@ -183,10 +183,12 @@ add_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "sub"]
 #[stable(feature = "rust1", since = "1.0.0")]
-#[rustc_on_unimplemented(message="cannot subtract `{RHS}` from `{Self}`",
-                         label="no implementation for `{Self} - {RHS}`")]
+#[rustc_on_unimplemented(
+    message = "cannot subtract `{RHS}` from `{Self}`",
+    label = "no implementation for `{Self} - {RHS}`"
+)]
 #[doc(alias = "-")]
-pub trait Sub<RHS=Self> {
+pub trait Sub<RHS = Self> {
     /// The resulting type after applying the `-` operator.
     #[stable(feature = "rust1", since = "1.0.0")]
     type Output;
@@ -212,7 +214,7 @@ macro_rules! sub_impl {
     )*)
 }
 
-sub_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+sub_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The multiplication operator `*`.
 ///
@@ -303,10 +305,12 @@ sub_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "mul"]
 #[stable(feature = "rust1", since = "1.0.0")]
-#[rustc_on_unimplemented(message="cannot multiply `{RHS}` to `{Self}`",
-                         label="no implementation for `{Self} * {RHS}`")]
+#[rustc_on_unimplemented(
+    message = "cannot multiply `{RHS}` to `{Self}`",
+    label = "no implementation for `{Self} * {RHS}`"
+)]
 #[doc(alias = "*")]
-pub trait Mul<RHS=Self> {
+pub trait Mul<RHS = Self> {
     /// The resulting type after applying the `*` operator.
     #[stable(feature = "rust1", since = "1.0.0")]
     type Output;
@@ -332,7 +336,7 @@ macro_rules! mul_impl {
     )*)
 }
 
-mul_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+mul_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The division operator `/`.
 ///
@@ -427,10 +431,12 @@ mul_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "div"]
 #[stable(feature = "rust1", since = "1.0.0")]
-#[rustc_on_unimplemented(message="cannot divide `{Self}` by `{RHS}`",
-                         label="no implementation for `{Self} / {RHS}`")]
+#[rustc_on_unimplemented(
+    message = "cannot divide `{Self}` by `{RHS}`",
+    label = "no implementation for `{Self} / {RHS}`"
+)]
 #[doc(alias = "/")]
-pub trait Div<RHS=Self> {
+pub trait Div<RHS = Self> {
     /// The resulting type after applying the `/` operator.
     #[stable(feature = "rust1", since = "1.0.0")]
     type Output;
@@ -457,7 +463,7 @@ macro_rules! div_impl_integer {
     )*)
 }
 
-div_impl_integer! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
+div_impl_integer! { usize u8 u16 u32 isize i8 i16 i32 }
 
 macro_rules! div_impl_float {
     ($($t:ty)*) => ($(
@@ -472,8 +478,6 @@ macro_rules! div_impl_float {
         forward_ref_binop! { impl Div, div for $t, $t }
     )*)
 }
-
-div_impl_float! { f32 f64 }
 
 /// The remainder operator `%`.
 ///
@@ -512,10 +516,12 @@ div_impl_float! { f32 f64 }
 /// ```
 #[lang = "rem"]
 #[stable(feature = "rust1", since = "1.0.0")]
-#[rustc_on_unimplemented(message="cannot mod `{Self}` by `{RHS}`",
-                         label="no implementation for `{Self} % {RHS}`")]
+#[rustc_on_unimplemented(
+    message = "cannot mod `{Self}` by `{RHS}`",
+    label = "no implementation for `{Self} % {RHS}`"
+)]
 #[doc(alias = "%")]
-pub trait Rem<RHS=Self> {
+pub trait Rem<RHS = Self> {
     /// The resulting type after applying the `%` operator.
     #[stable(feature = "rust1", since = "1.0.0")]
     type Output = Self;
@@ -542,8 +548,7 @@ macro_rules! rem_impl_integer {
     )*)
 }
 
-rem_impl_integer! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 }
-
+rem_impl_integer! { usize u8 u16 u32 isize i8 i16 i32 }
 
 macro_rules! rem_impl_float {
     ($($t:ty)*) => ($(
@@ -558,8 +563,6 @@ macro_rules! rem_impl_float {
         forward_ref_binop! { impl Rem, rem for $t, $t }
     )*)
 }
-
-rem_impl_float! { f32 f64 }
 
 /// The unary negation operator `-`.
 ///
@@ -611,8 +614,6 @@ pub trait Neg {
     fn neg(self) -> Self::Output;
 }
 
-
-
 macro_rules! neg_impl_core {
     ($id:ident => $body:expr, $($t:ty)*) => ($(
         #[stable(feature = "rust1", since = "1.0.0")]
@@ -640,8 +641,7 @@ macro_rules! neg_impl_unsigned {
         }, $($t)*} }
 }
 
-// neg_impl_unsigned! { usize u8 u16 u32 u64 }
-neg_impl_numeric! { isize i8 i16 i32 i64 i128 f32 f64 }
+neg_impl_numeric! { isize i8 i16 i32 }
 
 /// The addition assignment operator `+=`.
 ///
@@ -674,11 +674,13 @@ neg_impl_numeric! { isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "add_assign"]
 #[stable(feature = "op_assign_traits", since = "1.8.0")]
-#[rustc_on_unimplemented(message="cannot add-assign `{Rhs}` to `{Self}`",
-                         label="no implementation for `{Self} += {Rhs}`")]
+#[rustc_on_unimplemented(
+    message = "cannot add-assign `{Rhs}` to `{Self}`",
+    label = "no implementation for `{Self} += {Rhs}`"
+)]
 #[doc(alias = "+")]
 #[doc(alias = "+=")]
-pub trait AddAssign<Rhs=Self> {
+pub trait AddAssign<Rhs = Self> {
     /// Performs the `+=` operation.
     #[stable(feature = "op_assign_traits", since = "1.8.0")]
     fn add_assign(&mut self, rhs: Rhs);
@@ -697,7 +699,7 @@ macro_rules! add_assign_impl {
     )+)
 }
 
-add_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+add_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The subtraction assignment operator `-=`.
 ///
@@ -730,11 +732,13 @@ add_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "sub_assign"]
 #[stable(feature = "op_assign_traits", since = "1.8.0")]
-#[rustc_on_unimplemented(message="cannot subtract-assign `{Rhs}` from `{Self}`",
-                         label="no implementation for `{Self} -= {Rhs}`")]
+#[rustc_on_unimplemented(
+    message = "cannot subtract-assign `{Rhs}` from `{Self}`",
+    label = "no implementation for `{Self} -= {Rhs}`"
+)]
 #[doc(alias = "-")]
 #[doc(alias = "-=")]
-pub trait SubAssign<Rhs=Self> {
+pub trait SubAssign<Rhs = Self> {
     /// Performs the `-=` operation.
     #[stable(feature = "op_assign_traits", since = "1.8.0")]
     fn sub_assign(&mut self, rhs: Rhs);
@@ -753,7 +757,7 @@ macro_rules! sub_assign_impl {
     )+)
 }
 
-sub_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+sub_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The multiplication assignment operator `*=`.
 ///
@@ -777,11 +781,13 @@ sub_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "mul_assign"]
 #[stable(feature = "op_assign_traits", since = "1.8.0")]
-#[rustc_on_unimplemented(message="cannot multiply-assign `{Rhs}` to `{Self}`",
-                         label="no implementation for `{Self} *= {Rhs}`")]
+#[rustc_on_unimplemented(
+    message = "cannot multiply-assign `{Rhs}` to `{Self}`",
+    label = "no implementation for `{Self} *= {Rhs}`"
+)]
 #[doc(alias = "*")]
 #[doc(alias = "*=")]
-pub trait MulAssign<Rhs=Self> {
+pub trait MulAssign<Rhs = Self> {
     /// Performs the `*=` operation.
     #[stable(feature = "op_assign_traits", since = "1.8.0")]
     fn mul_assign(&mut self, rhs: Rhs);
@@ -800,7 +806,7 @@ macro_rules! mul_assign_impl {
     )+)
 }
 
-mul_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+mul_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The division assignment operator `/=`.
 ///
@@ -824,11 +830,13 @@ mul_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "div_assign"]
 #[stable(feature = "op_assign_traits", since = "1.8.0")]
-#[rustc_on_unimplemented(message="cannot divide-assign `{Self}` by `{Rhs}`",
-                         label="no implementation for `{Self} /= {Rhs}`")]
+#[rustc_on_unimplemented(
+    message = "cannot divide-assign `{Self}` by `{Rhs}`",
+    label = "no implementation for `{Self} /= {Rhs}`"
+)]
 #[doc(alias = "/")]
 #[doc(alias = "/=")]
-pub trait DivAssign<Rhs=Self> {
+pub trait DivAssign<Rhs = Self> {
     /// Performs the `/=` operation.
     #[stable(feature = "op_assign_traits", since = "1.8.0")]
     fn div_assign(&mut self, rhs: Rhs);
@@ -846,7 +854,7 @@ macro_rules! div_assign_impl {
     )+)
 }
 
-div_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+div_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
 
 /// The remainder assignment operator `%=`.
 ///
@@ -874,11 +882,13 @@ div_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
 /// ```
 #[lang = "rem_assign"]
 #[stable(feature = "op_assign_traits", since = "1.8.0")]
-#[rustc_on_unimplemented(message="cannot mod-assign `{Self}` by `{Rhs}``",
-                         label="no implementation for `{Self} %= {Rhs}`")]
+#[rustc_on_unimplemented(
+    message = "cannot mod-assign `{Self}` by `{Rhs}``",
+    label = "no implementation for `{Self} %= {Rhs}`"
+)]
 #[doc(alias = "%")]
 #[doc(alias = "%=")]
-pub trait RemAssign<Rhs=Self> {
+pub trait RemAssign<Rhs = Self> {
     /// Performs the `%=` operation.
     #[stable(feature = "op_assign_traits", since = "1.8.0")]
     fn rem_assign(&mut self, rhs: Rhs);
@@ -896,4 +906,4 @@ macro_rules! rem_assign_impl {
     )+)
 }
 
-rem_assign_impl! { usize u8 u16 u32 u64 u128 isize i8 i16 i32 i64 i128 f32 f64 }
+rem_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }

@@ -106,7 +106,7 @@
 /// [impls]: #implementors
 #[stable(feature = "rust1", since = "1.0.0")]
 #[lang = "clone"]
-pub trait Clone : Sized {
+pub trait Clone: Sized {
     /// Returns a copy of the value.
     ///
     /// # Examples
@@ -138,16 +138,24 @@ pub trait Clone : Sized {
 // These structs should never appear in user code.
 #[doc(hidden)]
 #[allow(missing_debug_implementations)]
-#[unstable(feature = "derive_clone_copy",
-           reason = "deriving hack, should not be public",
-           issue = "0")]
-pub struct AssertParamIsClone<T: Clone + ?Sized> { _field: ::marker::PhantomData<T> }
+#[unstable(
+    feature = "derive_clone_copy",
+    reason = "deriving hack, should not be public",
+    issue = "0"
+)]
+pub struct AssertParamIsClone<T: Clone + ?Sized> {
+    _field: ::marker::PhantomData<T>,
+}
 #[doc(hidden)]
 #[allow(missing_debug_implementations)]
-#[unstable(feature = "derive_clone_copy",
-           reason = "deriving hack, should not be public",
-           issue = "0")]
-pub struct AssertParamIsCopy<T: Copy + ?Sized> { _field: ::marker::PhantomData<T> }
+#[unstable(
+    feature = "derive_clone_copy",
+    reason = "deriving hack, should not be public",
+    issue = "0"
+)]
+pub struct AssertParamIsCopy<T: Copy + ?Sized> {
+    _field: ::marker::PhantomData<T>,
+}
 
 /// Implementations of `Clone` for primitive types.
 ///
@@ -172,9 +180,8 @@ mod impls {
     }
 
     impl_clone! {
-        usize u8 u16 u32 u64 u128
-        isize i8 i16 i32 i64 i128
-        f32 f64
+        usize u8 u16 u32
+        isize i8 i16 i32
         bool char
     }
 
@@ -210,5 +217,4 @@ mod impls {
             *self
         }
     }
-
 }
