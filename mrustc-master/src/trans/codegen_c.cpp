@@ -1356,10 +1356,12 @@ namespace {
                 emit_type_fn(ty); m_of << "\n";
                 }
             TU_ARMA(NamedFunction, te) {
-                m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                // m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                emit_ctype(ty); m_of << ";\n";
                 }
             TU_ARMA(Array, te) {
                 // m_of << "typedef struct "; emit_ctype(ty); m_of << " "; emit_ctype(ty); m_of << ";\n";
+                emit_ctype(ty); m_of << ";\n";
                 }
             TU_ARMA(Path, te) {
                 TU_MATCH_HDRA( (te.binding), {)
@@ -1671,27 +1673,29 @@ namespace {
                 m_of << " // " << ty << "\n";
                 }
             TU_ARMA(NamedFunction, te) {
-                m_of << "typedef struct "; emit_ctype(ty); m_of << " {";
+                // m_of << "typedef struct ";
+                emit_ctype(ty); m_of << " {";
                 if( m_options.disallow_empty_structs ) {
                     m_of << " char _unused; ";
                 }
-                m_of << "} "; emit_ctype(ty); m_of << ";\n";
+                m_of << "};\n";
                 }
             TU_ARMA(Array, te) {
-                m_of << "typedef ";
-                size_t align;
-                if( te.size.as_Known() == 0 ) {
-                    Target_GetAlignOf(sp, m_resolve, ty, align);
-                    switch(m_compiler)
-                    {
-                    case Compiler::Msvc:
-                        m_of << "__declspec(align(" << align << "))\n";
-                        break;
-                    case Compiler::Gcc:
-                        break;
-                    }
-                }
-                m_of << "struct "; emit_ctype(ty); m_of << " { ";
+                // m_of << "typedef ";
+                // size_t align;
+                // if( te.size.as_Known() == 0 ) {
+                //     Target_GetAlignOf(sp, m_resolve, ty, align);
+                //     switch(m_compiler)
+                //     {
+                //     case Compiler::Msvc:
+                //         m_of << "__declspec(align(" << align << "))\n";
+                //         break;
+                //     case Compiler::Gcc:
+                //         break;
+                //     }
+                // }
+                // m_of << "struct ";
+                emit_ctype(ty); m_of << " { ";
                 if( te.size.as_Known() == 0 && m_options.disallow_empty_structs )
                 {
                     m_of << "char _d;";
@@ -1715,20 +1719,7 @@ namespace {
                 {
                     emit_ctype(te.inner); m_of << " DATA[" << std::min(static_cast<size_t>(128), te.size.as_Known()) << "];";
                 }
-                m_of << " } ";
-                if( te.size.as_Known() == 0 ) {
-                    switch(m_compiler)
-                    {
-                    case Compiler::Msvc:
-                        break;
-                    case Compiler::Gcc:
-                        // m_of << " __attribute__((";
-                        // m_of << "__aligned__(" << align << "),";
-                        // m_of << "))";
-                        break;
-                    }
-                }
-                emit_ctype(ty); m_of << ";";
+                m_of << " };\n";
                 m_of << " // " << ty << "\n";
                 }
             TU_ARMA(ErasedType, te) {
@@ -7884,7 +7875,7 @@ namespace {
                 MIR_BUG(*m_mir_res, "ErasedType in trans - " << ty);
                 }
             TU_ARMA(Array, te) {
-                m_of << "t_" << Trans_Mangle(ty) << " " << inner;
+                m_of << "struct t_" << Trans_Mangle(ty) << " " << inner;
                 //emit_ctype(te.inner, inner);
                 //m_of << "[" << te.size.as_Known() << "]";
                 }
@@ -7910,7 +7901,7 @@ namespace {
                 emit_ctype_ptr(te.inner, inner);
                 }
             TU_ARMA(NamedFunction, te) {
-                m_of << "t_" << Trans_Mangle(ty) << " " << inner;
+                m_of << "struct t_" << Trans_Mangle(ty) << " " << inner;
                 }
             TU_ARMA(Function, te) {
                 m_of << "t_" << Trans_Mangle(ty) << " " << inner;
