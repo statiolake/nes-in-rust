@@ -4,9 +4,8 @@
 /*                                                                           */
 /*              Garbage collection (dead code elimination) for ld65          */
 /*                                                                           */
-/*  Strategy v6: Track both section-relative references AND symbol imports   */
-/*  as potential CODE references. Local labels (L1001B etc.) are imported    */
-/*  as EXPR_SYMBOL, so we add their target offsets to live ranges.           */
+/*  Strategy v8: Export-based GC. Delete fragments within dead export ranges */
+/*  Dead export = not marked as live, has Size > 0                           */
 /*                                                                           */
 /*****************************************************************************/
 
@@ -49,22 +48,14 @@ static Collection WorkList = STATIC_COLLECTION_INITIALIZER;
 /* Live exports collection */
 static Collection LiveExports = STATIC_COLLECTION_INITIALIZER;
 
-/* Live fragment ranges - stores pairs of (Section*, offset ranges) */
-typedef struct LiveRange LiveRange;
-struct LiveRange {
+/* Dead export ranges - ranges of bytes to delete within a section */
+typedef struct DeadRange DeadRange;
+struct DeadRange {
     Section*        Sec;
     unsigned long   Start;
     unsigned long   End;
 };
-static Collection LiveRanges = STATIC_COLLECTION_INITIALIZER;
-
-/* Pending section references to process */
-typedef struct SectionRef SectionRef;
-struct SectionRef {
-    Section*        Sec;
-    unsigned long   Offset;
-};
-static Collection PendingRefs = STATIC_COLLECTION_INITIALIZER;
+static Collection DeadRanges = STATIC_COLLECTION_INITIALIZER;
 
 /* Statistics */
 static unsigned long TotalBytesRemoved = 0;
@@ -101,7 +92,6 @@ static void MarkExportLive (Export* E)
 
 /* Forward declarations */
 static Section* GetExportSection (Export* E, unsigned long* Offset);
-static SectionRef* NewSectionRef (Section* Sec, unsigned long Offset);
 
 static void MarkExprSymbolsLive (ExprNode* Expr)
 /* Recursively walk expression tree and mark referenced symbols as live */
@@ -122,20 +112,6 @@ static void MarkExprSymbolsLive (ExprNode* Expr)
     if (Expr->Op == EXPR_SYMBOL) {
         Export* E = GetExprExport (Expr);
         MarkExportLive (E);
-
-        /* Also add the symbol's location as a section reference if it's in CODE */
-        if (E != 0) {
-            Section* Sec;
-            unsigned long Offset;
-            Sec = GetExportSection (E, &Offset);
-            if (Sec != 0) {
-                Segment* Seg = Sec->Seg;
-                const char* SegName = GetString (Seg->Name);
-                if (strcmp (SegName, "CODE") == 0) {
-                    CollAppend (&PendingRefs, NewSectionRef (Sec, Offset));
-                }
-            }
-        }
     }
 }
 
@@ -151,91 +127,37 @@ static void MarkFragmentSymbols (Fragment* F)
 
 
 
-static LiveRange* NewLiveRange (Section* Sec, unsigned long Start, unsigned long End)
-/* Create a new live range */
+static DeadRange* NewDeadRange (Section* Sec, unsigned long Start, unsigned long End)
+/* Create a new dead range */
 {
-    LiveRange* LR = xmalloc (sizeof (LiveRange));
-    LR->Sec = Sec;
-    LR->Start = Start;
-    LR->End = End;
-    return LR;
+    DeadRange* DR = xmalloc (sizeof (DeadRange));
+    DR->Sec = Sec;
+    DR->Start = Start;
+    DR->End = End;
+    return DR;
 }
 
 
 
-static void FreeLiveRange (LiveRange* LR)
-/* Free a live range */
+static void FreeDeadRange (DeadRange* DR)
+/* Free a dead range */
 {
-    xfree (LR);
+    xfree (DR);
 }
 
 
 
-static int AddLiveRange (Section* Sec, unsigned long Start, unsigned long End)
-/* Add a live range, merging with existing if overlapping.
- * Returns 1 if a new range was added or an existing one was extended, 0 otherwise.
- */
+static int IsInDeadRange (Section* Sec, unsigned long Start, unsigned long End)
+/* Check if a range [Start, End) is completely within any dead range */
 {
     unsigned I;
-
-    /* Try to merge with existing range */
-    for (I = 0; I < CollCount (&LiveRanges); ++I) {
-        LiveRange* LR = CollAt (&LiveRanges, I);
-        if (LR->Sec == Sec) {
-            /* Check for overlap or adjacency */
-            if (Start <= LR->End && End >= LR->Start) {
-                /* Check if this would extend the range */
-                int Extended = 0;
-                if (Start < LR->Start) {
-                    LR->Start = Start;
-                    Extended = 1;
-                }
-                if (End > LR->End) {
-                    LR->End = End;
-                    Extended = 1;
-                }
-                return Extended;
-            }
-        }
-    }
-
-    /* No merge possible, add new range */
-    CollAppend (&LiveRanges, NewLiveRange (Sec, Start, End));
-    return 1;
-}
-
-
-
-static int IsOffsetLive (Section* Sec, unsigned long Offset)
-/* Check if an offset in a section is within a live range */
-{
-    unsigned I;
-    for (I = 0; I < CollCount (&LiveRanges); ++I) {
-        LiveRange* LR = CollAt (&LiveRanges, I);
-        if (LR->Sec == Sec && Offset >= LR->Start && Offset < LR->End) {
+    for (I = 0; I < CollCount (&DeadRanges); ++I) {
+        DeadRange* DR = CollAt (&DeadRanges, I);
+        if (DR->Sec == Sec && Start >= DR->Start && End <= DR->End) {
             return 1;
         }
     }
     return 0;
-}
-
-
-
-static SectionRef* NewSectionRef (Section* Sec, unsigned long Offset)
-/* Create a new section reference */
-{
-    SectionRef* SR = xmalloc (sizeof (SectionRef));
-    SR->Sec = Sec;
-    SR->Offset = Offset;
-    return SR;
-}
-
-
-
-static void FreeSectionRef (SectionRef* SR)
-/* Free a section reference */
-{
-    xfree (SR);
 }
 
 
@@ -310,14 +232,55 @@ static void UpdateExportSectionExpr (Export* E, Section* Sec, unsigned long NewO
 
 
 /*****************************************************************************/
+/*                      Export Search and Marking                           */
+/*****************************************************************************/
+
+
+
+static Export* FindExportAtSectionOffset (Section* Sec, unsigned long Offset)
+/* Find an export that starts at the given section offset (CODE segment only) */
+{
+    unsigned I;
+
+    if (Sec == 0 || Sec->Seg == 0) {
+        return 0;
+    }
+
+    const char* SegName = GetString (Sec->Seg->Name);
+    if (strcmp (SegName, "CODE") != 0) {
+        return 0;
+    }
+
+    /* Search all object files for exports in this section */
+    for (I = 0; I < CollCount (&ObjDataList); ++I) {
+        ObjData* O = CollAt (&ObjDataList, I);
+        unsigned J;
+        for (J = 0; J < CollCount (&O->Exports); ++J) {
+            Export* E = CollAt (&O->Exports, J);
+            Section* ESec;
+            unsigned long EOffset;
+
+            ESec = GetExportSection (E, &EOffset);
+            if (ESec == Sec && EOffset == Offset) {
+                return E;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+
+/*****************************************************************************/
 /*                         Section Reference Extraction                      */
 /*****************************************************************************/
 
 
 
-static void ExtractSectionRefs (ExprNode* Expr, Section* ContextSec)
-/* Recursively walk expression tree and extract section+offset references.
- * These represent local labels (branch targets within the same section).
+static void MarkSectionRefLive (ExprNode* Expr)
+/* Walk expression tree and mark referenced CODE exports as live.
+ * Handles EXPR_SECTION + EXPR_LITERAL patterns (local label references).
  */
 {
     if (Expr == 0) {
@@ -349,13 +312,14 @@ static void ExtractSectionRefs (ExprNode* Expr, Section* ContextSec)
             HasOffset = 1;
         }
 
-        /* If we found a section+offset pattern, add as pending reference */
-        if (HasSection && HasOffset && RefSec != 0) {
-            /* Only track CODE segment references */
-            Segment* Seg = RefSec->Seg;
-            const char* SegName = GetString (Seg->Name);
-            if (strcmp (SegName, "CODE") == 0 && Offset >= 0) {
-                CollAppend (&PendingRefs, NewSectionRef (RefSec, (unsigned long)Offset));
+        /* If we found a section+offset pattern, try to find and mark the export */
+        if (HasSection && HasOffset && RefSec != 0 && Offset >= 0) {
+            Export* E = FindExportAtSectionOffset (RefSec, (unsigned long)Offset);
+            if (E != 0) {
+                MarkExportLive (E);
+            } else {
+                fprintf(stderr, "GC: WARNING: No export at offset 0x%lX in section %p\n",
+                        (unsigned long)Offset, (void*)RefSec);
             }
         }
     }
@@ -364,30 +328,29 @@ static void ExtractSectionRefs (ExprNode* Expr, Section* ContextSec)
     if (Expr->Op == EXPR_SECTION) {
         Section* RefSec = GetExprSection (Expr);
         if (RefSec != 0) {
-            Segment* Seg = RefSec->Seg;
-            const char* SegName = GetString (Seg->Name);
-            if (strcmp (SegName, "CODE") == 0) {
-                CollAppend (&PendingRefs, NewSectionRef (RefSec, 0));
+            Export* E = FindExportAtSectionOffset (RefSec, 0);
+            if (E != 0) {
+                MarkExportLive (E);
             }
         }
     }
 
     /* Recurse into children */
     if (EXPR_NODETYPE (Expr->Op) == EXPR_BINARYNODE) {
-        ExtractSectionRefs (Expr->Left, ContextSec);
-        ExtractSectionRefs (Expr->Right, ContextSec);
+        MarkSectionRefLive (Expr->Left);
+        MarkSectionRefLive (Expr->Right);
     } else if (EXPR_NODETYPE (Expr->Op) == EXPR_UNARYNODE) {
-        ExtractSectionRefs (Expr->Left, ContextSec);
+        MarkSectionRefLive (Expr->Left);
     }
 }
 
 
 
-static void ExtractFragmentSectionRefs (Fragment* F)
-/* Extract section references from a fragment's expression */
+static void MarkFragmentRefsLive (Fragment* F)
+/* Mark CODE fragments referenced by this fragment's expression as live */
 {
     if (F->Type == FRAG_EXPR || F->Type == FRAG_SEXPR) {
-        ExtractSectionRefs (F->Expr, F->Sec);
+        MarkSectionRefLive (F->Expr);
     }
 }
 
@@ -494,8 +457,8 @@ static void MarkRootSymbols (void)
 
                 for (F = Sec->FragRoot; F != 0; F = F->Next) {
                     MarkFragmentSymbols (F);
-                    /* Also extract section references from root segments */
-                    ExtractFragmentSectionRefs (F);
+                    /* Also mark CODE fragments referenced from root segments */
+                    MarkFragmentRefsLive (F);
                 }
             }
         }
@@ -522,8 +485,6 @@ static void MarkRootSymbols (void)
 
     fprintf (stderr, "GC: Worklist has %u symbols after root marking\n",
              CollCount (&WorkList));
-    fprintf (stderr, "GC: Pending section refs: %u\n",
-             CollCount (&PendingRefs));
 }
 
 
@@ -543,46 +504,13 @@ static void PropagateReachability (void)
 
     while (CollCount (&WorkList) > 0) {
         Export* E = CollPop (&WorkList);
-        Section* Sec;
-        unsigned long Offset;
 
         ProcessedCount++;
 
         /* Mark symbols referenced by this export's expression */
         if (E->Expr) {
             MarkExprSymbolsLive (E->Expr);
-            /* Also extract section references */
-            ExtractSectionRefs (E->Expr, 0);
-        }
-
-        /* Get the section for this export */
-        Sec = GetExportSection (E, &Offset);
-        if (Sec != 0) {
-            /* Walk fragments in the symbol's range and mark their references */
-            Fragment* F;
-            unsigned long CurrentOffset = 0;
-            unsigned long EndOffset = Offset + E->Size;
-
-            /* If Size is 0, use a minimal size */
-            if (E->Size == 0) {
-                EndOffset = Offset + 1;
-            }
-
-            for (F = Sec->FragRoot; F != 0; F = F->Next) {
-                unsigned long FragEnd = CurrentOffset + F->Size;
-
-                /* Check if this fragment overlaps with the symbol's range */
-                if (CurrentOffset < EndOffset && FragEnd > Offset) {
-                    MarkFragmentSymbols (F);
-                    /* Extract section references from fragments in this export */
-                    ExtractFragmentSectionRefs (F);
-                }
-
-                CurrentOffset = FragEnd;
-                if (CurrentOffset >= EndOffset) {
-                    break;
-                }
-            }
+            MarkSectionRefLive (E->Expr);
         }
     }
 
@@ -591,153 +519,6 @@ static void PropagateReachability (void)
 }
 
 
-
-/*****************************************************************************/
-/*                         Build Live Ranges                                 */
-/*****************************************************************************/
-
-
-
-static void BuildLiveRanges (void)
-/* Build live ranges from live exports */
-{
-    unsigned I;
-
-    fprintf (stderr, "GC: Phase 4 - Building initial live ranges from exports\n");
-
-    for (I = 0; I < CollCount (&LiveExports); ++I) {
-        Export* E = CollAt (&LiveExports, I);
-        Section* Sec;
-        unsigned long Offset;
-
-        Sec = GetExportSection (E, &Offset);
-        if (Sec != 0) {
-            Segment* Seg = Sec->Seg;
-            const char* SegName = GetString (Seg->Name);
-
-            if (strcmp (SegName, "CODE") == 0) {
-                unsigned long Size = E->Size;
-                /* For zero-sized exports, use size 1 - they mark a single location */
-                if (Size == 0) {
-                    Size = 1;
-                }
-                AddLiveRange (Sec, Offset, Offset + Size);
-            }
-        }
-    }
-
-    fprintf (stderr, "GC: Built %u initial live ranges\n", CollCount (&LiveRanges));
-}
-
-
-
-/*****************************************************************************/
-/*                    Section Reference Transitive Closure                   */
-/*****************************************************************************/
-
-
-
-static unsigned long FindFragmentEndOffset (Section* Sec, unsigned long StartOffset)
-/* Find the end of the fragment that contains StartOffset.
- * This helps us determine how much code to keep for a local label target.
- * Returns the end offset of the fragment, or StartOffset + some default if not found.
- */
-{
-    Fragment* F;
-    unsigned long CurrentOffset = 0;
-
-    for (F = Sec->FragRoot; F != 0; F = F->Next) {
-        unsigned long FragEnd = CurrentOffset + F->Size;
-
-        if (StartOffset >= CurrentOffset && StartOffset < FragEnd) {
-            /* Found the fragment containing this offset */
-            return FragEnd;
-        }
-
-        CurrentOffset = FragEnd;
-    }
-
-    /* Not found - return a minimal range */
-    return StartOffset + 1;
-}
-
-
-
-static void ProcessPendingSectionRefs (void)
-/* Process pending section references and add them as live ranges.
- * This implements a transitive closure: when we add a new live range,
- * we extract section references from fragments in that range, which
- * may discover more targets to keep.
- */
-{
-    unsigned Iteration = 0;
-    unsigned TotalRefsProcessed = 0;
-
-    fprintf (stderr, "GC: Phase 5 - Processing section references (transitive closure)\n");
-
-    while (CollCount (&PendingRefs) > 0) {
-        unsigned I;
-        unsigned RefsThisIteration = CollCount (&PendingRefs);
-        unsigned NewRangesAdded = 0;
-
-        Iteration++;
-        TotalRefsProcessed += RefsThisIteration;
-
-        /* Process all currently pending refs */
-        for (I = 0; I < RefsThisIteration; ++I) {
-            SectionRef* SR = CollAt (&PendingRefs, I);
-            Section* Sec = SR->Sec;
-            unsigned long Offset = SR->Offset;
-
-            /* Check if this offset is already in a live range */
-            if (!IsOffsetLive (Sec, Offset)) {
-                /* Find the end of the fragment containing this offset */
-                unsigned long EndOffset = FindFragmentEndOffset (Sec, Offset);
-
-                /* Add this as a live range */
-                if (AddLiveRange (Sec, Offset, EndOffset)) {
-                    NewRangesAdded++;
-
-                    /* Now scan fragments in this new range for more section refs */
-                    Fragment* F;
-                    unsigned long CurrentOffset = 0;
-
-                    for (F = Sec->FragRoot; F != 0; F = F->Next) {
-                        unsigned long FragEnd = CurrentOffset + F->Size;
-
-                        if (CurrentOffset < EndOffset && FragEnd > Offset) {
-                            ExtractFragmentSectionRefs (F);
-                        }
-
-                        CurrentOffset = FragEnd;
-                        if (CurrentOffset >= EndOffset) {
-                            break;
-                        }
-                    }
-                }
-            }
-
-            FreeSectionRef (SR);
-        }
-
-        /* Remove processed refs from collection */
-        for (I = 0; I < RefsThisIteration; ++I) {
-            CollDelete (&PendingRefs, 0);
-        }
-
-        fprintf (stderr, "GC:   Iteration %u: processed %u refs, added %u new ranges, %u pending\n",
-                 Iteration, RefsThisIteration, NewRangesAdded, CollCount (&PendingRefs));
-
-        /* Safety limit to prevent infinite loops */
-        if (Iteration > 10000) {
-            fprintf (stderr, "GC: WARNING: Too many iterations, aborting transitive closure\n");
-            break;
-        }
-    }
-
-    fprintf (stderr, "GC: Transitive closure complete: %u iterations, %u total refs, %u live ranges\n",
-             Iteration, TotalRefsProcessed, CollCount (&LiveRanges));
-}
 
 
 
@@ -983,7 +764,7 @@ static SectionOffsetTable* FindSectionTable (Collection* SectionTables, Section*
 }
 
 static void RemoveDeadCode (void)
-/* Remove fragments that are not in live ranges, adjusting Expr offsets */
+/* Remove fragments in dead export ranges, adjusting Expr offsets */
 {
     unsigned I, J, K;
     unsigned SegCount = SegmentCount ();
@@ -992,11 +773,45 @@ static void RemoveDeadCode (void)
     unsigned FragsKept = 0;
     Collection SectionTables = STATIC_COLLECTION_INITIALIZER;  /* Collection of SectionOffsetTable* */
 
+    fprintf (stderr, "GC: Phase 5 - Collecting dead export ranges\n");
+
+    /* ============================================================
+     * Phase 1: Collect all dead export ranges (not live, size > 0)
+     * ============================================================ */
+    for (I = 0; I < CollCount (&ObjDataList); ++I) {
+        ObjData* O = CollAt (&ObjDataList, I);
+        for (J = 0; J < CollCount (&O->Exports); ++J) {
+            Export* E = CollAt (&O->Exports, J);
+
+            /* Skip if live or size is 0 */
+            if (IsExportLive (E) || E->Size == 0) {
+                continue;
+            }
+
+            /* Get section and offset */
+            Section* Sec;
+            unsigned long Offset;
+            Sec = GetExportSection (E, &Offset);
+
+            if (Sec != 0 && Sec->Seg != 0) {
+                const char* SegName = GetString (Sec->Seg->Name);
+                if (strcmp (SegName, "CODE") == 0) {
+                    DeadRange* DR = NewDeadRange (Sec, Offset, Offset + E->Size);
+                    CollAppend (&DeadRanges, DR);
+                    fprintf (stderr, "GC:   Dead export '%s' at 0x%lX-0x%lX (size %u)\n",
+                             GetString (E->Name), Offset, Offset + E->Size, E->Size);
+                }
+            }
+        }
+    }
+
+    fprintf (stderr, "GC: Collected %u dead export ranges\n", CollCount (&DeadRanges));
+
     fprintf (stderr, "GC: Phase 6 - Removing dead code\n");
 
     /* ============================================================
-     * Phase 1: Collect all referenced offsets from ALL fragments
-     *          targeting CODE sections
+     * Phase 2: Collect all referenced offsets from ALL fragments
+     *          targeting CODE sections (for offset adjustment)
      * ============================================================ */
     for (I = 0; I < CollCount (&ObjDataList); ++I) {
         ObjData* O = CollAt (&ObjDataList, I);
@@ -1012,6 +827,12 @@ static void RemoveDeadCode (void)
                         if (strcmp (SegName, "CODE") == 0) {
                             long RefOffset;
                             if (GetSectionPlusLiteralOffset (F->Expr, RefSec, &RefOffset) && RefOffset >= 0) {
+                                /* Check for cross-section reference */
+                                if (RefSec != Sec) {
+                                    const char* SrcSegName = (Sec->Seg != 0) ? GetString(Sec->Seg->Name) : "???";
+                                    fprintf(stderr, "GC: WARNING: Cross-section ref from %s:%p to CODE:%p offset 0x%lX\n",
+                                            SrcSegName, (void*)Sec, (void*)RefSec, (unsigned long)RefOffset);
+                                }
                                 AddOffsetToSection (&SectionTables, RefSec, (unsigned long)RefOffset);
                             }
                         }
@@ -1023,8 +844,10 @@ static void RemoveDeadCode (void)
     }
 
     /* Sort all offset tables */
+    fprintf(stderr, "GC: Phase 1 collected %u section tables\n", CollCount(&SectionTables));
     for (I = 0; I < CollCount (&SectionTables); ++I) {
         SectionOffsetTable* T = CollAt (&SectionTables, I);
+        fprintf(stderr, "GC:   Section %p: %u offsets\n", (void*)T->Sec, CollCount(&T->Offsets));
         CollSort (&T->Offsets, CompareOffsetEntries, 0);
     }
 
@@ -1051,60 +874,65 @@ static void RemoveDeadCode (void)
             SectionOffsetTable* Table = FindSectionTable (&SectionTables, Sec);
             unsigned OffsetIdx = 0;
 
+            fprintf(stderr, "GC: Phase 2 processing section %p, Table=%p (%u offsets)\n",
+                    (void*)Sec, (void*)Table, Table ? CollCount(&Table->Offsets) : 0);
+
             F = Sec->FragRoot;
             CurrentOffset = 0;
             CurrentlyRemovedBytes = 0;
 
-            while (F != 0) {
-                unsigned long FragEnd = CurrentOffset + F->Size;
-                int FragLive = 0;
-                unsigned long CheckOffset;
+            {
+                unsigned FragIndex = 0;
+                while (F != 0) {
+                    unsigned long FragEnd = CurrentOffset + F->Size;
+                    int FragLive;
 
-                Next = F->Next;
+                    Next = F->Next;
 
-                /* Check if fragment is live */
-                for (CheckOffset = CurrentOffset; CheckOffset < FragEnd; ++CheckOffset) {
-                    if (IsOffsetLive (Sec, CheckOffset)) {
-                        FragLive = 1;
-                        break;
-                    }
-                }
+                    /* Check if fragment is in a dead range */
+                    FragLive = !IsInDeadRange (Sec, CurrentOffset, FragEnd);
 
-                /* Update FinalOffset for all referenced offsets within this fragment's range */
-                if (Table != 0) {
-                    while (OffsetIdx < CollCount (&Table->Offsets)) {
-                        OffsetEntry* E = CollAt (&Table->Offsets, OffsetIdx);
-                        if (E->OrigOffset < FragEnd) {
-                            E->FinalOffset = E->OrigOffset - CurrentlyRemovedBytes;
-                            OffsetIdx++;
-                        } else {
-                            break;
+                    /* Update FinalOffset for all referenced offsets within this fragment's range */
+                    if (Table != 0) {
+                        while (OffsetIdx < CollCount (&Table->Offsets)) {
+                            OffsetEntry* E = CollAt (&Table->Offsets, OffsetIdx);
+                            if (E->OrigOffset < FragEnd) {
+                                E->FinalOffset = E->OrigOffset - CurrentlyRemovedBytes;
+                                OffsetIdx++;
+                            } else {
+                                break;
+                            }
                         }
                     }
-                }
 
-                if (FragLive) {
-                    Prev = F;
-                    FragsKept++;
-                } else {
-                    SectionBytesRemoved += F->Size;
-                    TotalRemoved += F->Size;
-                    CurrentlyRemovedBytes += F->Size;
-                    FragsRemoved++;
-
-                    /* Unlink the fragment */
-                    if (Prev == 0) {
-                        Sec->FragRoot = Next;
+                    if (FragLive) {
+                        fprintf (stderr, "GC:   Frag[%u] KEEP offset=0x%lX size=%u\n",
+                                 FragIndex, CurrentOffset, F->Size);
+                        Prev = F;
+                        FragsKept++;
                     } else {
-                        Prev->Next = Next;
-                    }
-                    if (Sec->FragLast == F) {
-                        Sec->FragLast = Prev;
-                    }
-                }
+                        fprintf (stderr, "GC:   Frag[%u] DELETE offset=0x%lX size=%u (removed so far: %lu)\n",
+                                 FragIndex, CurrentOffset, F->Size, CurrentlyRemovedBytes);
+                        SectionBytesRemoved += F->Size;
+                        TotalRemoved += F->Size;
+                        CurrentlyRemovedBytes += F->Size;
+                        FragsRemoved++;
 
-                CurrentOffset = FragEnd;
-                F = Next;
+                        /* Unlink the fragment */
+                        if (Prev == 0) {
+                            Sec->FragRoot = Next;
+                        } else {
+                            Prev->Next = Next;
+                        }
+                        if (Sec->FragLast == F) {
+                            Sec->FragLast = Prev;
+                        }
+                    }
+
+                    CurrentOffset = FragEnd;
+                    FragIndex++;
+                    F = Next;
+                }
             }
 
             /* Process any remaining offsets after the last fragment */
@@ -1128,6 +956,20 @@ static void RemoveDeadCode (void)
             Seg->Size += Sec->Fill;
             Sec->Offs = Seg->Size;
             Seg->Size += Sec->Size;
+        }
+    }
+
+    /* Dump all offset adjustments after Phase 2 */
+    fprintf (stderr, "GC: Offset adjustments after Phase 2:\n");
+    for (I = 0; I < CollCount (&SectionTables); ++I) {
+        SectionOffsetTable* T = CollAt (&SectionTables, I);
+        unsigned K;
+        fprintf (stderr, "GC:   Section %p:\n", (void*)T->Sec);
+        for (K = 0; K < CollCount (&T->Offsets); ++K) {
+            OffsetEntry* E = CollAt (&T->Offsets, K);
+            fprintf (stderr, "GC:     0x%lX -> 0x%lX%s\n",
+                     E->OrigOffset, E->FinalOffset,
+                     (E->OrigOffset != E->FinalOffset) ? " (CHANGED)" : "");
         }
     }
 
@@ -1331,11 +1173,16 @@ static void Cleanup (void)
         }
     }
 
-    /* Don't free memory - just clear the collections to avoid double-free */
+    /* Free dead ranges */
+    for (I = 0; I < CollCount (&DeadRanges); ++I) {
+        DeadRange* DR = CollAt (&DeadRanges, I);
+        FreeDeadRange (DR);
+    }
+
+    /* Clear the collections */
     CollDeleteAll (&WorkList);
     CollDeleteAll (&LiveExports);
-    CollDeleteAll (&LiveRanges);
-    CollDeleteAll (&PendingRefs);
+    CollDeleteAll (&DeadRanges);
 }
 
 
@@ -1351,8 +1198,8 @@ void GcCollect (void)
 {
     fprintf (stderr, "\n");
     fprintf (stderr, "========================================\n");
-    fprintf (stderr, "GC: Starting garbage collection (v6)\n");
-    fprintf (stderr, "GC: With symbol import tracking for local labels\n");
+    fprintf (stderr, "GC: Starting garbage collection (v8)\n");
+    fprintf (stderr, "GC: Export-based dead code removal\n");
     fprintf (stderr, "========================================\n");
 
     /* Reset statistics */
@@ -1361,20 +1208,13 @@ void GcCollect (void)
     ExportsDead = 0;
     CollDeleteAll (&WorkList);
     CollDeleteAll (&LiveExports);
-    CollDeleteAll (&LiveRanges);
-    CollDeleteAll (&PendingRefs);
+    CollDeleteAll (&DeadRanges);
 
     /* Mark roots */
     MarkRootSymbols ();
 
     /* Propagate reachability */
     PropagateReachability ();
-
-    /* Build initial live ranges from exports */
-    BuildLiveRanges ();
-
-    /* Process section references with transitive closure */
-    ProcessPendingSectionRefs ();
 
     /* Remove dead code */
     RemoveDeadCode ();
@@ -1386,7 +1226,7 @@ void GcCollect (void)
     /* Final report */
     fprintf (stderr, "\n");
     fprintf (stderr, "========================================\n");
-    fprintf (stderr, "GC Complete (v6):\n");
+    fprintf (stderr, "GC Complete (v8):\n");
     fprintf (stderr, "  Live exports: %u\n", ExportsLive);
     fprintf (stderr, "  Dead exports: %u\n", ExportsDead);
     fprintf (stderr, "  Bytes removed: %lu\n", TotalBytesRemoved);

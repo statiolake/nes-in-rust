@@ -1,0 +1,1765 @@
+
+========================================
+GC: Starting garbage collection (v8)
+GC: Export-based dead code removal
+========================================
+GC: Phase 1 - Marking root segments
+GC: WARNING: No export at offset 0xD in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0xD in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0x14 in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0x14 in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0x1D in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0x1D in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0x20 in section 0xaaab00b6e6a0
+GC: WARNING: No export at offset 0x28 in section 0xaaab00b87370
+GC: WARNING: No export at offset 0x35 in section 0xaaab00ae2920
+GC: WARNING: No export at offset 0x5C in section 0xaaab00ae2920
+GC: Phase 2 - Marking constructor/destructor symbols
+GC: Worklist has 15 symbols after root marking
+GC: Phase 3 - Propagating reachability
+GC: WARNING: No export at offset 0x30 in section 0xaaab00b07bf0
+GC: Processed 16 symbols, 16 total live
+GC: Phase 5 - Collecting dead export ranges
+GC:   Dead export '_main' at 0x0-0x1A (size 26)
+GC:   Dead export 'addysp' at 0x1-0x2 (size 1)
+GC:   Dead export 'axlong' at 0x0-0x2 (size 2)
+GC:   Dead export '_cputc' at 0x5-0x7 (size 2)
+GC:   Dead export 'decsp4' at 0x0-0xD (size 13)
+GC:   Dead export 'decsp6' at 0x0-0xD (size 13)
+GC:   Dead export 'incsp2' at 0x8-0x16 (size 14)
+GC:   Dead export 'popax' at 0x0-0x8 (size 8)
+GC:   Dead export 'negeax' at 0x0-0x1 (size 1)
+GC:   Dead export '_ultoa' at 0x59-0x5C (size 3)
+GC:   Dead export '_ltoa' at 0x18-0x1B (size 3)
+GC:   Dead export 'popa' at 0x0-0xC (size 12)
+GC:   Dead export 'popptr1' at 0x0-0xE (size 14)
+GC:   Dead export 'ppubuf_put' at 0xC-0x2C (size 32)
+GC:   Dead export 'ppubuf_wait' at 0x5-0xC (size 7)
+GC:   Dead export 'push1' at 0x0-0x5 (size 5)
+GC:   Dead export 'pushax' at 0x4-0x1A (size 22)
+GC:   Dead export 'pusha0' at 0x2-0x4 (size 2)
+GC:   Dead export 'push0' at 0x0-0x2 (size 2)
+GC:   Dead export 'setcursor' at 0x0-0xF (size 15)
+GC: Collected 20 dead export ranges
+GC: Phase 6 - Removing dead code
+GC: WARNING: Cross-section ref from ONCE:0xaaab00ae2160 to CODE:0xaaab00b87370 offset 0x28
+GC: WARNING: Cross-section ref from DATA:0xaaab00d6b570 to CODE:0xaaab00d8b0b0 offset 0x0
+GC: Phase 1 collected 7 section tables
+GC:   Section 0xaaab00adb890: 2 offsets
+GC:   Section 0xaaab00adf2b0: 22 offsets
+GC:   Section 0xaaab00b87370: 2 offsets
+GC:   Section 0xaaab00c67c80: 3 offsets
+GC:   Section 0xaaab00c498d0: 1 offsets
+GC:   Section 0xaaab00d2b2d0: 2 offsets
+GC:   Section 0xaaab00d8b0b0: 2 offsets
+GC: Phase 2 processing section 0xaaab00adb890, Table=0xaaab00e55e60 (2 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
+GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[3] DELETE offset=0x3 size=1 (removed so far: 3)
+GC:   Frag[4] DELETE offset=0x4 size=1 (removed so far: 4)
+GC:   Frag[5] DELETE offset=0x5 size=2 (removed so far: 5)
+GC:   Frag[6] DELETE offset=0x7 size=2 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x9 size=1 (removed so far: 9)
+GC:   Frag[8] DELETE offset=0xA size=2 (removed so far: 10)
+GC:   Frag[9] DELETE offset=0xC size=1 (removed so far: 12)
+GC:   Frag[10] DELETE offset=0xD size=2 (removed so far: 13)
+GC:   Frag[11] DELETE offset=0xF size=1 (removed so far: 15)
+GC:   Frag[12] DELETE offset=0x10 size=2 (removed so far: 16)
+GC:   Frag[13] DELETE offset=0x12 size=2 (removed so far: 18)
+GC:   Frag[14] DELETE offset=0x14 size=2 (removed so far: 20)
+GC:   Frag[15] DELETE offset=0x16 size=1 (removed so far: 22)
+GC:   Frag[16] DELETE offset=0x17 size=2 (removed so far: 23)
+GC:   Frag[17] DELETE offset=0x19 size=1 (removed so far: 25)
+GC: Phase 2 processing section 0xaaab00b34200, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab00adece0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab00adf2b0, Table=0xaaab00e55ca0 (22 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=2
+GC:   Frag[1] KEEP offset=0x2 size=1
+GC:   Frag[2] KEEP offset=0x3 size=1
+GC:   Frag[3] KEEP offset=0x4 size=1
+GC:   Frag[4] KEEP offset=0x5 size=1
+GC:   Frag[5] KEEP offset=0x6 size=1
+GC:   Frag[6] KEEP offset=0x7 size=1
+GC:   Frag[7] KEEP offset=0x8 size=1
+GC:   Frag[8] KEEP offset=0x9 size=1
+GC:   Frag[9] KEEP offset=0xA size=1
+GC:   Frag[10] KEEP offset=0xB size=1
+GC:   Frag[11] KEEP offset=0xC size=2
+GC:   Frag[12] KEEP offset=0xE size=1
+GC:   Frag[13] KEEP offset=0xF size=2
+GC:   Frag[14] KEEP offset=0x11 size=1
+GC:   Frag[15] KEEP offset=0x12 size=2
+GC:   Frag[16] KEEP offset=0x14 size=1
+GC:   Frag[17] KEEP offset=0x15 size=1
+GC:   Frag[18] KEEP offset=0x16 size=1
+GC:   Frag[19] KEEP offset=0x17 size=1
+GC:   Frag[20] KEEP offset=0x18 size=1
+GC:   Frag[21] KEEP offset=0x19 size=2
+GC:   Frag[22] KEEP offset=0x1B size=1
+GC:   Frag[23] KEEP offset=0x1C size=2
+GC:   Frag[24] KEEP offset=0x1E size=1
+GC:   Frag[25] KEEP offset=0x1F size=2
+GC:   Frag[26] KEEP offset=0x21 size=1
+GC:   Frag[27] KEEP offset=0x22 size=1
+GC:   Frag[28] KEEP offset=0x23 size=1
+GC:   Frag[29] KEEP offset=0x24 size=2
+GC:   Frag[30] KEEP offset=0x26 size=1
+GC:   Frag[31] KEEP offset=0x27 size=1
+GC:   Frag[32] KEEP offset=0x28 size=1
+GC:   Frag[33] KEEP offset=0x29 size=1
+GC:   Frag[34] KEEP offset=0x2A size=1
+GC:   Frag[35] KEEP offset=0x2B size=1
+GC:   Frag[36] KEEP offset=0x2C size=1
+GC:   Frag[37] KEEP offset=0x2D size=1
+GC:   Frag[38] KEEP offset=0x2E size=2
+GC:   Frag[39] KEEP offset=0x30 size=1
+GC:   Frag[40] KEEP offset=0x31 size=1
+GC:   Frag[41] KEEP offset=0x32 size=1
+GC:   Frag[42] KEEP offset=0x33 size=2
+GC:   Frag[43] KEEP offset=0x35 size=1
+GC:   Frag[44] KEEP offset=0x36 size=2
+GC:   Frag[45] KEEP offset=0x38 size=1
+GC:   Frag[46] KEEP offset=0x39 size=2
+GC:   Frag[47] KEEP offset=0x3B size=1
+GC:   Frag[48] KEEP offset=0x3C size=1
+GC:   Frag[49] KEEP offset=0x3D size=1
+GC:   Frag[50] KEEP offset=0x3E size=2
+GC:   Frag[51] KEEP offset=0x40 size=1
+GC:   Frag[52] KEEP offset=0x41 size=2
+GC:   Frag[53] KEEP offset=0x43 size=1
+GC:   Frag[54] KEEP offset=0x44 size=2
+GC:   Frag[55] KEEP offset=0x46 size=1
+GC:   Frag[56] KEEP offset=0x47 size=1
+GC:   Frag[57] KEEP offset=0x48 size=1
+GC:   Frag[58] KEEP offset=0x49 size=1
+GC:   Frag[59] KEEP offset=0x4A size=1
+GC:   Frag[60] KEEP offset=0x4B size=2
+GC:   Frag[61] KEEP offset=0x4D size=2
+GC:   Frag[62] KEEP offset=0x4F size=1
+GC:   Frag[63] KEEP offset=0x50 size=1
+GC:   Frag[64] KEEP offset=0x51 size=1
+GC:   Frag[65] KEEP offset=0x52 size=1
+GC:   Frag[66] KEEP offset=0x53 size=1
+GC:   Frag[67] KEEP offset=0x54 size=1
+GC:   Frag[68] KEEP offset=0x55 size=1
+GC:   Frag[69] KEEP offset=0x56 size=2
+GC:   Frag[70] KEEP offset=0x58 size=1
+GC:   Frag[71] KEEP offset=0x59 size=1
+GC:   Frag[72] KEEP offset=0x5A size=1
+GC:   Frag[73] KEEP offset=0x5B size=1
+GC:   Frag[74] KEEP offset=0x5C size=1
+GC:   Frag[75] KEEP offset=0x5D size=1
+GC:   Frag[76] KEEP offset=0x5E size=1
+GC:   Frag[77] KEEP offset=0x5F size=2
+GC:   Frag[78] KEEP offset=0x61 size=1
+GC:   Frag[79] KEEP offset=0x62 size=1
+GC:   Frag[80] KEEP offset=0x63 size=2
+GC:   Frag[81] KEEP offset=0x65 size=1
+GC:   Frag[82] KEEP offset=0x66 size=1
+GC:   Frag[83] KEEP offset=0x67 size=1
+GC:   Frag[84] KEEP offset=0x68 size=2
+GC:   Frag[85] KEEP offset=0x6A size=1
+GC:   Frag[86] KEEP offset=0x6B size=1
+GC:   Frag[87] KEEP offset=0x6C size=1
+GC:   Frag[88] KEEP offset=0x6D size=1
+GC:   Frag[89] KEEP offset=0x6E size=1
+GC:   Frag[90] KEEP offset=0x6F size=1
+GC:   Frag[91] KEEP offset=0x70 size=1
+GC:   Frag[92] KEEP offset=0x71 size=1
+GC:   Frag[93] KEEP offset=0x72 size=1
+GC:   Frag[94] KEEP offset=0x73 size=1
+GC:   Frag[95] KEEP offset=0x74 size=1
+GC:   Frag[96] KEEP offset=0x75 size=1
+GC:   Frag[97] KEEP offset=0x76 size=1
+GC:   Frag[98] KEEP offset=0x77 size=1
+GC:   Frag[99] KEEP offset=0x78 size=1
+GC:   Frag[100] KEEP offset=0x79 size=1
+GC:   Frag[101] KEEP offset=0x7A size=1
+GC:   Frag[102] KEEP offset=0x7B size=1
+GC:   Frag[103] KEEP offset=0x7C size=1
+GC:   Frag[104] KEEP offset=0x7D size=1
+GC:   Frag[105] KEEP offset=0x7E size=1
+GC:   Frag[106] KEEP offset=0x7F size=1
+GC:   Frag[107] KEEP offset=0x80 size=1
+GC:   Frag[108] KEEP offset=0x81 size=1
+GC:   Frag[109] KEEP offset=0x82 size=1
+GC:   Frag[110] KEEP offset=0x83 size=1
+GC:   Frag[111] KEEP offset=0x84 size=1
+GC:   Frag[112] KEEP offset=0x85 size=1
+GC:   Frag[113] KEEP offset=0x86 size=1
+GC:   Frag[114] KEEP offset=0x87 size=1
+GC:   Frag[115] KEEP offset=0x88 size=1
+GC:   Frag[116] KEEP offset=0x89 size=1
+GC:   Frag[117] KEEP offset=0x8A size=1
+GC:   Frag[118] KEEP offset=0x8B size=1
+GC:   Frag[119] KEEP offset=0x8C size=1
+GC:   Frag[120] KEEP offset=0x8D size=1
+GC:   Frag[121] KEEP offset=0x8E size=1
+GC:   Frag[122] KEEP offset=0x8F size=1
+GC:   Frag[123] KEEP offset=0x90 size=1
+GC:   Frag[124] KEEP offset=0x91 size=1
+GC:   Frag[125] KEEP offset=0x92 size=1
+GC:   Frag[126] KEEP offset=0x93 size=1
+GC:   Frag[127] KEEP offset=0x94 size=1
+GC:   Frag[128] KEEP offset=0x95 size=2
+GC:   Frag[129] KEEP offset=0x97 size=1
+GC:   Frag[130] KEEP offset=0x98 size=2
+GC:   Frag[131] KEEP offset=0x9A size=1
+GC:   Frag[132] KEEP offset=0x9B size=2
+GC:   Frag[133] KEEP offset=0x9D size=1
+GC:   Frag[134] KEEP offset=0x9E size=1
+GC:   Frag[135] KEEP offset=0x9F size=1
+GC:   Frag[136] KEEP offset=0xA0 size=1
+GC:   Frag[137] KEEP offset=0xA1 size=1
+GC:   Frag[138] KEEP offset=0xA2 size=1
+GC:   Frag[139] KEEP offset=0xA3 size=1
+GC:   Frag[140] KEEP offset=0xA4 size=2
+GC:   Frag[141] KEEP offset=0xA6 size=1
+GC:   Frag[142] KEEP offset=0xA7 size=1
+GC:   Frag[143] KEEP offset=0xA8 size=1
+GC:   Frag[144] KEEP offset=0xA9 size=1
+GC:   Frag[145] KEEP offset=0xAA size=2
+GC:   Frag[146] KEEP offset=0xAC size=1
+GC:   Frag[147] KEEP offset=0xAD size=1
+GC:   Frag[148] KEEP offset=0xAE size=1
+GC:   Frag[149] KEEP offset=0xAF size=1
+GC:   Frag[150] KEEP offset=0xB0 size=1
+GC:   Frag[151] KEEP offset=0xB1 size=2
+GC:   Frag[152] KEEP offset=0xB3 size=1
+GC:   Frag[153] KEEP offset=0xB4 size=2
+GC:   Frag[154] KEEP offset=0xB6 size=1
+GC:   Frag[155] KEEP offset=0xB7 size=2
+GC:   Frag[156] KEEP offset=0xB9 size=1
+GC:   Frag[157] KEEP offset=0xBA size=1
+GC:   Frag[158] KEEP offset=0xBB size=1
+GC:   Frag[159] KEEP offset=0xBC size=2
+GC:   Frag[160] KEEP offset=0xBE size=1
+GC:   Frag[161] KEEP offset=0xBF size=1
+GC:   Frag[162] KEEP offset=0xC0 size=1
+GC:   Frag[163] KEEP offset=0xC1 size=1
+GC:   Frag[164] KEEP offset=0xC2 size=2
+GC:   Frag[165] KEEP offset=0xC4 size=1
+GC:   Frag[166] KEEP offset=0xC5 size=2
+GC:   Frag[167] KEEP offset=0xC7 size=1
+GC:   Frag[168] KEEP offset=0xC8 size=2
+GC:   Frag[169] KEEP offset=0xCA size=1
+GC:   Frag[170] KEEP offset=0xCB size=2
+GC:   Frag[171] KEEP offset=0xCD size=1
+GC:   Frag[172] KEEP offset=0xCE size=2
+GC:   Frag[173] KEEP offset=0xD0 size=1
+GC:   Frag[174] KEEP offset=0xD1 size=2
+GC:   Frag[175] KEEP offset=0xD3 size=1
+GC:   Frag[176] KEEP offset=0xD4 size=2
+GC:   Frag[177] KEEP offset=0xD6 size=1
+GC:   Frag[178] KEEP offset=0xD7 size=2
+GC:   Frag[179] KEEP offset=0xD9 size=1
+GC:   Frag[180] KEEP offset=0xDA size=1
+GC:   Frag[181] KEEP offset=0xDB size=1
+GC:   Frag[182] KEEP offset=0xDC size=2
+GC:   Frag[183] KEEP offset=0xDE size=1
+GC:   Frag[184] KEEP offset=0xDF size=2
+GC:   Frag[185] KEEP offset=0xE1 size=1
+GC:   Frag[186] KEEP offset=0xE2 size=1
+GC:   Frag[187] KEEP offset=0xE3 size=1
+GC:   Frag[188] KEEP offset=0xE4 size=2
+GC:   Frag[189] KEEP offset=0xE6 size=1
+GC:   Frag[190] KEEP offset=0xE7 size=1
+GC:   Frag[191] KEEP offset=0xE8 size=1
+GC:   Frag[192] KEEP offset=0xE9 size=2
+GC:   Frag[193] KEEP offset=0xEB size=1
+GC:   Frag[194] KEEP offset=0xEC size=2
+GC:   Frag[195] KEEP offset=0xEE size=1
+GC:   Frag[196] KEEP offset=0xEF size=1
+GC:   Frag[197] KEEP offset=0xF0 size=1
+GC:   Frag[198] KEEP offset=0xF1 size=2
+GC:   Frag[199] KEEP offset=0xF3 size=1
+GC:   Frag[200] KEEP offset=0xF4 size=2
+GC:   Frag[201] KEEP offset=0xF6 size=1
+GC:   Frag[202] KEEP offset=0xF7 size=2
+GC:   Frag[203] KEEP offset=0xF9 size=1
+GC:   Frag[204] KEEP offset=0xFA size=2
+GC:   Frag[205] KEEP offset=0xFC size=1
+GC:   Frag[206] KEEP offset=0xFD size=1
+GC:   Frag[207] KEEP offset=0xFE size=1
+GC:   Frag[208] KEEP offset=0xFF size=1
+GC:   Frag[209] KEEP offset=0x100 size=1
+GC:   Frag[210] KEEP offset=0x101 size=1
+GC:   Frag[211] KEEP offset=0x102 size=1
+GC:   Frag[212] KEEP offset=0x103 size=1
+GC:   Frag[213] KEEP offset=0x104 size=1
+GC:   Frag[214] KEEP offset=0x105 size=2
+GC:   Frag[215] KEEP offset=0x107 size=1
+GC:   Frag[216] KEEP offset=0x108 size=1
+GC:   Frag[217] KEEP offset=0x109 size=1
+GC:   Frag[218] KEEP offset=0x10A size=1
+GC:   Frag[219] KEEP offset=0x10B size=1
+GC:   Frag[220] KEEP offset=0x10C size=2
+GC:   Frag[221] KEEP offset=0x10E size=1
+GC:   Frag[222] KEEP offset=0x10F size=1
+GC:   Frag[223] KEEP offset=0x110 size=1
+GC:   Frag[224] KEEP offset=0x111 size=1
+GC:   Frag[225] KEEP offset=0x112 size=2
+GC:   Frag[226] KEEP offset=0x114 size=1
+GC:   Frag[227] KEEP offset=0x115 size=1
+GC:   Frag[228] KEEP offset=0x116 size=1
+GC:   Frag[229] KEEP offset=0x117 size=1
+GC:   Frag[230] KEEP offset=0x118 size=1
+GC:   Frag[231] KEEP offset=0x119 size=1
+GC:   Frag[232] KEEP offset=0x11A size=1
+GC:   Frag[233] KEEP offset=0x11B size=1
+GC:   Frag[234] KEEP offset=0x11C size=1
+GC:   Frag[235] KEEP offset=0x11D size=1
+GC:   Frag[236] KEEP offset=0x11E size=2
+GC:   Frag[237] KEEP offset=0x120 size=1
+GC:   Frag[238] KEEP offset=0x121 size=1
+GC:   Frag[239] KEEP offset=0x122 size=1
+GC:   Frag[240] KEEP offset=0x123 size=1
+GC:   Frag[241] KEEP offset=0x124 size=2
+GC:   Frag[242] KEEP offset=0x126 size=1
+GC:   Frag[243] KEEP offset=0x127 size=1
+GC:   Frag[244] KEEP offset=0x128 size=1
+GC:   Frag[245] KEEP offset=0x129 size=1
+GC:   Frag[246] KEEP offset=0x12A size=1
+GC:   Frag[247] KEEP offset=0x12B size=1
+GC:   Frag[248] KEEP offset=0x12C size=1
+GC:   Frag[249] KEEP offset=0x12D size=1
+GC:   Frag[250] KEEP offset=0x12E size=2
+GC:   Frag[251] KEEP offset=0x130 size=1
+GC:   Frag[252] KEEP offset=0x131 size=1
+GC:   Frag[253] KEEP offset=0x132 size=1
+GC:   Frag[254] KEEP offset=0x133 size=1
+GC:   Frag[255] KEEP offset=0x134 size=2
+GC:   Frag[256] KEEP offset=0x136 size=1
+GC:   Frag[257] KEEP offset=0x137 size=1
+GC:   Frag[258] KEEP offset=0x138 size=1
+GC:   Frag[259] KEEP offset=0x139 size=1
+GC:   Frag[260] KEEP offset=0x13A size=1
+GC:   Frag[261] KEEP offset=0x13B size=1
+GC:   Frag[262] KEEP offset=0x13C size=1
+GC:   Frag[263] KEEP offset=0x13D size=1
+GC:   Frag[264] KEEP offset=0x13E size=1
+GC:   Frag[265] KEEP offset=0x13F size=1
+GC:   Frag[266] KEEP offset=0x140 size=1
+GC:   Frag[267] KEEP offset=0x141 size=1
+GC:   Frag[268] KEEP offset=0x142 size=1
+GC:   Frag[269] KEEP offset=0x143 size=1
+GC:   Frag[270] KEEP offset=0x144 size=1
+GC:   Frag[271] KEEP offset=0x145 size=1
+GC:   Frag[272] KEEP offset=0x146 size=1
+GC:   Frag[273] KEEP offset=0x147 size=1
+GC:   Frag[274] KEEP offset=0x148 size=1
+GC:   Frag[275] KEEP offset=0x149 size=1
+GC:   Frag[276] KEEP offset=0x14A size=1
+GC:   Frag[277] KEEP offset=0x14B size=1
+GC:   Frag[278] KEEP offset=0x14C size=1
+GC:   Frag[279] KEEP offset=0x14D size=1
+GC:   Frag[280] KEEP offset=0x14E size=1
+GC:   Frag[281] KEEP offset=0x14F size=1
+GC:   Frag[282] KEEP offset=0x150 size=1
+GC:   Frag[283] KEEP offset=0x151 size=1
+GC:   Frag[284] KEEP offset=0x152 size=1
+GC:   Frag[285] KEEP offset=0x153 size=1
+GC:   Frag[286] KEEP offset=0x154 size=1
+GC:   Frag[287] KEEP offset=0x155 size=1
+GC:   Frag[288] KEEP offset=0x156 size=1
+GC:   Frag[289] KEEP offset=0x157 size=1
+GC:   Frag[290] KEEP offset=0x158 size=1
+GC:   Frag[291] KEEP offset=0x159 size=2
+GC:   Frag[292] KEEP offset=0x15B size=2
+GC:   Frag[293] KEEP offset=0x15D size=1
+GC:   Frag[294] KEEP offset=0x15E size=1
+GC:   Frag[295] KEEP offset=0x15F size=1
+GC:   Frag[296] KEEP offset=0x160 size=1
+GC:   Frag[297] KEEP offset=0x161 size=1
+GC:   Frag[298] KEEP offset=0x162 size=1
+GC:   Frag[299] KEEP offset=0x163 size=1
+GC:   Frag[300] KEEP offset=0x164 size=1
+GC:   Frag[301] KEEP offset=0x165 size=1
+GC:   Frag[302] KEEP offset=0x166 size=1
+GC:   Frag[303] KEEP offset=0x167 size=1
+GC:   Frag[304] KEEP offset=0x168 size=1
+GC:   Frag[305] KEEP offset=0x169 size=1
+GC:   Frag[306] KEEP offset=0x16A size=1
+GC:   Frag[307] KEEP offset=0x16B size=1
+GC:   Frag[308] KEEP offset=0x16C size=1
+GC:   Frag[309] KEEP offset=0x16D size=1
+GC:   Frag[310] KEEP offset=0x16E size=1
+GC:   Frag[311] KEEP offset=0x16F size=1
+GC:   Frag[312] KEEP offset=0x170 size=1
+GC:   Frag[313] KEEP offset=0x171 size=1
+GC:   Frag[314] KEEP offset=0x172 size=1
+GC:   Frag[315] KEEP offset=0x173 size=1
+GC:   Frag[316] KEEP offset=0x174 size=1
+GC:   Frag[317] KEEP offset=0x175 size=1
+GC:   Frag[318] KEEP offset=0x176 size=1
+GC:   Frag[319] KEEP offset=0x177 size=1
+GC:   Frag[320] KEEP offset=0x178 size=1
+GC:   Frag[321] KEEP offset=0x179 size=1
+GC:   Frag[322] KEEP offset=0x17A size=1
+GC:   Frag[323] KEEP offset=0x17B size=2
+GC:   Frag[324] KEEP offset=0x17D size=1
+GC:   Frag[325] KEEP offset=0x17E size=2
+GC:   Frag[326] KEEP offset=0x180 size=1
+GC:   Frag[327] KEEP offset=0x181 size=1
+GC:   Frag[328] KEEP offset=0x182 size=1
+GC:   Frag[329] KEEP offset=0x183 size=2
+GC:   Frag[330] KEEP offset=0x185 size=1
+GC:   Frag[331] KEEP offset=0x186 size=2
+GC:   Frag[332] KEEP offset=0x188 size=1
+GC:   Frag[333] KEEP offset=0x189 size=1
+GC:   Frag[334] KEEP offset=0x18A size=1
+GC:   Frag[335] KEEP offset=0x18B size=1
+GC:   Frag[336] KEEP offset=0x18C size=1
+GC:   Frag[337] KEEP offset=0x18D size=1
+GC:   Frag[338] KEEP offset=0x18E size=2
+GC:   Frag[339] KEEP offset=0x190 size=1
+GC:   Frag[340] KEEP offset=0x191 size=1
+GC:   Frag[341] KEEP offset=0x192 size=1
+GC:   Frag[342] KEEP offset=0x193 size=1
+GC:   Frag[343] KEEP offset=0x194 size=2
+GC:   Frag[344] KEEP offset=0x196 size=1
+GC:   Frag[345] KEEP offset=0x197 size=1
+GC:   Frag[346] KEEP offset=0x198 size=1
+GC:   Frag[347] KEEP offset=0x199 size=2
+GC:   Frag[348] KEEP offset=0x19B size=1
+GC:   Frag[349] KEEP offset=0x19C size=2
+GC:   Frag[350] KEEP offset=0x19E size=1
+GC:   Frag[351] KEEP offset=0x19F size=2
+GC:   Frag[352] KEEP offset=0x1A1 size=2
+GC:   Frag[353] KEEP offset=0x1A3 size=1
+GC:   Frag[354] KEEP offset=0x1A4 size=1
+GC:   Frag[355] KEEP offset=0x1A5 size=1
+GC:   Frag[356] KEEP offset=0x1A6 size=2
+GC:   Frag[357] KEEP offset=0x1A8 size=1
+GC:   Frag[358] KEEP offset=0x1A9 size=1
+GC:   Frag[359] KEEP offset=0x1AA size=1
+GC:   Frag[360] KEEP offset=0x1AB size=1
+GC:   Frag[361] KEEP offset=0x1AC size=1
+GC:   Frag[362] KEEP offset=0x1AD size=2
+GC:   Frag[363] KEEP offset=0x1AF size=1
+GC:   Frag[364] KEEP offset=0x1B0 size=1
+GC:   Frag[365] KEEP offset=0x1B1 size=1
+GC:   Frag[366] KEEP offset=0x1B2 size=2
+GC:   Frag[367] KEEP offset=0x1B4 size=1
+GC:   Frag[368] KEEP offset=0x1B5 size=1
+GC:   Frag[369] KEEP offset=0x1B6 size=2
+GC:   Frag[370] KEEP offset=0x1B8 size=1
+GC:   Frag[371] KEEP offset=0x1B9 size=1
+GC:   Frag[372] KEEP offset=0x1BA size=1
+GC:   Frag[373] KEEP offset=0x1BB size=2
+GC:   Frag[374] KEEP offset=0x1BD size=1
+GC:   Frag[375] KEEP offset=0x1BE size=1
+GC:   Frag[376] KEEP offset=0x1BF size=2
+GC:   Frag[377] KEEP offset=0x1C1 size=1
+GC:   Frag[378] KEEP offset=0x1C2 size=1
+GC:   Frag[379] KEEP offset=0x1C3 size=1
+GC:   Frag[380] KEEP offset=0x1C4 size=2
+GC:   Frag[381] KEEP offset=0x1C6 size=1
+GC:   Frag[382] KEEP offset=0x1C7 size=1
+GC:   Frag[383] KEEP offset=0x1C8 size=2
+GC:   Frag[384] KEEP offset=0x1CA size=1
+GC:   Frag[385] KEEP offset=0x1CB size=1
+GC:   Frag[386] KEEP offset=0x1CC size=1
+GC:   Frag[387] KEEP offset=0x1CD size=2
+GC:   Frag[388] KEEP offset=0x1CF size=1
+GC:   Frag[389] KEEP offset=0x1D0 size=2
+GC:   Frag[390] KEEP offset=0x1D2 size=1
+GC:   Frag[391] KEEP offset=0x1D3 size=2
+GC:   Frag[392] KEEP offset=0x1D5 size=2
+GC:   Frag[393] KEEP offset=0x1D7 size=2
+GC:   Frag[394] KEEP offset=0x1D9 size=1
+GC:   Frag[395] KEEP offset=0x1DA size=1
+GC:   Frag[396] KEEP offset=0x1DB size=1
+GC:   Frag[397] KEEP offset=0x1DC size=1
+GC:   Frag[398] KEEP offset=0x1DD size=2
+GC:   Frag[399] KEEP offset=0x1DF size=1
+GC:   Frag[400] KEEP offset=0x1E0 size=1
+GC:   Frag[401] KEEP offset=0x1E1 size=1
+GC:   Frag[402] KEEP offset=0x1E2 size=2
+GC:   Frag[403] KEEP offset=0x1E4 size=2
+GC:   Frag[404] KEEP offset=0x1E6 size=1
+GC:   Frag[405] KEEP offset=0x1E7 size=1
+GC:   Frag[406] KEEP offset=0x1E8 size=1
+GC:   Frag[407] KEEP offset=0x1E9 size=2
+GC:   Frag[408] KEEP offset=0x1EB size=1
+GC:   Frag[409] KEEP offset=0x1EC size=2
+GC:   Frag[410] KEEP offset=0x1EE size=1
+GC:   Frag[411] KEEP offset=0x1EF size=2
+GC:   Frag[412] KEEP offset=0x1F1 size=1
+GC:   Frag[413] KEEP offset=0x1F2 size=2
+GC:   Frag[414] KEEP offset=0x1F4 size=1
+GC:   Frag[415] KEEP offset=0x1F5 size=2
+GC:   Frag[416] KEEP offset=0x1F7 size=1
+GC:   Frag[417] KEEP offset=0x1F8 size=2
+GC:   Frag[418] KEEP offset=0x1FA size=1
+GC:   Frag[419] KEEP offset=0x1FB size=2
+GC:   Frag[420] KEEP offset=0x1FD size=1
+GC:   Frag[421] KEEP offset=0x1FE size=2
+GC:   Frag[422] KEEP offset=0x200 size=1
+GC:   Frag[423] KEEP offset=0x201 size=1
+GC:   Frag[424] KEEP offset=0x202 size=2
+GC:   Frag[425] KEEP offset=0x204 size=1
+GC:   Frag[426] KEEP offset=0x205 size=1
+GC:   Frag[427] KEEP offset=0x206 size=1
+GC:   Frag[428] KEEP offset=0x207 size=2
+GC:   Frag[429] KEEP offset=0x209 size=1
+GC:   Frag[430] KEEP offset=0x20A size=1
+GC:   Frag[431] KEEP offset=0x20B size=2
+GC:   Frag[432] KEEP offset=0x20D size=1
+GC:   Frag[433] KEEP offset=0x20E size=1
+GC:   Frag[434] KEEP offset=0x20F size=1
+GC:   Frag[435] KEEP offset=0x210 size=2
+GC:   Frag[436] KEEP offset=0x212 size=1
+GC:   Frag[437] KEEP offset=0x213 size=2
+GC:   Frag[438] KEEP offset=0x215 size=1
+GC:   Frag[439] KEEP offset=0x216 size=2
+GC:   Frag[440] KEEP offset=0x218 size=1
+GC:   Frag[441] KEEP offset=0x219 size=2
+GC:   Frag[442] KEEP offset=0x21B size=1
+GC:   Frag[443] KEEP offset=0x21C size=2
+GC:   Frag[444] KEEP offset=0x21E size=1
+GC:   Frag[445] KEEP offset=0x21F size=2
+GC:   Frag[446] KEEP offset=0x221 size=1
+GC:   Frag[447] KEEP offset=0x222 size=1
+GC:   Frag[448] KEEP offset=0x223 size=2
+GC:   Frag[449] KEEP offset=0x225 size=1
+GC:   Frag[450] KEEP offset=0x226 size=1
+GC:   Frag[451] KEEP offset=0x227 size=2
+GC:   Frag[452] KEEP offset=0x229 size=1
+GC:   Frag[453] KEEP offset=0x22A size=1
+GC:   Frag[454] KEEP offset=0x22B size=2
+GC:   Frag[455] KEEP offset=0x22D size=1
+GC:   Frag[456] KEEP offset=0x22E size=1
+GC:   Frag[457] KEEP offset=0x22F size=2
+GC:   Frag[458] KEEP offset=0x231 size=1
+GC:   Frag[459] KEEP offset=0x232 size=1
+GC:   Frag[460] KEEP offset=0x233 size=2
+GC:   Frag[461] KEEP offset=0x235 size=1
+GC:   Frag[462] KEEP offset=0x236 size=1
+GC:   Frag[463] KEEP offset=0x237 size=2
+GC:   Frag[464] KEEP offset=0x239 size=1
+GC:   Frag[465] KEEP offset=0x23A size=1
+GC:   Frag[466] KEEP offset=0x23B size=2
+GC:   Frag[467] KEEP offset=0x23D size=1
+GC:   Frag[468] KEEP offset=0x23E size=2
+GC:   Frag[469] KEEP offset=0x240 size=1
+GC:   Frag[470] KEEP offset=0x241 size=2
+GC:   Frag[471] KEEP offset=0x243 size=1
+GC:   Frag[472] KEEP offset=0x244 size=2
+GC:   Frag[473] KEEP offset=0x246 size=1
+GC:   Frag[474] KEEP offset=0x247 size=2
+GC:   Frag[475] KEEP offset=0x249 size=1
+GC:   Frag[476] KEEP offset=0x24A size=1
+GC:   Frag[477] KEEP offset=0x24B size=1
+GC:   Frag[478] KEEP offset=0x24C size=2
+GC:   Frag[479] KEEP offset=0x24E size=1
+GC:   Frag[480] KEEP offset=0x24F size=1
+GC:   Frag[481] KEEP offset=0x250 size=1
+GC:   Frag[482] KEEP offset=0x251 size=2
+GC:   Frag[483] KEEP offset=0x253 size=1
+GC:   Frag[484] KEEP offset=0x254 size=2
+GC:   Frag[485] KEEP offset=0x256 size=2
+GC:   Frag[486] KEEP offset=0x258 size=1
+GC:   Frag[487] KEEP offset=0x259 size=1
+GC:   Frag[488] KEEP offset=0x25A size=1
+GC:   Frag[489] KEEP offset=0x25B size=2
+GC:   Frag[490] KEEP offset=0x25D size=1
+GC:   Frag[491] KEEP offset=0x25E size=2
+GC:   Frag[492] KEEP offset=0x260 size=2
+GC:   Frag[493] KEEP offset=0x262 size=1
+GC:   Frag[494] KEEP offset=0x263 size=2
+GC:   Frag[495] KEEP offset=0x265 size=1
+GC:   Frag[496] KEEP offset=0x266 size=2
+GC:   Frag[497] KEEP offset=0x268 size=2
+GC:   Frag[498] KEEP offset=0x26A size=1
+GC:   Frag[499] KEEP offset=0x26B size=1
+GC:   Frag[500] KEEP offset=0x26C size=2
+GC:   Frag[501] KEEP offset=0x26E size=1
+GC:   Frag[502] KEEP offset=0x26F size=1
+GC:   Frag[503] KEEP offset=0x270 size=2
+GC:   Frag[504] KEEP offset=0x272 size=1
+GC:   Frag[505] KEEP offset=0x273 size=2
+GC:   Frag[506] KEEP offset=0x275 size=1
+GC:   Frag[507] KEEP offset=0x276 size=1
+GC:   Frag[508] KEEP offset=0x277 size=2
+GC:   Frag[509] KEEP offset=0x279 size=1
+GC:   Frag[510] KEEP offset=0x27A size=2
+GC:   Frag[511] KEEP offset=0x27C size=1
+GC:   Frag[512] KEEP offset=0x27D size=1
+GC:   Frag[513] KEEP offset=0x27E size=2
+GC:   Frag[514] KEEP offset=0x280 size=1
+GC:   Frag[515] KEEP offset=0x281 size=2
+GC:   Frag[516] KEEP offset=0x283 size=1
+GC:   Frag[517] KEEP offset=0x284 size=2
+GC:   Frag[518] KEEP offset=0x286 size=1
+GC:   Frag[519] KEEP offset=0x287 size=1
+GC:   Frag[520] KEEP offset=0x288 size=1
+GC:   Frag[521] KEEP offset=0x289 size=1
+GC:   Frag[522] KEEP offset=0x28A size=1
+GC:   Frag[523] KEEP offset=0x28B size=2
+GC:   Frag[524] KEEP offset=0x28D size=1
+GC:   Frag[525] KEEP offset=0x28E size=1
+GC:   Frag[526] KEEP offset=0x28F size=1
+GC:   Frag[527] KEEP offset=0x290 size=2
+GC:   Frag[528] KEEP offset=0x292 size=1
+GC:   Frag[529] KEEP offset=0x293 size=2
+GC:   Frag[530] KEEP offset=0x295 size=2
+GC:   Frag[531] KEEP offset=0x297 size=1
+GC:   Frag[532] KEEP offset=0x298 size=2
+GC:   Frag[533] KEEP offset=0x29A size=1
+GC:   Frag[534] KEEP offset=0x29B size=2
+GC:   Frag[535] KEEP offset=0x29D size=2
+GC:   Frag[536] KEEP offset=0x29F size=1
+GC:   Frag[537] KEEP offset=0x2A0 size=1
+GC:   Frag[538] KEEP offset=0x2A1 size=1
+GC:   Frag[539] KEEP offset=0x2A2 size=2
+GC:   Frag[540] KEEP offset=0x2A4 size=1
+GC:   Frag[541] KEEP offset=0x2A5 size=1
+GC:   Frag[542] KEEP offset=0x2A6 size=1
+GC:   Frag[543] KEEP offset=0x2A7 size=1
+GC:   Frag[544] KEEP offset=0x2A8 size=2
+GC:   Frag[545] KEEP offset=0x2AA size=1
+GC:   Frag[546] KEEP offset=0x2AB size=1
+GC:   Frag[547] KEEP offset=0x2AC size=1
+GC:   Frag[548] KEEP offset=0x2AD size=1
+GC:   Frag[549] KEEP offset=0x2AE size=1
+GC:   Frag[550] KEEP offset=0x2AF size=1
+GC:   Frag[551] KEEP offset=0x2B0 size=1
+GC:   Frag[552] KEEP offset=0x2B1 size=1
+GC:   Frag[553] KEEP offset=0x2B2 size=1
+GC:   Frag[554] KEEP offset=0x2B3 size=1
+GC:   Frag[555] KEEP offset=0x2B4 size=2
+GC:   Frag[556] KEEP offset=0x2B6 size=2
+GC:   Frag[557] KEEP offset=0x2B8 size=1
+GC:   Frag[558] KEEP offset=0x2B9 size=1
+GC:   Frag[559] KEEP offset=0x2BA size=1
+GC:   Frag[560] KEEP offset=0x2BB size=2
+GC:   Frag[561] KEEP offset=0x2BD size=1
+GC:   Frag[562] KEEP offset=0x2BE size=2
+GC:   Frag[563] KEEP offset=0x2C0 size=1
+GC:   Frag[564] KEEP offset=0x2C1 size=1
+GC:   Frag[565] KEEP offset=0x2C2 size=1
+GC:   Frag[566] KEEP offset=0x2C3 size=1
+GC:   Frag[567] KEEP offset=0x2C4 size=1
+GC:   Frag[568] KEEP offset=0x2C5 size=1
+GC:   Frag[569] KEEP offset=0x2C6 size=1
+GC:   Frag[570] KEEP offset=0x2C7 size=1
+GC:   Frag[571] KEEP offset=0x2C8 size=1
+GC:   Frag[572] KEEP offset=0x2C9 size=1
+GC:   Frag[573] KEEP offset=0x2CA size=1
+GC:   Frag[574] KEEP offset=0x2CB size=1
+GC:   Frag[575] KEEP offset=0x2CC size=2
+GC:   Frag[576] KEEP offset=0x2CE size=1
+GC:   Frag[577] KEEP offset=0x2CF size=2
+GC:   Frag[578] KEEP offset=0x2D1 size=1
+GC:   Frag[579] KEEP offset=0x2D2 size=1
+GC:   Frag[580] KEEP offset=0x2D3 size=2
+GC:   Frag[581] KEEP offset=0x2D5 size=1
+GC:   Frag[582] KEEP offset=0x2D6 size=2
+GC:   Frag[583] KEEP offset=0x2D8 size=1
+GC:   Frag[584] KEEP offset=0x2D9 size=2
+GC:   Frag[585] KEEP offset=0x2DB size=1
+GC:   Frag[586] KEEP offset=0x2DC size=2
+GC:   Frag[587] KEEP offset=0x2DE size=1
+GC:   Frag[588] KEEP offset=0x2DF size=2
+GC:   Frag[589] KEEP offset=0x2E1 size=2
+GC:   Frag[590] KEEP offset=0x2E3 size=1
+GC:   Frag[591] KEEP offset=0x2E4 size=1
+GC:   Frag[592] KEEP offset=0x2E5 size=2
+GC:   Frag[593] KEEP offset=0x2E7 size=1
+GC:   Frag[594] KEEP offset=0x2E8 size=2
+GC:   Frag[595] KEEP offset=0x2EA size=1
+GC:   Frag[596] KEEP offset=0x2EB size=1
+GC:   Frag[597] KEEP offset=0x2EC size=2
+GC:   Frag[598] KEEP offset=0x2EE size=2
+GC:   Frag[599] KEEP offset=0x2F0 size=1
+GC:   Frag[600] KEEP offset=0x2F1 size=1
+GC:   Frag[601] KEEP offset=0x2F2 size=2
+GC:   Frag[602] KEEP offset=0x2F4 size=1
+GC:   Frag[603] KEEP offset=0x2F5 size=1
+GC:   Frag[604] KEEP offset=0x2F6 size=1
+GC:   Frag[605] KEEP offset=0x2F7 size=2
+GC:   Frag[606] KEEP offset=0x2F9 size=1
+GC:   Frag[607] KEEP offset=0x2FA size=2
+GC:   Frag[608] KEEP offset=0x2FC size=1
+GC:   Frag[609] KEEP offset=0x2FD size=2
+GC:   Frag[610] KEEP offset=0x2FF size=1
+GC:   Frag[611] KEEP offset=0x300 size=2
+GC:   Frag[612] KEEP offset=0x302 size=2
+GC:   Frag[613] KEEP offset=0x304 size=1
+GC:   Frag[614] KEEP offset=0x305 size=1
+GC:   Frag[615] KEEP offset=0x306 size=1
+GC:   Frag[616] KEEP offset=0x307 size=2
+GC:   Frag[617] KEEP offset=0x309 size=2
+GC:   Frag[618] KEEP offset=0x30B size=1
+GC:   Frag[619] KEEP offset=0x30C size=2
+GC:   Frag[620] KEEP offset=0x30E size=1
+GC:   Frag[621] KEEP offset=0x30F size=2
+GC:   Frag[622] KEEP offset=0x311 size=2
+GC:   Frag[623] KEEP offset=0x313 size=1
+GC:   Frag[624] KEEP offset=0x314 size=1
+GC:   Frag[625] KEEP offset=0x315 size=2
+GC:   Frag[626] KEEP offset=0x317 size=1
+GC:   Frag[627] KEEP offset=0x318 size=1
+GC:   Frag[628] KEEP offset=0x319 size=1
+GC:   Frag[629] KEEP offset=0x31A size=1
+GC:   Frag[630] KEEP offset=0x31B size=2
+GC:   Frag[631] KEEP offset=0x31D size=1
+GC:   Frag[632] KEEP offset=0x31E size=1
+GC:   Frag[633] KEEP offset=0x31F size=2
+GC:   Frag[634] KEEP offset=0x321 size=1
+GC:   Frag[635] KEEP offset=0x322 size=2
+GC:   Frag[636] KEEP offset=0x324 size=2
+GC:   Frag[637] KEEP offset=0x326 size=1
+GC:   Frag[638] KEEP offset=0x327 size=2
+GC:   Frag[639] KEEP offset=0x329 size=1
+GC:   Frag[640] KEEP offset=0x32A size=2
+GC:   Frag[641] KEEP offset=0x32C size=2
+GC:   Frag[642] KEEP offset=0x32E size=1
+GC:   Frag[643] KEEP offset=0x32F size=2
+GC:   Frag[644] KEEP offset=0x331 size=1
+GC:   Frag[645] KEEP offset=0x332 size=2
+GC:   Frag[646] KEEP offset=0x334 size=1
+GC:   Frag[647] KEEP offset=0x335 size=1
+GC:   Frag[648] KEEP offset=0x336 size=1
+GC:   Frag[649] KEEP offset=0x337 size=2
+GC:   Frag[650] KEEP offset=0x339 size=1
+GC:   Frag[651] KEEP offset=0x33A size=2
+GC:   Frag[652] KEEP offset=0x33C size=1
+GC:   Frag[653] KEEP offset=0x33D size=2
+GC:   Frag[654] KEEP offset=0x33F size=1
+GC:   Frag[655] KEEP offset=0x340 size=2
+GC:   Frag[656] KEEP offset=0x342 size=1
+GC:   Frag[657] KEEP offset=0x343 size=2
+GC:   Frag[658] KEEP offset=0x345 size=1
+GC:   Frag[659] KEEP offset=0x346 size=2
+GC:   Frag[660] KEEP offset=0x348 size=1
+GC:   Frag[661] KEEP offset=0x349 size=2
+GC:   Frag[662] KEEP offset=0x34B size=1
+GC:   Frag[663] KEEP offset=0x34C size=2
+GC:   Frag[664] KEEP offset=0x34E size=1
+GC:   Frag[665] KEEP offset=0x34F size=2
+GC:   Frag[666] KEEP offset=0x351 size=1
+GC:   Frag[667] KEEP offset=0x352 size=2
+GC:   Frag[668] KEEP offset=0x354 size=1
+GC:   Frag[669] KEEP offset=0x355 size=2
+GC:   Frag[670] KEEP offset=0x357 size=1
+GC:   Frag[671] KEEP offset=0x358 size=2
+GC:   Frag[672] KEEP offset=0x35A size=1
+GC:   Frag[673] KEEP offset=0x35B size=1
+GC:   Frag[674] KEEP offset=0x35C size=1
+GC:   Frag[675] KEEP offset=0x35D size=2
+GC:   Frag[676] KEEP offset=0x35F size=1
+GC:   Frag[677] KEEP offset=0x360 size=2
+GC:   Frag[678] KEEP offset=0x362 size=1
+GC:   Frag[679] KEEP offset=0x363 size=2
+GC:   Frag[680] KEEP offset=0x365 size=1
+GC:   Frag[681] KEEP offset=0x366 size=1
+GC:   Frag[682] KEEP offset=0x367 size=2
+GC:   Frag[683] KEEP offset=0x369 size=1
+GC:   Frag[684] KEEP offset=0x36A size=1
+GC:   Frag[685] KEEP offset=0x36B size=1
+GC:   Frag[686] KEEP offset=0x36C size=2
+GC:   Frag[687] KEEP offset=0x36E size=1
+GC:   Frag[688] KEEP offset=0x36F size=2
+GC:   Frag[689] KEEP offset=0x371 size=1
+GC:   Frag[690] KEEP offset=0x372 size=1
+GC:   Frag[691] KEEP offset=0x373 size=2
+GC:   Frag[692] KEEP offset=0x375 size=1
+GC:   Frag[693] KEEP offset=0x376 size=2
+GC:   Frag[694] KEEP offset=0x378 size=1
+GC:   Frag[695] KEEP offset=0x379 size=1
+GC:   Frag[696] KEEP offset=0x37A size=2
+GC:   Frag[697] KEEP offset=0x37C size=1
+GC:   Frag[698] KEEP offset=0x37D size=2
+GC:   Frag[699] KEEP offset=0x37F size=1
+GC:   Frag[700] KEEP offset=0x380 size=1
+GC:   Frag[701] KEEP offset=0x381 size=2
+GC:   Frag[702] KEEP offset=0x383 size=1
+GC:   Frag[703] KEEP offset=0x384 size=2
+GC:   Frag[704] KEEP offset=0x386 size=1
+GC:   Frag[705] KEEP offset=0x387 size=2
+GC:   Frag[706] KEEP offset=0x389 size=1
+GC:   Frag[707] KEEP offset=0x38A size=2
+GC:   Frag[708] KEEP offset=0x38C size=1
+GC:   Frag[709] KEEP offset=0x38D size=2
+GC:   Frag[710] KEEP offset=0x38F size=1
+GC:   Frag[711] KEEP offset=0x390 size=2
+GC:   Frag[712] KEEP offset=0x392 size=1
+GC:   Frag[713] KEEP offset=0x393 size=1
+GC:   Frag[714] KEEP offset=0x394 size=1
+GC:   Frag[715] KEEP offset=0x395 size=2
+GC:   Frag[716] KEEP offset=0x397 size=1
+GC:   Frag[717] KEEP offset=0x398 size=2
+GC:   Frag[718] KEEP offset=0x39A size=1
+GC:   Frag[719] KEEP offset=0x39B size=2
+GC:   Frag[720] KEEP offset=0x39D size=1
+GC:   Frag[721] KEEP offset=0x39E size=1
+GC:   Frag[722] KEEP offset=0x39F size=1
+GC:   Frag[723] KEEP offset=0x3A0 size=2
+GC:   Frag[724] KEEP offset=0x3A2 size=1
+GC:   Frag[725] KEEP offset=0x3A3 size=2
+GC: Phase 2 processing section 0xaaab00b5c610, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 0)
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=1
+GC:   Frag[5] KEEP offset=0x5 size=1
+GC:   Frag[6] KEEP offset=0x6 size=1
+GC:   Frag[7] KEEP offset=0x7 size=1
+GC:   Frag[8] KEEP offset=0x8 size=1
+GC:   Frag[9] KEEP offset=0x9 size=1
+GC:   Frag[10] KEEP offset=0xA size=1
+GC:   Frag[11] KEEP offset=0xB size=1
+GC:   Frag[12] KEEP offset=0xC size=1
+GC:   Frag[13] KEEP offset=0xD size=1
+GC: Phase 2 processing section 0xaaab00b6dad0, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
+GC:   Frag[1] KEEP offset=0x2 size=2
+GC:   Frag[2] KEEP offset=0x4 size=1
+GC:   Frag[3] KEEP offset=0x5 size=1
+GC:   Frag[4] KEEP offset=0x6 size=2
+GC:   Frag[5] KEEP offset=0x8 size=1
+GC:   Frag[6] KEEP offset=0x9 size=1
+GC:   Frag[7] KEEP offset=0xA size=1
+GC:   Frag[8] KEEP offset=0xB size=1
+GC:   Frag[9] KEEP offset=0xC size=1
+GC: Phase 2 processing section 0xaaab00b76560, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=2
+GC:   Frag[2] KEEP offset=0x3 size=1
+GC:   Frag[3] KEEP offset=0x4 size=2
+GC:   Frag[4] KEEP offset=0x6 size=1
+GC:   Frag[5] KEEP offset=0x7 size=2
+GC:   Frag[6] KEEP offset=0x9 size=1
+GC:   Frag[7] KEEP offset=0xA size=2
+GC:   Frag[8] KEEP offset=0xC size=1
+GC:   Frag[9] KEEP offset=0xD size=2
+GC:   Frag[10] KEEP offset=0xF size=1
+GC:   Frag[11] KEEP offset=0x10 size=2
+GC:   Frag[12] KEEP offset=0x12 size=2
+GC:   Frag[13] KEEP offset=0x14 size=1
+GC:   Frag[14] KEEP offset=0x15 size=2
+GC: Phase 2 processing section 0xaaab00b84c10, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=1
+GC:   Frag[5] KEEP offset=0x5 size=1
+GC:   Frag[6] KEEP offset=0x6 size=1
+GC:   Frag[7] KEEP offset=0x7 size=1
+GC:   Frag[8] KEEP offset=0x8 size=1
+GC:   Frag[9] KEEP offset=0x9 size=2
+GC:   Frag[10] KEEP offset=0xB size=1
+GC: Phase 2 processing section 0xaaab00b7ca10, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=1
+GC:   Frag[5] KEEP offset=0x5 size=1
+GC:   Frag[6] KEEP offset=0x6 size=1
+GC:   Frag[7] KEEP offset=0x7 size=1
+GC:   Frag[8] KEEP offset=0x8 size=1
+GC:   Frag[9] KEEP offset=0x9 size=1
+GC:   Frag[10] KEEP offset=0xA size=1
+GC:   Frag[11] KEEP offset=0xB size=1
+GC:   Frag[12] KEEP offset=0xC size=1
+GC:   Frag[13] KEEP offset=0xD size=1
+GC:   Frag[14] KEEP offset=0xE size=1
+GC:   Frag[15] KEEP offset=0xF size=1
+GC:   Frag[16] KEEP offset=0x10 size=1
+GC:   Frag[17] KEEP offset=0x11 size=1
+GC:   Frag[18] KEEP offset=0x12 size=1
+GC:   Frag[19] KEEP offset=0x13 size=1
+GC:   Frag[20] KEEP offset=0x14 size=1
+GC:   Frag[21] KEEP offset=0x15 size=1
+GC:   Frag[22] KEEP offset=0x16 size=2
+GC:   Frag[23] KEEP offset=0x18 size=1
+GC:   Frag[24] KEEP offset=0x19 size=1
+GC:   Frag[25] KEEP offset=0x1A size=1
+GC:   Frag[26] KEEP offset=0x1B size=1
+GC:   Frag[27] KEEP offset=0x1C size=1
+GC:   Frag[28] KEEP offset=0x1D size=1
+GC:   Frag[29] KEEP offset=0x1E size=1
+GC:   Frag[30] KEEP offset=0x1F size=1
+GC:   Frag[31] KEEP offset=0x20 size=1
+GC:   Frag[32] KEEP offset=0x21 size=1
+GC:   Frag[33] KEEP offset=0x22 size=1
+GC:   Frag[34] KEEP offset=0x23 size=1
+GC:   Frag[35] KEEP offset=0x24 size=1
+GC:   Frag[36] KEEP offset=0x25 size=1
+GC:   Frag[37] KEEP offset=0x26 size=1
+GC:   Frag[38] KEEP offset=0x27 size=1
+GC:   Frag[39] KEEP offset=0x28 size=1
+GC:   Frag[40] KEEP offset=0x29 size=1
+GC:   Frag[41] KEEP offset=0x2A size=1
+GC:   Frag[42] KEEP offset=0x2B size=1
+GC:   Frag[43] KEEP offset=0x2C size=1
+GC: Phase 2 processing section 0xaaab00b86530, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=2
+GC:   Frag[2] KEEP offset=0x3 size=1
+GC:   Frag[3] KEEP offset=0x4 size=1
+GC:   Frag[4] KEEP offset=0x5 size=1
+GC:   Frag[5] KEEP offset=0x6 size=1
+GC:   Frag[6] KEEP offset=0x7 size=1
+GC:   Frag[7] KEEP offset=0x8 size=1
+GC:   Frag[8] KEEP offset=0x9 size=1
+GC:   Frag[9] KEEP offset=0xA size=1
+GC:   Frag[10] KEEP offset=0xB size=1
+GC:   Frag[11] KEEP offset=0xC size=1
+GC:   Frag[12] KEEP offset=0xD size=1
+GC:   Frag[13] KEEP offset=0xE size=1
+GC:   Frag[14] KEEP offset=0xF size=1
+GC:   Frag[15] KEEP offset=0x10 size=1
+GC:   Frag[16] KEEP offset=0x11 size=1
+GC:   Frag[17] KEEP offset=0x12 size=2
+GC:   Frag[18] KEEP offset=0x14 size=1
+GC:   Frag[19] KEEP offset=0x15 size=1
+GC:   Frag[20] KEEP offset=0x16 size=1
+GC:   Frag[21] KEEP offset=0x17 size=1
+GC:   Frag[22] KEEP offset=0x18 size=1
+GC:   Frag[23] KEEP offset=0x19 size=1
+GC:   Frag[24] KEEP offset=0x1A size=1
+GC:   Frag[25] KEEP offset=0x1B size=2
+GC:   Frag[26] KEEP offset=0x1D size=1
+GC:   Frag[27] KEEP offset=0x1E size=1
+GC:   Frag[28] KEEP offset=0x1F size=1
+GC:   Frag[29] KEEP offset=0x20 size=1
+GC:   Frag[30] KEEP offset=0x21 size=1
+GC:   Frag[31] KEEP offset=0x22 size=2
+GC:   Frag[32] KEEP offset=0x24 size=1
+GC:   Frag[33] KEEP offset=0x25 size=2
+GC:   Frag[34] KEEP offset=0x27 size=1
+GC:   Frag[35] KEEP offset=0x28 size=2
+GC: Phase 2 processing section 0xaaab00b87370, Table=0xaaab00e55fe0 (2 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=2
+GC:   Frag[3] KEEP offset=0x4 size=1
+GC:   Frag[4] DELETE offset=0x5 size=2 (removed so far: 0)
+GC:   Frag[5] KEEP offset=0x7 size=1
+GC:   Frag[6] KEEP offset=0x8 size=1
+GC:   Frag[7] KEEP offset=0x9 size=2
+GC:   Frag[8] KEEP offset=0xB size=2
+GC:   Frag[9] KEEP offset=0xD size=1
+GC:   Frag[10] KEEP offset=0xE size=1
+GC:   Frag[11] KEEP offset=0xF size=2
+GC:   Frag[12] KEEP offset=0x11 size=1
+GC:   Frag[13] KEEP offset=0x12 size=1
+GC:   Frag[14] KEEP offset=0x13 size=1
+GC:   Frag[15] KEEP offset=0x14 size=2
+GC:   Frag[16] KEEP offset=0x16 size=2
+GC:   Frag[17] KEEP offset=0x18 size=1
+GC:   Frag[18] KEEP offset=0x19 size=2
+GC:   Frag[19] KEEP offset=0x1B size=1
+GC:   Frag[20] KEEP offset=0x1C size=1
+GC:   Frag[21] KEEP offset=0x1D size=2
+GC:   Frag[22] KEEP offset=0x1F size=2
+GC:   Frag[23] KEEP offset=0x21 size=2
+GC:   Frag[24] KEEP offset=0x23 size=1
+GC:   Frag[25] KEEP offset=0x24 size=2
+GC:   Frag[26] KEEP offset=0x26 size=2
+GC:   Frag[27] KEEP offset=0x28 size=2
+GC:   Frag[28] KEEP offset=0x2A size=2
+GC:   Frag[29] KEEP offset=0x2C size=1
+GC:   Frag[30] KEEP offset=0x2D size=2
+GC:   Frag[31] KEEP offset=0x2F size=2
+GC:   Frag[32] KEEP offset=0x31 size=2
+GC:   Frag[33] KEEP offset=0x33 size=2
+GC:   Frag[34] KEEP offset=0x35 size=1
+GC:   Frag[35] KEEP offset=0x36 size=2
+GC: Phase 2 processing section 0xaaab00b8b680, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab00ae4500, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab00ae94b0, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=2
+GC:   Frag[1] KEEP offset=0x2 size=1
+GC:   Frag[2] KEEP offset=0x3 size=1
+GC:   Frag[3] KEEP offset=0x4 size=1
+GC:   Frag[4] KEEP offset=0x5 size=1
+GC:   Frag[5] KEEP offset=0x6 size=1
+GC:   Frag[6] KEEP offset=0x7 size=2
+GC:   Frag[7] KEEP offset=0x9 size=1
+GC:   Frag[8] KEEP offset=0xA size=1
+GC:   Frag[9] KEEP offset=0xB size=1
+GC:   Frag[10] KEEP offset=0xC size=1
+GC:   Frag[11] KEEP offset=0xD size=1
+GC:   Frag[12] KEEP offset=0xE size=1
+GC:   Frag[13] KEEP offset=0xF size=1
+GC:   Frag[14] KEEP offset=0x10 size=2
+GC:   Frag[15] KEEP offset=0x12 size=1
+GC:   Frag[16] KEEP offset=0x13 size=1
+GC:   Frag[17] KEEP offset=0x14 size=2
+GC:   Frag[18] KEEP offset=0x16 size=2
+GC:   Frag[19] KEEP offset=0x18 size=1
+GC:   Frag[20] KEEP offset=0x19 size=1
+GC:   Frag[21] KEEP offset=0x1A size=2
+GC:   Frag[22] KEEP offset=0x1C size=1
+GC:   Frag[23] KEEP offset=0x1D size=1
+GC: Phase 2 processing section 0xaaab00bd6810, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
+GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[3] DELETE offset=0x3 size=2 (removed so far: 3)
+GC:   Frag[4] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[5] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 8)
+GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
+GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
+GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
+GC:   Frag[11] DELETE offset=0xC size=1 (removed so far: 12)
+GC: Phase 2 processing section 0xaaab00aea5b0, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
+GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[3] DELETE offset=0x3 size=2 (removed so far: 3)
+GC:   Frag[4] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[5] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 8)
+GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
+GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
+GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
+GC:   Frag[11] DELETE offset=0xC size=1 (removed so far: 12)
+GC: Phase 2 processing section 0xaaab00bf8390, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=2
+GC:   Frag[2] KEEP offset=0x3 size=2
+GC:   Frag[3] KEEP offset=0x5 size=1
+GC:   Frag[4] KEEP offset=0x6 size=2
+GC:   Frag[5] KEEP offset=0x8 size=2
+GC:   Frag[6] KEEP offset=0xA size=1
+GC:   Frag[7] KEEP offset=0xB size=2
+GC:   Frag[8] KEEP offset=0xD size=1
+GC:   Frag[9] KEEP offset=0xE size=2
+GC: Phase 2 processing section 0xaaab00b57ab0, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[2] DELETE offset=0x3 size=1 (removed so far: 3)
+GC:   Frag[3] DELETE offset=0x4 size=1 (removed so far: 4)
+GC:   Frag[4] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[5] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 8)
+GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
+GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
+GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
+GC:   Frag[11] DELETE offset=0xC size=1 (removed so far: 12)
+GC:   Frag[12] DELETE offset=0xD size=1 (removed so far: 13)
+GC:   Frag[13] DELETE offset=0xE size=1 (removed so far: 14)
+GC:   Frag[14] DELETE offset=0xF size=1 (removed so far: 15)
+GC:   Frag[15] DELETE offset=0x10 size=1 (removed so far: 16)
+GC:   Frag[16] DELETE offset=0x11 size=1 (removed so far: 17)
+GC:   Frag[17] DELETE offset=0x12 size=1 (removed so far: 18)
+GC:   Frag[18] DELETE offset=0x13 size=1 (removed so far: 19)
+GC:   Frag[19] DELETE offset=0x14 size=1 (removed so far: 20)
+GC:   Frag[20] DELETE offset=0x15 size=1 (removed so far: 21)
+GC: Phase 2 processing section 0xaaab00c41960, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
+GC:   Frag[1] KEEP offset=0x1 size=2
+GC:   Frag[2] KEEP offset=0x3 size=2
+GC:   Frag[3] KEEP offset=0x5 size=1
+GC:   Frag[4] KEEP offset=0x6 size=1
+GC:   Frag[5] KEEP offset=0x7 size=2
+GC:   Frag[6] KEEP offset=0x9 size=2
+GC:   Frag[7] KEEP offset=0xB size=1
+GC:   Frag[8] KEEP offset=0xC size=1
+GC:   Frag[9] KEEP offset=0xD size=1
+GC:   Frag[10] KEEP offset=0xE size=2
+GC:   Frag[11] KEEP offset=0x10 size=2
+GC:   Frag[12] KEEP offset=0x12 size=1
+GC:   Frag[13] KEEP offset=0x13 size=1
+GC:   Frag[14] KEEP offset=0x14 size=1
+GC:   Frag[15] KEEP offset=0x15 size=1
+GC:   Frag[16] KEEP offset=0x16 size=2
+GC:   Frag[17] KEEP offset=0x18 size=2
+GC:   Frag[18] KEEP offset=0x1A size=1
+GC:   Frag[19] KEEP offset=0x1B size=1
+GC:   Frag[20] KEEP offset=0x1C size=1
+GC:   Frag[21] KEEP offset=0x1D size=1
+GC: Phase 2 processing section 0xaaab00c138c0, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=2
+GC:   Frag[1] KEEP offset=0x2 size=1
+GC:   Frag[2] KEEP offset=0x3 size=2
+GC:   Frag[3] KEEP offset=0x5 size=1
+GC:   Frag[4] KEEP offset=0x6 size=1
+GC:   Frag[5] KEEP offset=0x7 size=1
+GC:   Frag[6] KEEP offset=0x8 size=1
+GC:   Frag[7] KEEP offset=0x9 size=1
+GC:   Frag[8] KEEP offset=0xA size=1
+GC:   Frag[9] KEEP offset=0xB size=2
+GC:   Frag[10] KEEP offset=0xD size=2
+GC:   Frag[11] KEEP offset=0xF size=1
+GC:   Frag[12] KEEP offset=0x10 size=1
+GC:   Frag[13] KEEP offset=0x11 size=1
+GC:   Frag[14] KEEP offset=0x12 size=1
+GC:   Frag[15] KEEP offset=0x13 size=1
+GC:   Frag[16] KEEP offset=0x14 size=1
+GC:   Frag[17] KEEP offset=0x15 size=1
+GC:   Frag[18] KEEP offset=0x16 size=1
+GC:   Frag[19] KEEP offset=0x17 size=1
+GC:   Frag[20] KEEP offset=0x18 size=1
+GC:   Frag[21] KEEP offset=0x19 size=1
+GC:   Frag[22] KEEP offset=0x1A size=1
+GC:   Frag[23] KEEP offset=0x1B size=1
+GC:   Frag[24] KEEP offset=0x1C size=1
+GC:   Frag[25] KEEP offset=0x1D size=1
+GC:   Frag[26] KEEP offset=0x1E size=1
+GC:   Frag[27] KEEP offset=0x1F size=1
+GC:   Frag[28] KEEP offset=0x20 size=1
+GC: Phase 2 processing section 0xaaab00c67c80, Table=0xaaab00e3f170 (3 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=2
+GC:   Frag[4] KEEP offset=0x5 size=1
+GC:   Frag[5] KEEP offset=0x6 size=1
+GC:   Frag[6] KEEP offset=0x7 size=1
+GC:   Frag[7] KEEP offset=0x8 size=1
+GC:   Frag[8] KEEP offset=0x9 size=1
+GC:   Frag[9] KEEP offset=0xA size=1
+GC:   Frag[10] KEEP offset=0xB size=1
+GC:   Frag[11] KEEP offset=0xC size=1
+GC:   Frag[12] KEEP offset=0xD size=1
+GC:   Frag[13] KEEP offset=0xE size=2
+GC:   Frag[14] KEEP offset=0x10 size=1
+GC:   Frag[15] KEEP offset=0x11 size=2
+GC:   Frag[16] KEEP offset=0x13 size=1
+GC:   Frag[17] KEEP offset=0x14 size=1
+GC:   Frag[18] KEEP offset=0x15 size=1
+GC:   Frag[19] KEEP offset=0x16 size=1
+GC:   Frag[20] KEEP offset=0x17 size=1
+GC:   Frag[21] DELETE offset=0x18 size=1 (removed so far: 0)
+GC:   Frag[22] DELETE offset=0x19 size=2 (removed so far: 1)
+GC:   Frag[23] KEEP offset=0x1B size=1
+GC:   Frag[24] KEEP offset=0x1C size=1
+GC:   Frag[25] KEEP offset=0x1D size=1
+GC:   Frag[26] KEEP offset=0x1E size=1
+GC:   Frag[27] KEEP offset=0x1F size=2
+GC:   Frag[28] KEEP offset=0x21 size=1
+GC:   Frag[29] KEEP offset=0x22 size=1
+GC:   Frag[30] KEEP offset=0x23 size=1
+GC:   Frag[31] KEEP offset=0x24 size=1
+GC:   Frag[32] KEEP offset=0x25 size=1
+GC:   Frag[33] KEEP offset=0x26 size=1
+GC:   Frag[34] KEEP offset=0x27 size=1
+GC:   Frag[35] KEEP offset=0x28 size=1
+GC:   Frag[36] KEEP offset=0x29 size=1
+GC:   Frag[37] KEEP offset=0x2A size=1
+GC:   Frag[38] KEEP offset=0x2B size=2
+GC:   Frag[39] KEEP offset=0x2D size=1
+GC:   Frag[40] KEEP offset=0x2E size=1
+GC:   Frag[41] KEEP offset=0x2F size=2
+GC:   Frag[42] KEEP offset=0x31 size=1
+GC:   Frag[43] KEEP offset=0x32 size=2
+GC:   Frag[44] KEEP offset=0x34 size=1
+GC:   Frag[45] KEEP offset=0x35 size=1
+GC:   Frag[46] KEEP offset=0x36 size=1
+GC:   Frag[47] KEEP offset=0x37 size=1
+GC:   Frag[48] KEEP offset=0x38 size=1
+GC:   Frag[49] KEEP offset=0x39 size=1
+GC:   Frag[50] KEEP offset=0x3A size=2
+GC:   Frag[51] KEEP offset=0x3C size=1
+GC:   Frag[52] KEEP offset=0x3D size=1
+GC:   Frag[53] KEEP offset=0x3E size=1
+GC:   Frag[54] KEEP offset=0x3F size=2
+GC:   Frag[55] KEEP offset=0x41 size=2
+GC:   Frag[56] KEEP offset=0x43 size=1
+GC:   Frag[57] KEEP offset=0x44 size=1
+GC:   Frag[58] KEEP offset=0x45 size=1
+GC:   Frag[59] KEEP offset=0x46 size=1
+GC:   Frag[60] KEEP offset=0x47 size=1
+GC:   Frag[61] KEEP offset=0x48 size=1
+GC:   Frag[62] KEEP offset=0x49 size=1
+GC:   Frag[63] KEEP offset=0x4A size=1
+GC:   Frag[64] KEEP offset=0x4B size=1
+GC:   Frag[65] KEEP offset=0x4C size=1
+GC:   Frag[66] KEEP offset=0x4D size=1
+GC:   Frag[67] KEEP offset=0x4E size=1
+GC:   Frag[68] KEEP offset=0x4F size=1
+GC:   Frag[69] KEEP offset=0x50 size=2
+GC:   Frag[70] KEEP offset=0x52 size=1
+GC:   Frag[71] KEEP offset=0x53 size=1
+GC:   Frag[72] KEEP offset=0x54 size=1
+GC:   Frag[73] KEEP offset=0x55 size=1
+GC:   Frag[74] KEEP offset=0x56 size=1
+GC:   Frag[75] KEEP offset=0x57 size=2
+GC:   Frag[76] DELETE offset=0x59 size=1 (removed so far: 3)
+GC:   Frag[77] DELETE offset=0x5A size=2 (removed so far: 4)
+GC:   Frag[78] KEEP offset=0x5C size=2
+GC:   Frag[79] KEEP offset=0x5E size=1
+GC:   Frag[80] KEEP offset=0x5F size=2
+GC:   Frag[81] KEEP offset=0x61 size=2
+GC:   Frag[82] KEEP offset=0x63 size=1
+GC:   Frag[83] KEEP offset=0x64 size=1
+GC:   Frag[84] KEEP offset=0x65 size=1
+GC:   Frag[85] KEEP offset=0x66 size=1
+GC:   Frag[86] KEEP offset=0x67 size=1
+GC:   Frag[87] KEEP offset=0x68 size=1
+GC:   Frag[88] KEEP offset=0x69 size=1
+GC:   Frag[89] KEEP offset=0x6A size=1
+GC:   Frag[90] KEEP offset=0x6B size=1
+GC:   Frag[91] KEEP offset=0x6C size=1
+GC:   Frag[92] KEEP offset=0x6D size=1
+GC:   Frag[93] KEEP offset=0x6E size=1
+GC:   Frag[94] KEEP offset=0x6F size=1
+GC:   Frag[95] KEEP offset=0x70 size=1
+GC:   Frag[96] KEEP offset=0x71 size=1
+GC:   Frag[97] KEEP offset=0x72 size=1
+GC:   Frag[98] KEEP offset=0x73 size=1
+GC:   Frag[99] KEEP offset=0x74 size=1
+GC:   Frag[100] KEEP offset=0x75 size=1
+GC:   Frag[101] KEEP offset=0x76 size=1
+GC:   Frag[102] KEEP offset=0x77 size=1
+GC:   Frag[103] KEEP offset=0x78 size=1
+GC:   Frag[104] KEEP offset=0x79 size=2
+GC:   Frag[105] KEEP offset=0x7B size=1
+GC:   Frag[106] KEEP offset=0x7C size=1
+GC:   Frag[107] KEEP offset=0x7D size=1
+GC:   Frag[108] KEEP offset=0x7E size=1
+GC:   Frag[109] KEEP offset=0x7F size=1
+GC:   Frag[110] KEEP offset=0x80 size=1
+GC:   Frag[111] KEEP offset=0x81 size=1
+GC:   Frag[112] KEEP offset=0x82 size=1
+GC:   Frag[113] KEEP offset=0x83 size=1
+GC:   Frag[114] KEEP offset=0x84 size=1
+GC:   Frag[115] KEEP offset=0x85 size=1
+GC:   Frag[116] KEEP offset=0x86 size=2
+GC:   Frag[117] KEEP offset=0x88 size=1
+GC:   Frag[118] KEEP offset=0x89 size=1
+GC:   Frag[119] KEEP offset=0x8A size=1
+GC:   Frag[120] KEEP offset=0x8B size=1
+GC:   Frag[121] KEEP offset=0x8C size=1
+GC:   Frag[122] KEEP offset=0x8D size=1
+GC:   Frag[123] KEEP offset=0x8E size=1
+GC:   Frag[124] KEEP offset=0x8F size=1
+GC:   Frag[125] KEEP offset=0x90 size=1
+GC:   Frag[126] KEEP offset=0x91 size=1
+GC:   Frag[127] KEEP offset=0x92 size=1
+GC:   Frag[128] KEEP offset=0x93 size=1
+GC:   Frag[129] KEEP offset=0x94 size=1
+GC: Phase 2 processing section 0xaaab00c97f20, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab00cedce0, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[2] DELETE offset=0x3 size=1 (removed so far: 3)
+GC:   Frag[3] DELETE offset=0x4 size=1 (removed so far: 4)
+GC:   Frag[4] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[5] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 8)
+GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
+GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
+GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
+GC: Phase 2 processing section 0xaaab00cefe80, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[2] DELETE offset=0x3 size=1 (removed so far: 3)
+GC:   Frag[3] DELETE offset=0x4 size=1 (removed so far: 4)
+GC:   Frag[4] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[5] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 8)
+GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
+GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
+GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
+GC:   Frag[11] DELETE offset=0xC size=2 (removed so far: 12)
+GC: Phase 2 processing section 0xaaab00ceeed0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab00c498d0, Table=0xaaab00e3fbb0 (1 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=1
+GC:   Frag[5] DELETE offset=0x5 size=2 (removed so far: 0)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 2)
+GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 3)
+GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 4)
+GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 5)
+GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 6)
+GC:   Frag[11] DELETE offset=0xC size=1 (removed so far: 7)
+GC:   Frag[12] DELETE offset=0xD size=1 (removed so far: 8)
+GC:   Frag[13] DELETE offset=0xE size=1 (removed so far: 9)
+GC:   Frag[14] DELETE offset=0xF size=1 (removed so far: 10)
+GC:   Frag[15] DELETE offset=0x10 size=1 (removed so far: 11)
+GC:   Frag[16] DELETE offset=0x11 size=1 (removed so far: 12)
+GC:   Frag[17] DELETE offset=0x12 size=1 (removed so far: 13)
+GC:   Frag[18] DELETE offset=0x13 size=2 (removed so far: 14)
+GC:   Frag[19] DELETE offset=0x15 size=1 (removed so far: 16)
+GC:   Frag[20] DELETE offset=0x16 size=1 (removed so far: 17)
+GC:   Frag[21] DELETE offset=0x17 size=1 (removed so far: 18)
+GC:   Frag[22] DELETE offset=0x18 size=1 (removed so far: 19)
+GC:   Frag[23] DELETE offset=0x19 size=1 (removed so far: 20)
+GC:   Frag[24] DELETE offset=0x1A size=2 (removed so far: 21)
+GC:   Frag[25] DELETE offset=0x1C size=1 (removed so far: 23)
+GC:   Frag[26] DELETE offset=0x1D size=1 (removed so far: 24)
+GC:   Frag[27] DELETE offset=0x1E size=1 (removed so far: 25)
+GC:   Frag[28] DELETE offset=0x1F size=2 (removed so far: 26)
+GC:   Frag[29] DELETE offset=0x21 size=1 (removed so far: 28)
+GC:   Frag[30] DELETE offset=0x22 size=1 (removed so far: 29)
+GC:   Frag[31] DELETE offset=0x23 size=1 (removed so far: 30)
+GC:   Frag[32] DELETE offset=0x24 size=2 (removed so far: 31)
+GC:   Frag[33] DELETE offset=0x26 size=1 (removed so far: 33)
+GC:   Frag[34] DELETE offset=0x27 size=1 (removed so far: 34)
+GC:   Frag[35] DELETE offset=0x28 size=1 (removed so far: 35)
+GC:   Frag[36] DELETE offset=0x29 size=1 (removed so far: 36)
+GC:   Frag[37] DELETE offset=0x2A size=1 (removed so far: 37)
+GC:   Frag[38] DELETE offset=0x2B size=1 (removed so far: 38)
+GC:   Frag[39] KEEP offset=0x2C size=1
+GC:   Frag[40] KEEP offset=0x2D size=1
+GC:   Frag[41] KEEP offset=0x2E size=1
+GC:   Frag[42] KEEP offset=0x2F size=1
+GC:   Frag[43] KEEP offset=0x30 size=1
+GC:   Frag[44] KEEP offset=0x31 size=1
+GC:   Frag[45] KEEP offset=0x32 size=1
+GC:   Frag[46] KEEP offset=0x33 size=2
+GC:   Frag[47] KEEP offset=0x35 size=1
+GC:   Frag[48] KEEP offset=0x36 size=2
+GC:   Frag[49] KEEP offset=0x38 size=1
+GC:   Frag[50] KEEP offset=0x39 size=2
+GC:   Frag[51] KEEP offset=0x3B size=3
+GC:   Frag[52] KEEP offset=0x3E size=1
+GC:   Frag[53] KEEP offset=0x3F size=2
+GC:   Frag[54] KEEP offset=0x41 size=3
+GC:   Frag[55] KEEP offset=0x44 size=1
+GC:   Frag[56] KEEP offset=0x45 size=2
+GC:   Frag[57] KEEP offset=0x47 size=3
+GC:   Frag[58] KEEP offset=0x4A size=1
+GC:   Frag[59] KEEP offset=0x4B size=1
+GC:   Frag[60] KEEP offset=0x4C size=1
+GC:   Frag[61] KEEP offset=0x4D size=1
+GC:   Frag[62] KEEP offset=0x4E size=1
+GC:   Frag[63] KEEP offset=0x4F size=2
+GC:   Frag[64] KEEP offset=0x51 size=3
+GC:   Frag[65] KEEP offset=0x54 size=1
+GC:   Frag[66] KEEP offset=0x55 size=2
+GC:   Frag[67] KEEP offset=0x57 size=3
+GC:   Frag[68] KEEP offset=0x5A size=1
+GC:   Frag[69] KEEP offset=0x5B size=2
+GC:   Frag[70] KEEP offset=0x5D size=3
+GC:   Frag[71] KEEP offset=0x60 size=1
+GC:   Frag[72] KEEP offset=0x61 size=1
+GC:   Frag[73] KEEP offset=0x62 size=1
+GC:   Frag[74] KEEP offset=0x63 size=1
+GC:   Frag[75] KEEP offset=0x64 size=1
+GC:   Frag[76] KEEP offset=0x65 size=2
+GC:   Frag[77] KEEP offset=0x67 size=3
+GC:   Frag[78] KEEP offset=0x6A size=1
+GC:   Frag[79] KEEP offset=0x6B size=2
+GC:   Frag[80] KEEP offset=0x6D size=3
+GC:   Frag[81] KEEP offset=0x70 size=1
+GC:   Frag[82] KEEP offset=0x71 size=2
+GC:   Frag[83] KEEP offset=0x73 size=3
+GC:   Frag[84] KEEP offset=0x76 size=1
+GC:   Frag[85] KEEP offset=0x77 size=1
+GC:   Frag[86] KEEP offset=0x78 size=1
+GC:   Frag[87] KEEP offset=0x79 size=1
+GC:   Frag[88] KEEP offset=0x7A size=1
+GC:   Frag[89] KEEP offset=0x7B size=2
+GC:   Frag[90] KEEP offset=0x7D size=3
+GC:   Frag[91] KEEP offset=0x80 size=1
+GC:   Frag[92] KEEP offset=0x81 size=2
+GC:   Frag[93] KEEP offset=0x83 size=3
+GC:   Frag[94] KEEP offset=0x86 size=1
+GC:   Frag[95] KEEP offset=0x87 size=2
+GC:   Frag[96] KEEP offset=0x89 size=3
+GC:   Frag[97] KEEP offset=0x8C size=1
+GC:   Frag[98] KEEP offset=0x8D size=1
+GC:   Frag[99] KEEP offset=0x8E size=1
+GC:   Frag[100] KEEP offset=0x8F size=1
+GC:   Frag[101] KEEP offset=0x90 size=1
+GC:   Frag[102] KEEP offset=0x91 size=2
+GC:   Frag[103] KEEP offset=0x93 size=3
+GC:   Frag[104] KEEP offset=0x96 size=1
+GC:   Frag[105] KEEP offset=0x97 size=2
+GC:   Frag[106] KEEP offset=0x99 size=3
+GC:   Frag[107] KEEP offset=0x9C size=1
+GC:   Frag[108] KEEP offset=0x9D size=2
+GC:   Frag[109] KEEP offset=0x9F size=3
+GC:   Frag[110] KEEP offset=0xA2 size=1
+GC:   Frag[111] KEEP offset=0xA3 size=1
+GC:   Frag[112] KEEP offset=0xA4 size=1
+GC:   Frag[113] KEEP offset=0xA5 size=1
+GC:   Frag[114] KEEP offset=0xA6 size=1
+GC:   Frag[115] KEEP offset=0xA7 size=2
+GC:   Frag[116] KEEP offset=0xA9 size=1
+GC:   Frag[117] KEEP offset=0xAA size=1
+GC:   Frag[118] KEEP offset=0xAB size=1
+GC:   Frag[119] KEEP offset=0xAC size=1
+GC:   Frag[120] KEEP offset=0xAD size=1
+GC:   Frag[121] KEEP offset=0xAE size=1
+GC:   Frag[122] KEEP offset=0xAF size=1
+GC: Phase 2 processing section 0xaaab00cfaed0, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[2] DELETE offset=0x3 size=2 (removed so far: 3)
+GC: Phase 2 processing section 0xaaab00b5fc30, Table=(nil) (0 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x2 size=2 (removed so far: 2)
+GC:   Frag[2] DELETE offset=0x4 size=1 (removed so far: 4)
+GC:   Frag[3] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[4] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[5] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[6] DELETE offset=0x8 size=2 (removed so far: 8)
+GC:   Frag[7] DELETE offset=0xA size=1 (removed so far: 10)
+GC:   Frag[8] DELETE offset=0xB size=1 (removed so far: 11)
+GC:   Frag[9] DELETE offset=0xC size=1 (removed so far: 12)
+GC:   Frag[10] DELETE offset=0xD size=1 (removed so far: 13)
+GC:   Frag[11] DELETE offset=0xE size=1 (removed so far: 14)
+GC:   Frag[12] DELETE offset=0xF size=1 (removed so far: 15)
+GC:   Frag[13] DELETE offset=0x10 size=2 (removed so far: 16)
+GC:   Frag[14] DELETE offset=0x12 size=1 (removed so far: 18)
+GC:   Frag[15] DELETE offset=0x13 size=1 (removed so far: 19)
+GC:   Frag[16] DELETE offset=0x14 size=1 (removed so far: 20)
+GC:   Frag[17] DELETE offset=0x15 size=1 (removed so far: 21)
+GC:   Frag[18] DELETE offset=0x16 size=1 (removed so far: 22)
+GC:   Frag[19] DELETE offset=0x17 size=1 (removed so far: 23)
+GC:   Frag[20] DELETE offset=0x18 size=1 (removed so far: 24)
+GC:   Frag[21] DELETE offset=0x19 size=1 (removed so far: 25)
+GC: Phase 2 processing section 0xaaab00d2b2d0, Table=0xaaab00e3f0e0 (2 offsets)
+GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
+GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
+GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
+GC:   Frag[3] DELETE offset=0x3 size=2 (removed so far: 3)
+GC:   Frag[4] DELETE offset=0x5 size=1 (removed so far: 5)
+GC:   Frag[5] DELETE offset=0x6 size=1 (removed so far: 6)
+GC:   Frag[6] DELETE offset=0x7 size=1 (removed so far: 7)
+GC:   Frag[7] DELETE offset=0x8 size=2 (removed so far: 8)
+GC:   Frag[8] DELETE offset=0xA size=2 (removed so far: 10)
+GC:   Frag[9] DELETE offset=0xC size=1 (removed so far: 12)
+GC:   Frag[10] DELETE offset=0xD size=1 (removed so far: 13)
+GC:   Frag[11] DELETE offset=0xE size=1 (removed so far: 14)
+GC:   Frag[12] KEEP offset=0xF size=1
+GC:   Frag[13] KEEP offset=0x10 size=1
+GC:   Frag[14] KEEP offset=0x11 size=1
+GC:   Frag[15] KEEP offset=0x12 size=1
+GC:   Frag[16] KEEP offset=0x13 size=1
+GC:   Frag[17] KEEP offset=0x14 size=1
+GC:   Frag[18] KEEP offset=0x15 size=1
+GC:   Frag[19] KEEP offset=0x16 size=1
+GC:   Frag[20] KEEP offset=0x17 size=1
+GC:   Frag[21] KEEP offset=0x18 size=1
+GC:   Frag[22] KEEP offset=0x19 size=1
+GC:   Frag[23] KEEP offset=0x1A size=1
+GC:   Frag[24] KEEP offset=0x1B size=1
+GC:   Frag[25] KEEP offset=0x1C size=1
+GC:   Frag[26] KEEP offset=0x1D size=1
+GC:   Frag[27] KEEP offset=0x1E size=1
+GC:   Frag[28] KEEP offset=0x1F size=1
+GC:   Frag[29] KEEP offset=0x20 size=1
+GC:   Frag[30] KEEP offset=0x21 size=1
+GC:   Frag[31] KEEP offset=0x22 size=1
+GC:   Frag[32] KEEP offset=0x23 size=1
+GC:   Frag[33] KEEP offset=0x24 size=1
+GC:   Frag[34] KEEP offset=0x25 size=1
+GC:   Frag[35] KEEP offset=0x26 size=1
+GC:   Frag[36] KEEP offset=0x27 size=1
+GC:   Frag[37] KEEP offset=0x28 size=1
+GC:   Frag[38] KEEP offset=0x29 size=1
+GC:   Frag[39] KEEP offset=0x2A size=1
+GC:   Frag[40] KEEP offset=0x2B size=1
+GC:   Frag[41] KEEP offset=0x2C size=1
+GC:   Frag[42] KEEP offset=0x2D size=1
+GC:   Frag[43] KEEP offset=0x2E size=1
+GC:   Frag[44] KEEP offset=0x2F size=1
+GC:   Frag[45] KEEP offset=0x30 size=1
+GC:   Frag[46] KEEP offset=0x31 size=1
+GC:   Frag[47] KEEP offset=0x32 size=1
+GC:   Frag[48] KEEP offset=0x33 size=1
+GC:   Frag[49] KEEP offset=0x34 size=1
+GC:   Frag[50] KEEP offset=0x35 size=1
+GC:   Frag[51] KEEP offset=0x36 size=1
+GC:   Frag[52] KEEP offset=0x37 size=1
+GC:   Frag[53] KEEP offset=0x38 size=1
+GC:   Frag[54] KEEP offset=0x39 size=1
+GC:   Frag[55] KEEP offset=0x3A size=1
+GC:   Frag[56] KEEP offset=0x3B size=1
+GC:   Frag[57] KEEP offset=0x3C size=1
+GC:   Frag[58] KEEP offset=0x3D size=1
+GC:   Frag[59] KEEP offset=0x3E size=1
+GC:   Frag[60] KEEP offset=0x3F size=1
+GC:   Frag[61] KEEP offset=0x40 size=1
+GC:   Frag[62] KEEP offset=0x41 size=1
+GC:   Frag[63] KEEP offset=0x42 size=1
+GC:   Frag[64] KEEP offset=0x43 size=1
+GC:   Frag[65] KEEP offset=0x44 size=1
+GC:   Frag[66] KEEP offset=0x45 size=1
+GC:   Frag[67] KEEP offset=0x46 size=1
+GC:   Frag[68] KEEP offset=0x47 size=1
+GC:   Frag[69] KEEP offset=0x48 size=1
+GC: Phase 2 processing section 0xaaab00d48ca0, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=2
+GC:   Frag[5] KEEP offset=0x6 size=2
+GC:   Frag[6] KEEP offset=0x8 size=1
+GC:   Frag[7] KEEP offset=0x9 size=1
+GC:   Frag[8] KEEP offset=0xA size=1
+GC:   Frag[9] KEEP offset=0xB size=1
+GC:   Frag[10] KEEP offset=0xC size=1
+GC:   Frag[11] KEEP offset=0xD size=1
+GC:   Frag[12] KEEP offset=0xE size=1
+GC:   Frag[13] KEEP offset=0xF size=1
+GC:   Frag[14] KEEP offset=0x10 size=1
+GC:   Frag[15] KEEP offset=0x11 size=1
+GC:   Frag[16] KEEP offset=0x12 size=1
+GC:   Frag[17] KEEP offset=0x13 size=1
+GC:   Frag[18] KEEP offset=0x14 size=1
+GC:   Frag[19] KEEP offset=0x15 size=1
+GC: Phase 2 processing section 0xaaab00d34a10, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=1
+GC:   Frag[5] KEEP offset=0x5 size=1
+GC:   Frag[6] KEEP offset=0x6 size=1
+GC:   Frag[7] KEEP offset=0x7 size=1
+GC:   Frag[8] KEEP offset=0x8 size=2
+GC:   Frag[9] KEEP offset=0xA size=1
+GC:   Frag[10] KEEP offset=0xB size=1
+GC:   Frag[11] KEEP offset=0xC size=1
+GC:   Frag[12] KEEP offset=0xD size=1
+GC:   Frag[13] KEEP offset=0xE size=1
+GC:   Frag[14] KEEP offset=0xF size=2
+GC:   Frag[15] KEEP offset=0x11 size=2
+GC:   Frag[16] KEEP offset=0x13 size=1
+GC:   Frag[17] KEEP offset=0x14 size=1
+GC:   Frag[18] KEEP offset=0x15 size=1
+GC:   Frag[19] KEEP offset=0x16 size=1
+GC:   Frag[20] KEEP offset=0x17 size=2
+GC:   Frag[21] KEEP offset=0x19 size=1
+GC:   Frag[22] KEEP offset=0x1A size=1
+GC:   Frag[23] KEEP offset=0x1B size=1
+GC:   Frag[24] KEEP offset=0x1C size=1
+GC:   Frag[25] KEEP offset=0x1D size=1
+GC:   Frag[26] KEEP offset=0x1E size=1
+GC:   Frag[27] KEEP offset=0x1F size=1
+GC:   Frag[28] KEEP offset=0x20 size=1
+GC:   Frag[29] KEEP offset=0x21 size=1
+GC:   Frag[30] KEEP offset=0x22 size=1
+GC:   Frag[31] KEEP offset=0x23 size=1
+GC:   Frag[32] KEEP offset=0x24 size=1
+GC:   Frag[33] KEEP offset=0x25 size=1
+GC:   Frag[34] KEEP offset=0x26 size=1
+GC: Phase 2 processing section 0xaaab00d8b0b0, Table=0xaaab00e3efa0 (2 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=2
+GC:   Frag[2] KEEP offset=0x3 size=1
+GC:   Frag[3] KEEP offset=0x4 size=1
+GC:   Frag[4] KEEP offset=0x5 size=2
+GC:   Frag[5] KEEP offset=0x7 size=1
+GC:   Frag[6] KEEP offset=0x8 size=2
+GC:   Frag[7] KEEP offset=0xA size=1
+GC:   Frag[8] KEEP offset=0xB size=1
+GC:   Frag[9] KEEP offset=0xC size=1
+GC:   Frag[10] KEEP offset=0xD size=2
+GC:   Frag[11] KEEP offset=0xF size=1
+GC:   Frag[12] KEEP offset=0x10 size=2
+GC:   Frag[13] KEEP offset=0x12 size=1
+GC:   Frag[14] KEEP offset=0x13 size=2
+GC:   Frag[15] KEEP offset=0x15 size=1
+GC:   Frag[16] KEEP offset=0x16 size=2
+GC:   Frag[17] KEEP offset=0x18 size=1
+GC:   Frag[18] KEEP offset=0x19 size=1
+GC:   Frag[19] KEEP offset=0x1A size=1
+GC:   Frag[20] KEEP offset=0x1B size=1
+GC:   Frag[21] KEEP offset=0x1C size=2
+GC:   Frag[22] KEEP offset=0x1E size=1
+GC:   Frag[23] KEEP offset=0x1F size=1
+GC:   Frag[24] KEEP offset=0x20 size=1
+GC:   Frag[25] KEEP offset=0x21 size=1
+GC:   Frag[26] KEEP offset=0x22 size=1
+GC:   Frag[27] KEEP offset=0x23 size=1
+GC:   Frag[28] KEEP offset=0x24 size=1
+GC:   Frag[29] KEEP offset=0x25 size=1
+GC:   Frag[30] KEEP offset=0x26 size=1
+GC:   Frag[31] KEEP offset=0x27 size=1
+GC:   Frag[32] KEEP offset=0x28 size=1
+GC:   Frag[33] KEEP offset=0x29 size=1
+GC:   Frag[34] KEEP offset=0x2A size=1
+GC:   Frag[35] KEEP offset=0x2B size=1
+GC:   Frag[36] KEEP offset=0x2C size=1
+GC:   Frag[37] KEEP offset=0x2D size=1
+GC:   Frag[38] KEEP offset=0x2E size=1
+GC:   Frag[39] KEEP offset=0x2F size=2
+GC:   Frag[40] KEEP offset=0x31 size=1
+GC:   Frag[41] KEEP offset=0x32 size=1
+GC:   Frag[42] KEEP offset=0x33 size=1
+GC:   Frag[43] KEEP offset=0x34 size=1
+GC:   Frag[44] KEEP offset=0x35 size=1
+GC:   Frag[45] KEEP offset=0x36 size=1
+GC:   Frag[46] KEEP offset=0x37 size=1
+GC:   Frag[47] KEEP offset=0x38 size=1
+GC:   Frag[48] KEEP offset=0x39 size=1
+GC:   Frag[49] KEEP offset=0x3A size=1
+GC:   Frag[50] KEEP offset=0x3B size=1
+GC:   Frag[51] KEEP offset=0x3C size=1
+GC:   Frag[52] KEEP offset=0x3D size=1
+GC:   Frag[53] KEEP offset=0x3E size=1
+GC:   Frag[54] KEEP offset=0x3F size=2
+GC:   Frag[55] KEEP offset=0x41 size=1
+GC:   Frag[56] KEEP offset=0x42 size=2
+GC:   Frag[57] KEEP offset=0x44 size=1
+GC:   Frag[58] KEEP offset=0x45 size=2
+GC:   Frag[59] KEEP offset=0x47 size=1
+GC:   Frag[60] KEEP offset=0x48 size=1
+GC:   Frag[61] KEEP offset=0x49 size=1
+GC:   Frag[62] KEEP offset=0x4A size=1
+GC:   Frag[63] KEEP offset=0x4B size=1
+GC:   Frag[64] KEEP offset=0x4C size=1
+GC:   Frag[65] KEEP offset=0x4D size=1
+GC:   Frag[66] KEEP offset=0x4E size=2
+GC:   Frag[67] KEEP offset=0x50 size=1
+GC:   Frag[68] KEEP offset=0x51 size=2
+GC:   Frag[69] KEEP offset=0x53 size=1
+GC:   Frag[70] KEEP offset=0x54 size=2
+GC:   Frag[71] KEEP offset=0x56 size=2
+GC:   Frag[72] KEEP offset=0x58 size=1
+GC:   Frag[73] KEEP offset=0x59 size=1
+GC:   Frag[74] KEEP offset=0x5A size=1
+GC:   Frag[75] KEEP offset=0x5B size=1
+GC:   Frag[76] KEEP offset=0x5C size=1
+GC:   Frag[77] KEEP offset=0x5D size=1
+GC:   Frag[78] KEEP offset=0x5E size=1
+GC:   Frag[79] KEEP offset=0x5F size=2
+GC:   Frag[80] KEEP offset=0x61 size=2
+GC:   Frag[81] KEEP offset=0x63 size=1
+GC:   Frag[82] KEEP offset=0x64 size=1
+GC:   Frag[83] KEEP offset=0x65 size=1
+GC:   Frag[84] KEEP offset=0x66 size=1
+GC:   Frag[85] KEEP offset=0x67 size=1
+GC:   Frag[86] KEEP offset=0x68 size=1
+GC:   Frag[87] KEEP offset=0x69 size=1
+GC:   Frag[88] KEEP offset=0x6A size=1
+GC:   Frag[89] KEEP offset=0x6B size=1
+GC:   Frag[90] KEEP offset=0x6C size=1
+GC:   Frag[91] KEEP offset=0x6D size=1
+GC:   Frag[92] KEEP offset=0x6E size=1
+GC:   Frag[93] KEEP offset=0x6F size=1
+GC:   Frag[94] KEEP offset=0x70 size=1
+GC:   Frag[95] KEEP offset=0x71 size=2
+GC:   Frag[96] KEEP offset=0x73 size=1
+GC:   Frag[97] KEEP offset=0x74 size=2
+GC:   Frag[98] KEEP offset=0x76 size=1
+GC:   Frag[99] KEEP offset=0x77 size=2
+GC:   Frag[100] KEEP offset=0x79 size=1
+GC: Phase 2 processing section 0xaaab00d635d0, Table=(nil) (0 offsets)
+GC:   Frag[0] KEEP offset=0x0 size=1
+GC:   Frag[1] KEEP offset=0x1 size=1
+GC:   Frag[2] KEEP offset=0x2 size=1
+GC:   Frag[3] KEEP offset=0x3 size=1
+GC:   Frag[4] KEEP offset=0x4 size=1
+GC:   Frag[5] KEEP offset=0x5 size=1
+GC:   Frag[6] KEEP offset=0x6 size=1
+GC:   Frag[7] KEEP offset=0x7 size=1
+GC:   Frag[8] KEEP offset=0x8 size=2
+GC:   Frag[9] KEEP offset=0xA size=1
+GC:   Frag[10] KEEP offset=0xB size=1
+GC:   Frag[11] KEEP offset=0xC size=1
+GC:   Frag[12] KEEP offset=0xD size=1
+GC:   Frag[13] KEEP offset=0xE size=1
+GC:   Frag[14] KEEP offset=0xF size=1
+GC:   Frag[15] KEEP offset=0x10 size=1
+GC:   Frag[16] KEEP offset=0x11 size=1
+GC:   Frag[17] KEEP offset=0x12 size=1
+GC:   Frag[18] KEEP offset=0x13 size=1
+GC:   Frag[19] KEEP offset=0x14 size=1
+GC:   Frag[20] KEEP offset=0x15 size=1
+GC:   Frag[21] KEEP offset=0x16 size=1
+GC:   Frag[22] KEEP offset=0x17 size=1
+GC:   Frag[23] KEEP offset=0x18 size=1
+GC:   Frag[24] KEEP offset=0x19 size=1
+GC:   Frag[25] KEEP offset=0x1A size=1
+GC:   Frag[26] KEEP offset=0x1B size=1
+GC:   Frag[27] KEEP offset=0x1C size=1
+GC:   Frag[28] KEEP offset=0x1D size=1
+GC:   Frag[29] KEEP offset=0x1E size=1
+GC:   Frag[30] KEEP offset=0x1F size=1
+GC:   Frag[31] KEEP offset=0x20 size=1
+GC:   Frag[32] KEEP offset=0x21 size=1
+GC:   Frag[33] KEEP offset=0x22 size=1
+GC: Phase 2 processing section 0xaaab00e46320, Table=(nil) (0 offsets)
+GC: Offset adjustments after Phase 2:
+GC:   Section 0xaaab00adb890:
+GC:     0xF -> 0x0 (CHANGED)
+GC:     0x19 -> 0x0 (CHANGED)
+GC:   Section 0xaaab00adf2b0:
+GC:     0x0 -> 0x0
+GC:     0x4 -> 0x4
+GC:     0xB -> 0xB
+GC:     0xE -> 0xE
+GC:     0x21 -> 0x21
+GC:     0x2D -> 0x2D
+GC:     0x38 -> 0x38
+GC:     0x4A -> 0x4A
+GC:     0x56 -> 0x56
+GC:     0x94 -> 0x94
+GC:     0x9E -> 0x9E
+GC:     0xAC -> 0xAC
+GC:     0xB6 -> 0xB6
+GC:     0xC1 -> 0xC1
+GC:     0xD9 -> 0xD9
+GC:     0xE6 -> 0xE6
+GC:     0x126 -> 0x126
+GC:     0x1AB -> 0x1AB
+GC:     0x1F4 -> 0x1F4
+GC:     0x21B -> 0x21B
+GC:     0x221 -> 0x221
+GC:     0x345 -> 0x345
+GC:   Section 0xaaab00b87370:
+GC:     0x28 -> 0x26 (CHANGED)
+GC:     0x2F -> 0x2D (CHANGED)
+GC:   Section 0xaaab00c67c80:
+GC:     0x0 -> 0x0
+GC:     0x5C -> 0x56 (CHANGED)
+GC:     0x90 -> 0x8A (CHANGED)
+GC:   Section 0xaaab00c498d0:
+GC:     0x5 -> 0x5
+GC:   Section 0xaaab00d2b2d0:
+GC:     0xF -> 0x0 (CHANGED)
+GC:     0x2C -> 0x1D (CHANGED)
+GC:   Section 0xaaab00d8b0b0:
+GC:     0x0 -> 0x0
+GC:     0x2E -> 0x2E
+GC: Rewrite 0x2F -> 0x2D
+GC: Rewrite 0x28 -> 0x26
+GC: Rewrite 0x28 -> 0x26
+GC: Rewrite export 0x2F -> 0x2D
+GC: Rewrite 0x90 -> 0x8A
+GC: Rewrite 0x5C -> 0x56
+GC: Live CODE symbols:
+GC:   Live: callmain (size=23)
+GC:   Live: donelib (size=12)
+GC:   Live: copydata (size=0)
+GC:   Live: _cputcxy (size=0)
+GC:   Live: ppubuf_flush (size=132)
+GC:   Live: ppubuf_waitempty (size=5)
+GC:   Live: zerobss (size=0)
+GC: WARNING: _write not found in any exports!
+GC: Phase 7 - Final segment sizes
+GC:   CODE: 1797 bytes
+GC:   RODATA: 205 bytes
+GC:   BSS: 45 bytes
+GC:   DATA: 52 bytes
+GC:   ZEROPAGE: 26 bytes
+GC:   ONCE: 108 bytes
+GC:   HEADER: 16 bytes
+GC:   STARTUP: 93 bytes
+GC:   VECTORS: 6 bytes
+GC:   CHARS: 4096 bytes
+
+========================================
+GC Complete (v8):
+  Live exports: 7
+  Dead exports: 38
+  Bytes removed: 197
+========================================
+
