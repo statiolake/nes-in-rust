@@ -429,11 +429,15 @@ unsigned SegWriteConstExpr (FILE* F, ExprNode* E, int Signed, unsigned Size)
     if (Signed) {
         if (Val > S_Hi[Size-1] || Val < S_Lo[Size-1]) {
             /* Range error */
+            fprintf (stderr, "DEBUG: Signed range error: Val=0x%lX (%ld), Size=%u, Range=[0x%lX to 0x%lX]\n",
+                    (unsigned long)Val, Val, Size, (unsigned long)S_Lo[Size-1], (unsigned long)S_Hi[Size-1]);
             return SEG_EXPR_RANGE_ERROR;
         }
     } else {
         if (((unsigned long)Val) > U_Hi[Size-1]) {
             /* Range error */
+            fprintf (stderr, "DEBUG: Unsigned range error: Val=0x%lX (%lu), Size=%u, Max=0x%lX\n",
+                    (unsigned long)Val, (unsigned long)Val, Size, U_Hi[Size-1]);
             return SEG_EXPR_RANGE_ERROR;
         }
     }
@@ -496,31 +500,37 @@ void SegWrite (const char* TgtName, FILE* Tgt, Segment* S, SegWriteFunc F, void*
                 case FRAG_SEXPR:
                     Sign = (Frag->Type == FRAG_SEXPR);
                     /* Call the users function and evaluate the result */
-                    switch (F (Frag->Expr, Sign, Frag->Size, Offs, Data)) {
+                    {
+                        int Result = F (Frag->Expr, Sign, Frag->Size, Offs, Data);
+                        switch (Result) {
 
-                        case SEG_EXPR_OK:
-                            break;
+                            case SEG_EXPR_OK:
+                                break;
 
-                        case SEG_EXPR_RANGE_ERROR:
-                            Error ("Range error in module '%s', line %u",
-                                   GetFragmentSourceName (Frag),
-                                   GetFragmentSourceLine (Frag));
-                            break;
+                            case SEG_EXPR_RANGE_ERROR:
+                                /* Debug: Try to evaluate and show the expression value */
+                                fprintf (stderr, "DEBUG: Range error at offset 0x%lX, fragment size %u, segment offset 0x%lX\n",
+                                        Offs, Frag->Size, S->OutputOffs);
+                                Error ("Range error in module '%s', line %u",
+                                       GetFragmentSourceName (Frag),
+                                       GetFragmentSourceLine (Frag));
+                                break;
 
-                        case SEG_EXPR_TOO_COMPLEX:
-                            Error ("Expression too complex in module '%s', line %u",
-                                   GetFragmentSourceName (Frag),
-                                   GetFragmentSourceLine (Frag));
-                            break;
+                            case SEG_EXPR_TOO_COMPLEX:
+                                Error ("Expression too complex in module '%s', line %u",
+                                       GetFragmentSourceName (Frag),
+                                       GetFragmentSourceLine (Frag));
+                                break;
 
-                        case SEG_EXPR_INVALID:
-                            Error ("Invalid expression in module '%s', line %u",
-                                   GetFragmentSourceName (Frag),
-                                   GetFragmentSourceLine (Frag));
-                            break;
+                            case SEG_EXPR_INVALID:
+                                Error ("Invalid expression in module '%s', line %u",
+                                       GetFragmentSourceName (Frag),
+                                       GetFragmentSourceLine (Frag));
+                                break;
 
-                        default:
-                            Internal ("Invalid return code from SegWriteFunc");
+                            default:
+                                Internal ("Invalid return code from SegWriteFunc");
+                        }
                     }
                     break;
 
@@ -549,6 +559,14 @@ unsigned SegmentCount (void)
 /* Return the total number of segments */
 {
     return CollCount (&SegmentList);
+}
+
+
+
+Segment* SegmentByIndex (unsigned Index)
+/* Return a segment by its index */
+{
+    return CollAt (&SegmentList, Index);
 }
 
 

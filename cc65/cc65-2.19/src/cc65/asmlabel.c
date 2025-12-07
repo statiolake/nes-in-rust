@@ -75,7 +75,7 @@ const char* LocalLabelName (unsigned L)
 */
 {
     static char Buf[64];
-    sprintf (Buf, "L%04X", L);
+    sprintf (Buf, "L%06X", L);
     return Buf;
 }
 
@@ -86,10 +86,10 @@ int IsLocalLabelName (const char* Name)
 {
     unsigned I;
 
-    if (Name[0] != 'L' || strlen (Name) != 5) {
+    if (Name[0] != 'L' || strlen (Name) != 7) {
         return 0;
     }
-    for (I = 1; I <= 4; ++I) {
+    for (I = 1; I <= 6; ++I) {
         if (!IsXDigit (Name[I])) {
             return 0;
         }

@@ -58,7 +58,7 @@
 
 
 /* Symbol table */
-static const char* SymTab[0x10000];
+static const char* SymTab[0x1000000];
 
 
 
@@ -74,7 +74,7 @@ static const char* MakeLabelName (unsigned Addr)
 */
 {
     static char LabelBuf [32];
-    xsprintf (LabelBuf, sizeof (LabelBuf), "L%04X", Addr);
+    xsprintf (LabelBuf, sizeof (LabelBuf), "L%06X", Addr);
     return LabelBuf;
 }
 
@@ -408,7 +408,7 @@ void DefOutOfRangeLabels (void)
     }
 
     /* High range */
-    while (Addr < 0x10000) {
+    while (Addr < 0x1000000) {
         DefOutOfRangeLabel (Addr++);
     }
 

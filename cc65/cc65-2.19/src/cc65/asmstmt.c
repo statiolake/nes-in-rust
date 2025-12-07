@@ -238,7 +238,7 @@ static void ParseGVarArg (StrBuf* T, unsigned Arg)
     } else {
         /* Static variable */
         char Buf [16];
-        xsprintf (Buf, sizeof (Buf), "L%04X", Sym->V.L.Label);
+        xsprintf (Buf, sizeof (Buf), "L%06X", Sym->V.L.Label);
         SB_AppendStr (T, Buf);
     }
 }

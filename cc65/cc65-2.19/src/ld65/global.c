@@ -59,3 +59,5 @@ unsigned char LargeAlignment = 0;       /* Don't warn about large alignments */
 const char* MapFileName     = 0;        /* Name of the map file */
 const char* LabelFileName   = 0;        /* Name of the label file */
 const char* DbgFileName     = 0;        /* Name of the debug file */
+
+unsigned char GcSections    = 0;        /* Enable garbage collection */

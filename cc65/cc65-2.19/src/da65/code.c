@@ -53,7 +53,7 @@
 
 
 
-unsigned char CodeBuf [0x10000];        /* Code buffer */
+unsigned char CodeBuf [0x1000000];      /* Code buffer (16MB) */
 unsigned long CodeStart;                /* Start address */
 unsigned long CodeEnd;                  /* End address */
 unsigned long PC;                       /* Current PC */
@@ -73,7 +73,7 @@ void LoadCode (void)
     FILE* F;
 
 
-    PRECONDITION (StartAddr < 0x10000);
+    PRECONDITION (StartAddr < 0x1000000);
 
     /* Open the file */
     F = fopen (InFile, "rb");
@@ -113,20 +113,13 @@ void LoadCode (void)
         Size = InputSize;
     }
 
-    /* If the start address was not given, set it so that the code loads to
-    ** 0x10000 - Size. This is a reasonable default assuming that the file
-    ** is a ROM that contains the hardware vectors at $FFFA.
-    */
+    /* If the start address was not given, set it to 0 */
     if (StartAddr < 0) {
-        if (Size > 0x10000) {
-            StartAddr = 0;
-        } else {
-            StartAddr = 0x10000 - Size;
-        }
+        StartAddr = 0;
     }
 
     /* Calculate the maximum code size */
-    MaxCount = 0x10000 - StartAddr;
+    MaxCount = 0x1000000 - StartAddr;
 
     /* Check if the size is larger than what we can read */
     if (Size == 0) {

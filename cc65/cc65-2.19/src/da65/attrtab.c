@@ -46,7 +46,7 @@
 
 
 /* Attribute table */
-static unsigned short AttrTab[0x10000];
+static unsigned short AttrTab[0x1000000];
 
 
 
@@ -59,7 +59,7 @@ static unsigned short AttrTab[0x10000];
 void AddrCheck (unsigned Addr)
 /* Check if the given address has a valid range */
 {
-    if (Addr >= 0x10000) {
+    if (Addr >= 0x1000000) {
         Error ("Address out of range: %08X", Addr);
     }
 }

@@ -60,6 +60,7 @@
 #include "exports.h"
 #include "fileio.h"
 #include "filepath.h"
+#include "gc.h"
 #include "global.h"
 #include "library.h"
 #include "mapfile.h"
@@ -135,6 +136,7 @@ static void Usage (void)
             "  --define sym=val\t\tDefine a symbol\n"
             "  --end-group\t\t\tEnd a library group\n"
             "  --force-import sym\t\tForce an import of symbol 'sym'\n"
+            "  --gc-sections\t\t\tRemove unreferenced sections\n"
             "  --help\t\t\tHelp (this text)\n"
             "  --large-alignment\t\tDon't warn about large alignments\n"
             "  --lib file\t\t\tLink this library\n"
@@ -355,6 +357,15 @@ static void OptEndGroup (const char* Opt attribute ((unused)),
 /* End a library group */
 {
     LibEndGroup ();
+}
+
+
+
+static void OptGcSections (const char* Opt attribute ((unused)),
+                           const char* Arg attribute ((unused)))
+/* Enable garbage collection of unreferenced sections */
+{
+    GcSections = 1;
 }
 
 
@@ -625,6 +636,7 @@ static void ParseCommandLine(void)
         { "--define",                    1,      OptDefine               },
         { "--end-group",                 0,      CmdlOptEndGroup         },
         { "--force-import",              1,      OptForceImport          },
+        { "--gc-sections",               0,      OptGcSections           },
         { "--help",                      0,      OptHelp                 },
         { "--large-alignment",           0,      OptLargeAlignment       },
         { "--lib",                       1,      OptLib                  },
@@ -820,6 +832,11 @@ int main (int argc, char* argv [])
 
     /* Create the condes tables if requested */
     ConDesCreate ();
+
+    /* Perform garbage collection if requested (before address assignment) */
+    if (GcSections) {
+        GcCollect ();
+    }
 
     /* Process data from the config file. Assign start addresses for the
     ** segments, define linker symbols. The function will return the number

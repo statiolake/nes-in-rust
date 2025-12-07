@@ -51,7 +51,7 @@
 
 
 
-static unsigned short SubroutineParamSize[0x10000];
+static unsigned short SubroutineParamSize[0x1000000];
 
 /*****************************************************************************/
 /*                             Helper functions                              */

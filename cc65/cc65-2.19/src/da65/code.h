@@ -7,7 +7,7 @@
 /*                                                                           */
 /*                                                                           */
 /* (C) 2000-2003 Ullrich von Bassewitz                                       */
-/*               Römerstrasse 52                                             */
+/*               Rï¿½merstrasse 52                                             */
 /*               D-70794 Filderstadt                                         */
 /* EMail:        uz@cc65.org                                                 */
 /*                                                                           */
@@ -44,7 +44,7 @@
 
 
 
-extern unsigned char CodeBuf [0x10000];         /* Code buffer */
+extern unsigned char CodeBuf [0x1000000];       /* Code buffer (16MB) */
 extern unsigned long CodeStart;                 /* Start address */
 extern unsigned long CodeEnd;                   /* End address */
 extern unsigned long PC;                        /* Current PC */

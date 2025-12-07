@@ -280,7 +280,7 @@ static void GlobalSection (void)
             case INFOTOK_INPUTSIZE:
                 InfoNextTok ();
                 InfoAssureInt ();
-                InfoRangeCheck (1, 0x10000);
+                InfoRangeCheck (1, 0x1000000);
                 InputSize = InfoIVal;
                 InfoNextTok ();
                 break;
@@ -446,7 +446,7 @@ static void LabelSection (void)
                     InfoError ("Size already given");
                 }
                 InfoAssureInt ();
-                InfoRangeCheck (1, 0x10000);
+                InfoRangeCheck (1, 0x1000000);
                 Size = InfoIVal;
                 InfoNextTok ();
                 break;
@@ -457,7 +457,7 @@ static void LabelSection (void)
                     InfoError ("ParamSize already given");
                 }
                 InfoAssureInt ();
-                InfoRangeCheck (1, 0x10000);
+                InfoRangeCheck (1, 0x1000000);
                 ParamSize = InfoIVal;
                 InfoNextTok ();
                 break;
@@ -484,11 +484,11 @@ static void LabelSection (void)
         /* Use default */
         Size = 1;
     }
-    if (Value + Size > 0x10000) {
+    if (Value + Size > 0x1000000) {
         InfoError ("Invalid size (address out of range)");
     }
     if (HaveLabel ((unsigned) Value)) {
-        InfoError ("Label for address $%04lX already defined", Value);
+        InfoError ("Label for address $%06lX already defined", Value);
     }
 
     /* Define the label(s) */

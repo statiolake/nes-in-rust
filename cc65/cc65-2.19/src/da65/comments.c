@@ -7,7 +7,7 @@
 /*                                                                           */
 /*                                                                           */
 /* (C) 2006      Ullrich von Bassewitz                                       */
-/*               Römerstrasse 52                                             */
+/*               Rï¿½merstrasse 52                                             */
 /*               D-70794 Filderstadt                                         */
 /* EMail:        uz@cc65.org                                                 */
 /*                                                                           */
@@ -50,7 +50,7 @@
 
 
 /* Comment table */
-static const char* CommentTab[0x10000];
+static const char* CommentTab[0x1000000];
 
 
 

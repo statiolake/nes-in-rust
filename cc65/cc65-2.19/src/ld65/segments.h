@@ -152,6 +152,9 @@ void SegWrite (const char* TgtName, FILE* Tgt, Segment* S, SegWriteFunc F, void*
 unsigned SegmentCount (void);
 /* Return the total number of segments */
 
+Segment* SegmentByIndex (unsigned Index);
+/* Return a segment by its index */
+
 void PrintSegmentMap (FILE* F);
 /* Print a segment map to the given file */
 

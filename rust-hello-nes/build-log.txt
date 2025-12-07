@@ -1,0 +1,127 @@
+CC=../mrustc-master/cl65-wrapper ../mrustc-master/bin/minicargo --target ./target.toml --output-dir output ./main
+--- [32mBUILDING main v0.1.0 [bin main][0m (50.0% 1r,0w,0b,1c/2t)
+> /workspace/mrustc-master/bin/mrustc /workspace/rust-hello-nes/main/src/main.rs -o output/main -C emit-depfile=output/main.d --cfg debug_assertions -O -L output -L output/host --crate-name main --crate-type bin --crate-tag 0_1_0 --target ./target.toml --extern core=output/libcore.rlib > output/main_dbg.txt
+ (50.0% 1r,0w,0b,1c/2t): main v0.1.0 [bin main]
+output/main.c(148): Warning: Passing struct by value for parameter 'l'
+output/main.c(148): Warning: Passing struct by value for parameter 'r'
+output/main.c(159): Warning: Parameter 'p' is never used
+output/main.c(161): Warning: Passing struct by value for parameter 'val'
+output/main.c(228): Warning: Parameter 'arg0' is never used
+output/main.c(228): Warning: Parameter 'arg1' is never used
+output/main.c(228): Warning: 'rv' is defined but never used
+output/main.c(228): Warning: 'bb2' is defined but never used
+output/main.c(251): Warning: Passing struct by value for parameter 'l'
+output/main.c(251): Warning: Passing struct by value for parameter 'l'
+output/main.c(252): Warning: 'ALIGN_TO' is defined but never used
+output/main.c(252): Warning: '__builtin_ctz' is defined but never used
+output/main.c(252): Warning: '__builtin_clz' is defined but never used
+output/main.c(252): Warning: '__builtin_popcount' is defined but never used
+output/main.c(252): Warning: '__builtin_bswap16' is defined but never used
+output/main.c(252): Warning: '__builtin_bswap32' is defined but never used
+output/main.c(252): Warning: '__builtin_mul_overflow_u8' is defined but never used
+output/main.c(252): Warning: '__builtin_mul_overflow_i8' is defined but never used
+output/main.c(252): Warning: '__builtin_mul_overflow_u32' is defined but never used
+output/main.c(252): Warning: '__builtin_mul_overflow_i32' is defined but never used
+output/main.c(252): Warning: '__builtin_mul_overflow_usize' is defined but never used
+output/main.c(252): Warning: '__builtin_mul_overflow_isize' is defined but never used
+output/main.c(252): Warning: '__builtin_sub_overflow_u32' is defined but never used
+output/main.c(252): Warning: '__builtin_sub_overflow_u8' is defined but never used
+output/main.c(252): Warning: '__builtin_sub_overflow_usize' is defined but never used
+output/main.c(252): Warning: '__builtin_add_overflow_u32' is defined but never used
+output/main.c(252): Warning: '__builtin_add_overflow_u8' is defined but never used
+output/main.c(252): Warning: '__builtin_add_overflow_usize' is defined but never used
+output/main.c(252): Warning: '__builtin_sub_overflow_i32' is defined but never used
+output/main.c(252): Warning: '__builtin_sub_overflow_i8' is defined but never used
+output/main.c(252): Warning: '__builtin_sub_overflow_isize' is defined but never used
+output/main.c(252): Warning: '__builtin_add_overflow_i32' is defined but never used
+output/main.c(252): Warning: '__builtin_add_overflow_i8' is defined but never used
+output/main.c(252): Warning: '__builtin_add_overflow_isize' is defined but never used
+output/main.c(252): Warning: 'make_sliceptr' is defined but never used
+output/main.c(252): Warning: 'make_traitobjptr' is defined but never used
+output/main.c(252): Warning: 'mrustc_max' is defined but never used
+output/main.c(252): Warning: 'noop_drop' is defined but never used
+output/main.c(252): Warning: 'mrustc_string_search_linear' is defined but never used
+output/main.c(252): Warning: '__mrustc_bitrev32' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_umax8' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_umin8' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_imax8' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_imin8' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_and_not8' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_umax16' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_umin16' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_imax16' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_imin16' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_and_not16' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_umax32' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_umin32' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_imax32' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_imin32' is defined but never used
+output/main.c(252): Warning: '__mrustc_op_and_not32' is defined but never used
+
+========================================
+GC: Starting garbage collection (v6)
+GC: With symbol import tracking for local labels
+========================================
+GC: Phase 1 - Marking root segments
+GC: Phase 2 - Marking constructor/destructor symbols
+GC: Worklist has 16 symbols after root marking
+GC: Pending section refs: 282
+GC: Phase 3 - Propagating reachability
+GC: Processed 24 symbols, 24 total live
+GC: Phase 4 - Building initial live ranges from exports
+GC:   Zero-sized export '__sig_dfl' at offset 47, using size 65536
+GC:   Zero-sized export 'zerobss' at offset 0, using size 65536
+GC:   Zero-sized export 'copydata' at offset 0, using size 65536
+GC:   Zero-sized export 'pushwysp' at offset 2, using size 65536
+GC:   Zero-sized export 'ldaxysp' at offset 2, using size 65536
+GC: Built 12 initial live ranges
+GC: Phase 5 - Processing section references (transitive closure)
+GC:   Iteration 1: processed 310 refs, added 146 new ranges, 0 pending
+GC: Transitive closure complete: 1 iterations, 310 total refs, 155 live ranges
+GC: Phase 6 - Removing dead code
+GC: Debug - will check fragments and log removals
+GC:   Segment 'CODE': old size 0x671EF (422383), new size 0x1DB (475)
+GC: Removed 284518 fragments (421908 bytes), kept 400 fragments
+GC: Live CODE symbols:
+GC:   Live: _main (size=16)
+GC:   Live: addysp (size=1)
+GC:   Live: callmain (size=23)
+GC:   Live: donelib (size=12)
+GC:   Live: copydata (size=0)
+GC:   Live: incsp4 (size=5)
+GC:   Live: ldaxysp (size=0)
+GC:   Live: ppubuf_flush (size=132)
+GC:   Live: pushax (size=22)
+GC:   Live: pushwysp (size=0)
+GC:   Live: __sig_dfl (size=0)
+GC:   Live: zerobss (size=0)
+GC: Found _write: live=0, size=12
+GC: Phase 7 - Final segment sizes
+GC:   CODE: 475 bytes
+GC:   RODATA: 12530 bytes
+GC:   BSS: 102 bytes
+GC:   DATA: 3405 bytes
+GC:   ZEROPAGE: 26 bytes
+GC:   ONCE: 111 bytes
+GC:   HEADER: 16 bytes
+GC:   STARTUP: 93 bytes
+GC:   VECTORS: 6 bytes
+GC:   CHARS: 4096 bytes
+
+========================================
+GC Complete (v6):
+  Live exports: 12
+  Dead exports: 4790
+  Bytes removed: 421908
+========================================
+
+DEBUG: Unsigned range error: Val=0x6F28C (455308), Size=2, Max=0xFFFF
+DEBUG: Range error at offset 0x1C, fragment size 2, segment offset 0x10
+ld65: Error: Range error in module 'nes/crt0.s', line 101
+C Compiler failed to execute - error code 256
+[31mProcess exited with non-zero exit status 1
+[0mFAILING COMMAND: /workspace/mrustc-master/bin/mrustc /workspace/rust-hello-nes/main/src/main.rs -o output/main -C emit-depfile=output/main.d --cfg debug_assertions -O -L output -L output/host --crate-name main --crate-type bin --crate-tag 0_1_0 --target ./target.toml --extern core=output/libcore.rlib
+Env:  OUT_DIR=/workspace/rust-hello-nes/output/build_main-0_1_0 CARGO_MANIFEST_DIR=/workspace/rust-hello-nes/main CARGO_PKG_NAME=main CARGO_PKG_VERSION=0.1.0 CARGO_PKG_VERSION_MAJOR=0 CARGO_PKG_VERSION_MINOR=1 CARGO_PKG_VERSION_PATCH=0
+ (100.0% 0r,0w,0b,2c/2t):
+BUILD FAILED
+make: *** [Makefile:3: output/main.nes] Error 1

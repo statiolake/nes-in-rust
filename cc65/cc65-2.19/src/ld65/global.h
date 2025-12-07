@@ -60,6 +60,8 @@ extern const char*      MapFileName;    /* Name of the map file */
 extern const char*      LabelFileName;  /* Name of the label file */
 extern const char*      DbgFileName;    /* Name of the debug file */
 
+extern unsigned char    GcSections;     /* Enable garbage collection */
+
 
 
 /* End of global.h */
