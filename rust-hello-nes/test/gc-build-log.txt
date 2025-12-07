@@ -177,38 +177,3 @@ GC:   CHARS: 4096 bytes
 GC Complete (v8)
 ========================================
 
-GC:   -> Unmarking __CONSTRUCTOR_COUNT__
-GC:   -> Unmarking __CONSTRUCTOR_TABLE__
-GC:   -> Unmarking ppuinit
-GC:   -> Unmarking paletteinit
-GC:   -> Unmarking _cputcxy
-GC:   -> Unmarking zerobss
-GC:   -> Unmarking copydata
-GC:   -> Unmarking __SRAM_START__
-GC:   -> Unmarking __SRAM_SIZE__
-GC:   -> Unmarking sp
-GC:   -> Unmarking initlib
-GC:   -> Unmarking callmain
-GC:   -> Unmarking donelib
-GC:   -> Unmarking ppubuf_flush
-GC:   -> Unmarking initconio
-GC:   -> Unmarking __DESTRUCTOR_COUNT__
-GC:   -> Unmarking __DESTRUCTOR_TABLE__
-GC:   -> Unmarking pushax
-GC:   -> Unmarking _main
-GC:   -> Unmarking _cputc
-GC:   -> Unmarking putchar
-GC:   -> Unmarking setcursor
-GC:   -> Unmarking ppubuf_put
-GC:   -> Unmarking ppubuf_waitempty
-GC:   -> Unmarking ppubuf_wait
-GC:   -> Unmarking __DATA_LOAD__
-GC:   -> Unmarking ptr1
-GC:   -> Unmarking __DATA_RUN__
-GC:   -> Unmarking ptr2
-GC:   -> Unmarking __DATA_SIZE__
-GC:   -> Unmarking tmp1
-GC:   -> Unmarking __BSS_RUN__
-GC:   -> Unmarking __BSS_SIZE__
-GC:   -> Unmarking gotoxy
-GC:   -> Unmarking popa

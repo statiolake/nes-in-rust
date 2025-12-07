@@ -35,6 +35,5 @@ for arg in "${args_to_process[@]}"; do
     esac
 done
 
-# フィルタリング後の引数をcl65に渡す（@ ファイル形式は展開して渡す）
-# --gc-sections を追加して未使用関数を除去
-exec ../cc65/cc65-2.19/bin/cl65 -t nes -Os -Wl --gc-sections "${filtered_args[@]}"
+# exec ../cc65/cc65-2.19/bin/cl65 -t nes -Os -Wl --gc-sections "${filtered_args[@]}"
+exec ../cc65/cc65-2.19/bin/cl65 -t nes -Os "${filtered_args[@]}"

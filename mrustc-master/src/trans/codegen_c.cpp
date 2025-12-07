@@ -3555,8 +3555,11 @@ namespace {
                         emit_lvalue(e.dst); m_of << ".DATA[2] = "; emit_param(ve.val);
                     }
                     else {
-                        m_of << "for(unsigned int i = 0; i < " << ve.count << "; i ++)\n";
-                        m_of << indent << "\t"; emit_lvalue(e.dst); m_of << ".DATA[i] = "; emit_param(ve.val);
+                        m_of << "do {\n";
+                        m_of << indent << "uint8_t i;\n";
+                        m_of << indent << "for(i = 0; i < " << ve.count << "; i ++)\n";
+                        m_of << indent << "\t"; emit_lvalue(e.dst); m_of << ".DATA[i] = "; emit_param(ve.val); m_of << ";\n";
+                        m_of << indent << "} while (0)\n";
                     }
                     }
                 TU_ARMA(Borrow, ve) {
