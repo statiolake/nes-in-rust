@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# .nes ファイルの CODE セグメントを da65 に渡すラッパースクリプト
+# 使用法: ./da65nes <.nes file> [da65 options]
+
+if [ $# -lt 1 ]; then
+    echo "Usage: $0 <.nes file> [da65 options]" >&2
+    exit 1
+fi
+
+NES_FILE="$1"
+shift  # 残りの引数を da65 のオプションとして扱う
+
+if [ ! -f "$NES_FILE" ]; then
+    echo "Error: File not found: $NES_FILE" >&2
+    exit 1
+fi
+
+# INES ヘッダのバイト4からプログラム ROM サイズを取得
+# バイト4 = PRG ROM サイズ（16Kバンク単位）
+PRG_BANKS=$(hexdump -C "$NES_FILE" | head -1 | awk '{print $6}')
+
+if [ -z "$PRG_BANKS" ]; then
+    # hexdump が失敗した場合は od を使う
+    PRG_BANKS=$(od -An -tx1 -N5 "$NES_FILE" | awk '{print $5}')
+fi
+
+PRG_BANKS=$((0x$PRG_BANKS))
+PRG_SIZE=$((PRG_BANKS * 16384))
+
+# 一時ファイルを作成
+TEMP_FILE=$(mktemp)
+trap "rm -f $TEMP_FILE" EXIT
+
+# INES ヘッダ（16バイト）をスキップしてプログラム ROM を抽出
+dd if="$NES_FILE" of="$TEMP_FILE" bs=1 skip=16 count=$PRG_SIZE 2>/dev/null
+
+# da65 にプログラム ROM を渡す
+da65 "$@" "$TEMP_FILE"

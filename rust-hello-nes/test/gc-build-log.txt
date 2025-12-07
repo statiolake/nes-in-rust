@@ -4,20 +4,20 @@ GC: Starting garbage collection (v8)
 GC: Export-based dead code removal
 ========================================
 GC: Phase 1 - Marking root segments
-GC: WARNING: No export at offset 0xD in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0xD in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0x14 in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0x14 in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0x1D in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0x1D in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0x20 in section 0xaaab00b6e6a0
-GC: WARNING: No export at offset 0x28 in section 0xaaab00b87370
-GC: WARNING: No export at offset 0x35 in section 0xaaab00ae2920
-GC: WARNING: No export at offset 0x5C in section 0xaaab00ae2920
+GC: WARNING: No export at offset 0xD in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0xD in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0x14 in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0x14 in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0x1D in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0x1D in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0x20 in section 0xaaab1e8276a0
+GC: WARNING: No export at offset 0x28 in section 0xaaab1e840370
+GC: WARNING: No export at offset 0x35 in section 0xaaab1e79b920
+GC: WARNING: No export at offset 0x5C in section 0xaaab1e79b920
 GC: Phase 2 - Marking constructor/destructor symbols
 GC: Worklist has 15 symbols after root marking
 GC: Phase 3 - Propagating reachability
-GC: WARNING: No export at offset 0x30 in section 0xaaab00b07bf0
+GC: WARNING: No export at offset 0x30 in section 0xaaab1e7c0bf0
 GC: Processed 16 symbols, 16 total live
 GC: Phase 5 - Collecting dead export ranges
 GC:   Dead export '_main' at 0x0-0x1A (size 26)
@@ -42,17 +42,17 @@ GC:   Dead export 'push0' at 0x0-0x2 (size 2)
 GC:   Dead export 'setcursor' at 0x0-0xF (size 15)
 GC: Collected 20 dead export ranges
 GC: Phase 6 - Removing dead code
-GC: WARNING: Cross-section ref from ONCE:0xaaab00ae2160 to CODE:0xaaab00b87370 offset 0x28
-GC: WARNING: Cross-section ref from DATA:0xaaab00d6b570 to CODE:0xaaab00d8b0b0 offset 0x0
+GC: WARNING: Cross-section ref from ONCE:0xaaab1e79b160 to CODE:0xaaab1e840370 offset 0x28
+GC: WARNING: Cross-section ref from DATA:0xaaab1ea24570 to CODE:0xaaab1ea440b0 offset 0x0
 GC: Phase 1 collected 7 section tables
-GC:   Section 0xaaab00adb890: 2 offsets
-GC:   Section 0xaaab00adf2b0: 22 offsets
-GC:   Section 0xaaab00b87370: 2 offsets
-GC:   Section 0xaaab00c67c80: 3 offsets
-GC:   Section 0xaaab00c498d0: 1 offsets
-GC:   Section 0xaaab00d2b2d0: 2 offsets
-GC:   Section 0xaaab00d8b0b0: 2 offsets
-GC: Phase 2 processing section 0xaaab00adb890, Table=0xaaab00e55e60 (2 offsets)
+GC:   Section 0xaaab1e794890: 2 offsets
+GC:   Section 0xaaab1e7982b0: 22 offsets
+GC:   Section 0xaaab1e840370: 2 offsets
+GC:   Section 0xaaab1e920c80: 3 offsets
+GC:   Section 0xaaab1e9028d0: 1 offsets
+GC:   Section 0xaaab1e9e42d0: 2 offsets
+GC:   Section 0xaaab1ea440b0: 2 offsets
+GC: Phase 2 processing section 0xaaab1e794890, Table=0xaaab1eb0ee60 (2 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
 GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
@@ -71,9 +71,9 @@ GC:   Frag[14] DELETE offset=0x14 size=2 (removed so far: 20)
 GC:   Frag[15] DELETE offset=0x16 size=1 (removed so far: 22)
 GC:   Frag[16] DELETE offset=0x17 size=2 (removed so far: 23)
 GC:   Frag[17] DELETE offset=0x19 size=1 (removed so far: 25)
-GC: Phase 2 processing section 0xaaab00b34200, Table=(nil) (0 offsets)
-GC: Phase 2 processing section 0xaaab00adece0, Table=(nil) (0 offsets)
-GC: Phase 2 processing section 0xaaab00adf2b0, Table=0xaaab00e55ca0 (22 offsets)
+GC: Phase 2 processing section 0xaaab1e7ed200, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e797ce0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e7982b0, Table=0xaaab1eb0eca0 (22 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=2
 GC:   Frag[1] KEEP offset=0x2 size=1
 GC:   Frag[2] KEEP offset=0x3 size=1
@@ -800,7 +800,7 @@ GC:   Frag[722] KEEP offset=0x39F size=1
 GC:   Frag[723] KEEP offset=0x3A0 size=2
 GC:   Frag[724] KEEP offset=0x3A2 size=1
 GC:   Frag[725] KEEP offset=0x3A3 size=2
-GC: Phase 2 processing section 0xaaab00b5c610, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e815610, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 0)
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -815,7 +815,7 @@ GC:   Frag[10] KEEP offset=0xA size=1
 GC:   Frag[11] KEEP offset=0xB size=1
 GC:   Frag[12] KEEP offset=0xC size=1
 GC:   Frag[13] KEEP offset=0xD size=1
-GC: Phase 2 processing section 0xaaab00b6dad0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e826ad0, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
 GC:   Frag[1] KEEP offset=0x2 size=2
 GC:   Frag[2] KEEP offset=0x4 size=1
@@ -826,7 +826,7 @@ GC:   Frag[6] KEEP offset=0x9 size=1
 GC:   Frag[7] KEEP offset=0xA size=1
 GC:   Frag[8] KEEP offset=0xB size=1
 GC:   Frag[9] KEEP offset=0xC size=1
-GC: Phase 2 processing section 0xaaab00b76560, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e82f560, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=2
 GC:   Frag[2] KEEP offset=0x3 size=1
@@ -842,7 +842,7 @@ GC:   Frag[11] KEEP offset=0x10 size=2
 GC:   Frag[12] KEEP offset=0x12 size=2
 GC:   Frag[13] KEEP offset=0x14 size=1
 GC:   Frag[14] KEEP offset=0x15 size=2
-GC: Phase 2 processing section 0xaaab00b84c10, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e83dc10, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -854,7 +854,7 @@ GC:   Frag[7] KEEP offset=0x7 size=1
 GC:   Frag[8] KEEP offset=0x8 size=1
 GC:   Frag[9] KEEP offset=0x9 size=2
 GC:   Frag[10] KEEP offset=0xB size=1
-GC: Phase 2 processing section 0xaaab00b7ca10, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e835a10, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -899,7 +899,7 @@ GC:   Frag[40] KEEP offset=0x29 size=1
 GC:   Frag[41] KEEP offset=0x2A size=1
 GC:   Frag[42] KEEP offset=0x2B size=1
 GC:   Frag[43] KEEP offset=0x2C size=1
-GC: Phase 2 processing section 0xaaab00b86530, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e83f530, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=2
 GC:   Frag[2] KEEP offset=0x3 size=1
@@ -936,7 +936,7 @@ GC:   Frag[32] KEEP offset=0x24 size=1
 GC:   Frag[33] KEEP offset=0x25 size=2
 GC:   Frag[34] KEEP offset=0x27 size=1
 GC:   Frag[35] KEEP offset=0x28 size=2
-GC: Phase 2 processing section 0xaaab00b87370, Table=0xaaab00e55fe0 (2 offsets)
+GC: Phase 2 processing section 0xaaab1e840370, Table=0xaaab1eb0efe0 (2 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=2
@@ -973,9 +973,9 @@ GC:   Frag[32] KEEP offset=0x31 size=2
 GC:   Frag[33] KEEP offset=0x33 size=2
 GC:   Frag[34] KEEP offset=0x35 size=1
 GC:   Frag[35] KEEP offset=0x36 size=2
-GC: Phase 2 processing section 0xaaab00b8b680, Table=(nil) (0 offsets)
-GC: Phase 2 processing section 0xaaab00ae4500, Table=(nil) (0 offsets)
-GC: Phase 2 processing section 0xaaab00ae94b0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e844680, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e79d500, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e7a24b0, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=2
 GC:   Frag[1] KEEP offset=0x2 size=1
 GC:   Frag[2] KEEP offset=0x3 size=1
@@ -1000,7 +1000,7 @@ GC:   Frag[20] KEEP offset=0x19 size=1
 GC:   Frag[21] KEEP offset=0x1A size=2
 GC:   Frag[22] KEEP offset=0x1C size=1
 GC:   Frag[23] KEEP offset=0x1D size=1
-GC: Phase 2 processing section 0xaaab00bd6810, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e88f810, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
 GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
@@ -1013,7 +1013,7 @@ GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
 GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
 GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
 GC:   Frag[11] DELETE offset=0xC size=1 (removed so far: 12)
-GC: Phase 2 processing section 0xaaab00aea5b0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e7a35b0, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
 GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
@@ -1026,7 +1026,7 @@ GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
 GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
 GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
 GC:   Frag[11] DELETE offset=0xC size=1 (removed so far: 12)
-GC: Phase 2 processing section 0xaaab00bf8390, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e8b1390, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=2
 GC:   Frag[2] KEEP offset=0x3 size=2
@@ -1037,7 +1037,7 @@ GC:   Frag[6] KEEP offset=0xA size=1
 GC:   Frag[7] KEEP offset=0xB size=2
 GC:   Frag[8] KEEP offset=0xD size=1
 GC:   Frag[9] KEEP offset=0xE size=2
-GC: Phase 2 processing section 0xaaab00b57ab0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e810ab0, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
 GC:   Frag[2] DELETE offset=0x3 size=1 (removed so far: 3)
@@ -1059,7 +1059,7 @@ GC:   Frag[17] DELETE offset=0x12 size=1 (removed so far: 18)
 GC:   Frag[18] DELETE offset=0x13 size=1 (removed so far: 19)
 GC:   Frag[19] DELETE offset=0x14 size=1 (removed so far: 20)
 GC:   Frag[20] DELETE offset=0x15 size=1 (removed so far: 21)
-GC: Phase 2 processing section 0xaaab00c41960, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e8fa960, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
 GC:   Frag[1] KEEP offset=0x1 size=2
 GC:   Frag[2] KEEP offset=0x3 size=2
@@ -1082,7 +1082,7 @@ GC:   Frag[18] KEEP offset=0x1A size=1
 GC:   Frag[19] KEEP offset=0x1B size=1
 GC:   Frag[20] KEEP offset=0x1C size=1
 GC:   Frag[21] KEEP offset=0x1D size=1
-GC: Phase 2 processing section 0xaaab00c138c0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e8cc8c0, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=2
 GC:   Frag[1] KEEP offset=0x2 size=1
 GC:   Frag[2] KEEP offset=0x3 size=2
@@ -1112,7 +1112,7 @@ GC:   Frag[25] KEEP offset=0x1D size=1
 GC:   Frag[26] KEEP offset=0x1E size=1
 GC:   Frag[27] KEEP offset=0x1F size=1
 GC:   Frag[28] KEEP offset=0x20 size=1
-GC: Phase 2 processing section 0xaaab00c67c80, Table=0xaaab00e3f170 (3 offsets)
+GC: Phase 2 processing section 0xaaab1e920c80, Table=0xaaab1eaf8170 (3 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -1243,8 +1243,8 @@ GC:   Frag[126] KEEP offset=0x91 size=1
 GC:   Frag[127] KEEP offset=0x92 size=1
 GC:   Frag[128] KEEP offset=0x93 size=1
 GC:   Frag[129] KEEP offset=0x94 size=1
-GC: Phase 2 processing section 0xaaab00c97f20, Table=(nil) (0 offsets)
-GC: Phase 2 processing section 0xaaab00cedce0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e950f20, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e9a6ce0, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
 GC:   Frag[2] DELETE offset=0x3 size=1 (removed so far: 3)
@@ -1256,7 +1256,7 @@ GC:   Frag[7] DELETE offset=0x8 size=1 (removed so far: 8)
 GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
 GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
 GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
-GC: Phase 2 processing section 0xaaab00cefe80, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e9a8e80, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
 GC:   Frag[2] DELETE offset=0x3 size=1 (removed so far: 3)
@@ -1269,8 +1269,8 @@ GC:   Frag[8] DELETE offset=0x9 size=1 (removed so far: 9)
 GC:   Frag[9] DELETE offset=0xA size=1 (removed so far: 10)
 GC:   Frag[10] DELETE offset=0xB size=1 (removed so far: 11)
 GC:   Frag[11] DELETE offset=0xC size=2 (removed so far: 12)
-GC: Phase 2 processing section 0xaaab00ceeed0, Table=(nil) (0 offsets)
-GC: Phase 2 processing section 0xaaab00c498d0, Table=0xaaab00e3fbb0 (1 offsets)
+GC: Phase 2 processing section 0xaaab1e9a7ed0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e9028d0, Table=0xaaab1eaf8bb0 (1 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -1394,11 +1394,11 @@ GC:   Frag[119] KEEP offset=0xAC size=1
 GC:   Frag[120] KEEP offset=0xAD size=1
 GC:   Frag[121] KEEP offset=0xAE size=1
 GC:   Frag[122] KEEP offset=0xAF size=1
-GC: Phase 2 processing section 0xaaab00cfaed0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e9b3ed0, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x2 size=1 (removed so far: 2)
 GC:   Frag[2] DELETE offset=0x3 size=2 (removed so far: 3)
-GC: Phase 2 processing section 0xaaab00b5fc30, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e818c30, Table=(nil) (0 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=2 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x2 size=2 (removed so far: 2)
 GC:   Frag[2] DELETE offset=0x4 size=1 (removed so far: 4)
@@ -1421,7 +1421,7 @@ GC:   Frag[18] DELETE offset=0x16 size=1 (removed so far: 22)
 GC:   Frag[19] DELETE offset=0x17 size=1 (removed so far: 23)
 GC:   Frag[20] DELETE offset=0x18 size=1 (removed so far: 24)
 GC:   Frag[21] DELETE offset=0x19 size=1 (removed so far: 25)
-GC: Phase 2 processing section 0xaaab00d2b2d0, Table=0xaaab00e3f0e0 (2 offsets)
+GC: Phase 2 processing section 0xaaab1e9e42d0, Table=0xaaab1eaf80e0 (2 offsets)
 GC:   Frag[0] DELETE offset=0x0 size=1 (removed so far: 0)
 GC:   Frag[1] DELETE offset=0x1 size=1 (removed so far: 1)
 GC:   Frag[2] DELETE offset=0x2 size=1 (removed so far: 2)
@@ -1492,7 +1492,7 @@ GC:   Frag[66] KEEP offset=0x45 size=1
 GC:   Frag[67] KEEP offset=0x46 size=1
 GC:   Frag[68] KEEP offset=0x47 size=1
 GC:   Frag[69] KEEP offset=0x48 size=1
-GC: Phase 2 processing section 0xaaab00d48ca0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1ea01ca0, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -1513,7 +1513,7 @@ GC:   Frag[16] KEEP offset=0x12 size=1
 GC:   Frag[17] KEEP offset=0x13 size=1
 GC:   Frag[18] KEEP offset=0x14 size=1
 GC:   Frag[19] KEEP offset=0x15 size=1
-GC: Phase 2 processing section 0xaaab00d34a10, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1e9eda10, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -1549,7 +1549,7 @@ GC:   Frag[31] KEEP offset=0x23 size=1
 GC:   Frag[32] KEEP offset=0x24 size=1
 GC:   Frag[33] KEEP offset=0x25 size=1
 GC:   Frag[34] KEEP offset=0x26 size=1
-GC: Phase 2 processing section 0xaaab00d8b0b0, Table=0xaaab00e3efa0 (2 offsets)
+GC: Phase 2 processing section 0xaaab1ea440b0, Table=0xaaab1eaf7fa0 (2 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=2
 GC:   Frag[2] KEEP offset=0x3 size=1
@@ -1651,7 +1651,7 @@ GC:   Frag[97] KEEP offset=0x74 size=2
 GC:   Frag[98] KEEP offset=0x76 size=1
 GC:   Frag[99] KEEP offset=0x77 size=2
 GC:   Frag[100] KEEP offset=0x79 size=1
-GC: Phase 2 processing section 0xaaab00d635d0, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1ea1c5d0, Table=(nil) (0 offsets)
 GC:   Frag[0] KEEP offset=0x0 size=1
 GC:   Frag[1] KEEP offset=0x1 size=1
 GC:   Frag[2] KEEP offset=0x2 size=1
@@ -1686,12 +1686,12 @@ GC:   Frag[30] KEEP offset=0x1F size=1
 GC:   Frag[31] KEEP offset=0x20 size=1
 GC:   Frag[32] KEEP offset=0x21 size=1
 GC:   Frag[33] KEEP offset=0x22 size=1
-GC: Phase 2 processing section 0xaaab00e46320, Table=(nil) (0 offsets)
+GC: Phase 2 processing section 0xaaab1eaff320, Table=(nil) (0 offsets)
 GC: Offset adjustments after Phase 2:
-GC:   Section 0xaaab00adb890:
+GC:   Section 0xaaab1e794890:
 GC:     0xF -> 0x0 (CHANGED)
 GC:     0x19 -> 0x0 (CHANGED)
-GC:   Section 0xaaab00adf2b0:
+GC:   Section 0xaaab1e7982b0:
 GC:     0x0 -> 0x0
 GC:     0x4 -> 0x4
 GC:     0xB -> 0xB
@@ -1714,19 +1714,19 @@ GC:     0x1F4 -> 0x1F4
 GC:     0x21B -> 0x21B
 GC:     0x221 -> 0x221
 GC:     0x345 -> 0x345
-GC:   Section 0xaaab00b87370:
+GC:   Section 0xaaab1e840370:
 GC:     0x28 -> 0x26 (CHANGED)
 GC:     0x2F -> 0x2D (CHANGED)
-GC:   Section 0xaaab00c67c80:
+GC:   Section 0xaaab1e920c80:
 GC:     0x0 -> 0x0
 GC:     0x5C -> 0x56 (CHANGED)
 GC:     0x90 -> 0x8A (CHANGED)
-GC:   Section 0xaaab00c498d0:
+GC:   Section 0xaaab1e9028d0:
 GC:     0x5 -> 0x5
-GC:   Section 0xaaab00d2b2d0:
+GC:   Section 0xaaab1e9e42d0:
 GC:     0xF -> 0x0 (CHANGED)
 GC:     0x2C -> 0x1D (CHANGED)
-GC:   Section 0xaaab00d8b0b0:
+GC:   Section 0xaaab1ea440b0:
 GC:     0x0 -> 0x0
 GC:     0x2E -> 0x2E
 GC: Rewrite 0x2F -> 0x2D
