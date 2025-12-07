@@ -83,7 +83,7 @@ C Compiler failed to execute - error code 256
 ### 言語機能の対応
 
 - inline の削除
-- __thread の削除
+- \_\_thread の削除
 - 初期化子の制約に対応
   ```
   SLICE_PTR rv = { ptr, s };
@@ -105,7 +105,7 @@ C Compiler failed to execute - error code 256
 - 配列の最大長の制限
   - 一律問答無用に 128 とかに制限
   - それで壊れたら？ しらない
-- ネームマングリングの最大長の制限 (128文字 → 48文字)
+- ネームマングリングの最大長の制限 (128 文字 → 48 文字)
 - 長いシンボル名のハッシュ区切り文字の変更 (`$` → `_`)
 - 構造体を返す関数を、戻り値ではなくポインタ渡しで返すように変更
   - cc65 は一定サイズ以上の構造体を値で返せない？ ため
@@ -287,7 +287,7 @@ Completed main v0.1.0 [bin main]
 
 おおコンパイル成功！
 
-#![screenshots/first_success.png]
+#![screenshots/01_first_success.png]
 
 ## ちょっと複雑目なコードを書いてみる
 

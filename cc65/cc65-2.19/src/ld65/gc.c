@@ -14,8 +14,10 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 /* common */
+#include "alignment.h"
 #include "cddefs.h"
 #include "coll.h"
 #include "exprdefs.h"
@@ -234,6 +236,75 @@ static void FreeSectionRef (SectionRef* SR)
 /* Free a section reference */
 {
     xfree (SR);
+}
+
+
+
+/*****************************************************************************/
+/*                        Removed Fragment Accounting                        */
+/*****************************************************************************/
+
+
+
+typedef struct RemovalRange RemovalRange;
+struct RemovalRange {
+    unsigned long   Start;  /* Offset within the section before GC */
+    unsigned long   Len;    /* Length of the removed fragment */
+};
+
+
+
+static unsigned long AdjustOffsetForRemovals (unsigned long Offset,
+                                              const Collection* Ranges,
+                                              int* InRemoved)
+/* Translate an old section offset to its new position after removing
+** fragments. Returns the adjusted offset. If the offset was inside a removed
+** range, *InRemoved is set to true and the returned offset points to the
+** start of that range.
+*/
+{
+    unsigned long RemovedBefore = 0;
+    unsigned I;
+
+    if (InRemoved) {
+        *InRemoved = 0;
+    }
+
+    for (I = 0; I < CollCount (Ranges); ++I) {
+        const RemovalRange* Range = CollConstAt (Ranges, I);
+
+        if (Offset >= Range->Start + Range->Len) {
+            RemovedBefore += Range->Len;
+            continue;
+        }
+
+        if (Offset >= Range->Start) {
+            if (InRemoved) {
+                *InRemoved = 1;
+            }
+            return Range->Start - RemovedBefore;
+        }
+
+        break;
+    }
+
+    return Offset - RemovedBefore;
+}
+
+
+
+static void UpdateExportSectionExpr (Export* E, Section* Sec, unsigned long NewOffset)
+/* Replace the export expression with a fresh section expression using the
+** adjusted offset.
+*/
+{
+    if (E->Expr != 0) {
+        FreeExpr (E->Expr);
+    }
+    /* Pass NULL for ObjData to use direct section pointer (V.Sec) instead of
+    ** index (V.SecNum), since we have the Section pointer directly.
+    */
+    E->Expr = SectionExpr (Sec, NewOffset, 0);
 }
 
 
@@ -546,11 +617,9 @@ static void BuildLiveRanges (void)
 
             if (strcmp (SegName, "CODE") == 0) {
                 unsigned long Size = E->Size;
-                /* For zero-sized exports, use a very large default to ensure we don't delete anything important */
+                /* For zero-sized exports, use size 1 - they mark a single location */
                 if (Size == 0) {
-                    Size = 65536;  /* Use maximum possible to be safe */
-                    fprintf (stderr, "GC:   Zero-sized export '%s' at offset %lu, using size %lu\n",
-                             GetString (E->Name), Offset, Size);
+                    Size = 1;
                 }
                 AddLiveRange (Sec, Offset, Offset + Size);
             }
@@ -678,18 +747,290 @@ static void ProcessPendingSectionRefs (void)
 
 
 
-static void RemoveDeadCode (void)
-/* Remove fragments that are not in live ranges */
+/* Helper: Get the Section referenced by an Expr (handles SECTION and SECTION+LITERAL patterns) */
+static Section* GetExprRefSection (ExprNode* Expr)
 {
-    unsigned I, J;
+    if (Expr == 0) {
+        return 0;
+    }
+
+    /* Direct section reference */
+    if (Expr->Op == EXPR_SECTION) {
+        if (Expr->Obj) {
+            if (Expr->V.SecNum >= CollCount (&Expr->Obj->Sections)) {
+                return 0;
+            }
+            return CollAt (&Expr->Obj->Sections, Expr->V.SecNum);
+        } else {
+            return Expr->V.Sec;
+        }
+    }
+
+    /* SECTION + LITERAL pattern */
+    if (Expr->Op == EXPR_PLUS) {
+        ExprNode* SectionExpr = 0;
+
+        if (Expr->Left && Expr->Left->Op == EXPR_SECTION) {
+            SectionExpr = Expr->Left;
+        } else if (Expr->Right && Expr->Right->Op == EXPR_SECTION) {
+            SectionExpr = Expr->Right;
+        }
+
+        if (SectionExpr) {
+            if (SectionExpr->Obj) {
+                if (SectionExpr->V.SecNum >= CollCount (&SectionExpr->Obj->Sections)) {
+                    return 0;
+                }
+                return CollAt (&SectionExpr->Obj->Sections, SectionExpr->V.SecNum);
+            } else {
+                return SectionExpr->V.Sec;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+
+/* Helper: Extract offset from EXPR_SECTION + EXPR_LITERAL pattern */
+static int GetSectionPlusLiteralOffset (ExprNode* Expr, Section* TargetSec, long* OutOffset)
+/* If Expr is (SECTION + LITERAL) referencing TargetSec, return 1 and set OutOffset.
+** Otherwise return 0.
+*/
+{
+    if (Expr == 0) {
+        return 0;
+    }
+
+    /* Direct section reference with offset 0 */
+    if (Expr->Op == EXPR_SECTION) {
+        Section* Sec;
+        if (Expr->Obj) {
+            if (Expr->V.SecNum >= CollCount (&Expr->Obj->Sections)) {
+                return 0;
+            }
+            Sec = CollAt (&Expr->Obj->Sections, Expr->V.SecNum);
+        } else {
+            Sec = Expr->V.Sec;
+        }
+        if (Sec == TargetSec) {
+            *OutOffset = 0;
+            return 1;
+        }
+        return 0;
+    }
+
+    /* SECTION + LITERAL pattern */
+    if (Expr->Op == EXPR_PLUS) {
+        ExprNode* SectionExpr = 0;
+        ExprNode* LiteralExpr = 0;
+
+        if (Expr->Left && Expr->Left->Op == EXPR_SECTION) {
+            SectionExpr = Expr->Left;
+            if (Expr->Right && Expr->Right->Op == EXPR_LITERAL) {
+                LiteralExpr = Expr->Right;
+            }
+        } else if (Expr->Right && Expr->Right->Op == EXPR_SECTION) {
+            SectionExpr = Expr->Right;
+            if (Expr->Left && Expr->Left->Op == EXPR_LITERAL) {
+                LiteralExpr = Expr->Left;
+            }
+        }
+
+        if (SectionExpr && LiteralExpr) {
+            Section* Sec;
+            if (SectionExpr->Obj) {
+                if (SectionExpr->V.SecNum >= CollCount (&SectionExpr->Obj->Sections)) {
+                    return 0;
+                }
+                Sec = CollAt (&SectionExpr->Obj->Sections, SectionExpr->V.SecNum);
+            } else {
+                Sec = SectionExpr->V.Sec;
+            }
+            if (Sec == TargetSec) {
+                *OutOffset = LiteralExpr->V.IVal;
+                return 1;
+            }
+        }
+    }
+
+    return 0;
+}
+
+
+
+/* Helper: Update the LITERAL part of EXPR_SECTION + EXPR_LITERAL */
+static void UpdateSectionPlusLiteralOffset (ExprNode* Expr, long NewOffset)
+/* Assumes Expr is (SECTION + LITERAL) pattern. Updates the LITERAL value. */
+{
+    if (Expr->Op == EXPR_SECTION) {
+        /* Was a direct section reference, need to add a literal */
+        /* This case shouldn't happen if offset was 0 and stays 0, but handle it */
+        return;
+    }
+
+    if (Expr->Op == EXPR_PLUS) {
+        if (Expr->Left && Expr->Left->Op == EXPR_LITERAL) {
+            Expr->Left->V.IVal = NewOffset;
+        } else if (Expr->Right && Expr->Right->Op == EXPR_LITERAL) {
+            Expr->Right->V.IVal = NewOffset;
+        }
+        return;
+    }
+
+    // Should not reach here
+    assert(0);
+}
+
+
+
+/* Offset entry for tracking referenced offsets */
+typedef struct OffsetEntry OffsetEntry;
+struct OffsetEntry {
+    unsigned long OrigOffset;
+    unsigned long FinalOffset;
+};
+
+/* Section offset table for tracking adjustments per section */
+typedef struct SectionOffsetTable SectionOffsetTable;
+struct SectionOffsetTable {
+    Section*    Sec;
+    Collection  Offsets;    /* Collection of OffsetEntry* */
+};
+
+/* Comparison function for sorting OffsetEntry by OrigOffset */
+static int CompareOffsetEntries (void* Data attribute ((unused)), const void* A, const void* B)
+{
+    const OffsetEntry* EA = A;
+    const OffsetEntry* EB = B;
+    if (EA->OrigOffset < EB->OrigOffset) return -1;
+    if (EA->OrigOffset > EB->OrigOffset) return 1;
+    return 0;
+}
+
+/* Binary search: find entry with largest OrigOffset <= target */
+static int BinarySearchOffset (Collection* Offsets, unsigned long Target)
+{
+    int Lo = 0;
+    int Hi = (int)CollCount (Offsets) - 1;
+    int Result = -1;
+
+    while (Lo <= Hi) {
+        int Mid = (Lo + Hi) / 2;
+        OffsetEntry* E = CollAt (Offsets, Mid);
+        if (E->OrigOffset <= Target) {
+            Result = Mid;
+            Lo = Mid + 1;
+        } else {
+            Hi = Mid - 1;
+        }
+    }
+    return Result;
+}
+
+
+
+/* Helper: Add offset to a section's offset table */
+static void AddOffsetToSection (Collection* SectionTables, Section* TargetSec, unsigned long Offset)
+{
+    unsigned I;
+    SectionOffsetTable* Table = 0;
+
+    /* Find or create table for this section */
+    for (I = 0; I < CollCount (SectionTables); ++I) {
+        SectionOffsetTable* T = CollAt (SectionTables, I);
+        if (T->Sec == TargetSec) {
+            Table = T;
+            break;
+        }
+    }
+    if (Table == 0) {
+        Table = xmalloc (sizeof (SectionOffsetTable));
+        Table->Sec = TargetSec;
+        InitCollection (&Table->Offsets);
+        CollAppend (SectionTables, Table);
+    }
+
+    /* Check if offset already exists */
+    for (I = 0; I < CollCount (&Table->Offsets); ++I) {
+        OffsetEntry* E = CollAt (&Table->Offsets, I);
+        if (E->OrigOffset == Offset) {
+            return;  /* Already exists */
+        }
+    }
+
+    /* Add new offset */
+    {
+        OffsetEntry* Entry = xmalloc (sizeof (OffsetEntry));
+        Entry->OrigOffset = Offset;
+        Entry->FinalOffset = Offset;
+        CollAppend (&Table->Offsets, Entry);
+    }
+}
+
+/* Helper: Find offset table for a section */
+static SectionOffsetTable* FindSectionTable (Collection* SectionTables, Section* Sec)
+{
+    unsigned I;
+    for (I = 0; I < CollCount (SectionTables); ++I) {
+        SectionOffsetTable* T = CollAt (SectionTables, I);
+        if (T->Sec == Sec) {
+            return T;
+        }
+    }
+    return 0;
+}
+
+static void RemoveDeadCode (void)
+/* Remove fragments that are not in live ranges, adjusting Expr offsets */
+{
+    unsigned I, J, K;
     unsigned SegCount = SegmentCount ();
     unsigned long TotalRemoved = 0;
     unsigned FragsRemoved = 0;
     unsigned FragsKept = 0;
+    Collection SectionTables = STATIC_COLLECTION_INITIALIZER;  /* Collection of SectionOffsetTable* */
 
     fprintf (stderr, "GC: Phase 6 - Removing dead code\n");
-    fprintf (stderr, "GC: Debug - will check fragments and log removals\n");
 
+    /* ============================================================
+     * Phase 1: Collect all referenced offsets from ALL fragments
+     *          targeting CODE sections
+     * ============================================================ */
+    for (I = 0; I < CollCount (&ObjDataList); ++I) {
+        ObjData* O = CollAt (&ObjDataList, I);
+        for (J = 0; J < CollCount (&O->Sections); ++J) {
+            Section* Sec = CollAt (&O->Sections, J);
+            Fragment* F = Sec->FragRoot;
+            while (F != 0) {
+                if (F->Type == FRAG_EXPR || F->Type == FRAG_SEXPR) {
+                    /* Check if this references a CODE section */
+                    Section* RefSec = GetExprRefSection (F->Expr);
+                    if (RefSec != 0 && RefSec->Seg != 0) {
+                        const char* SegName = GetString (RefSec->Seg->Name);
+                        if (strcmp (SegName, "CODE") == 0) {
+                            long RefOffset;
+                            if (GetSectionPlusLiteralOffset (F->Expr, RefSec, &RefOffset) && RefOffset >= 0) {
+                                AddOffsetToSection (&SectionTables, RefSec, (unsigned long)RefOffset);
+                            }
+                        }
+                    }
+                }
+                F = F->Next;
+            }
+        }
+    }
+
+    /* Sort all offset tables */
+    for (I = 0; I < CollCount (&SectionTables); ++I) {
+        SectionOffsetTable* T = CollAt (&SectionTables, I);
+        CollSort (&T->Offsets, CompareOffsetEntries, 0);
+    }
+
+    /* ============================================================
+     * Phase 2: Remove fragments and calculate offset adjustments
+     * ============================================================ */
     for (I = 0; I < SegCount; ++I) {
         Segment* Seg = SegmentByIndex (I);
         const char* SegName = GetString (Seg->Name);
@@ -704,114 +1045,166 @@ static void RemoveDeadCode (void)
             Fragment* F;
             Fragment* Prev = 0;
             Fragment* Next;
-            unsigned long OldOffset = 0;
-            unsigned long NewOffset = 0;
+            unsigned long CurrentOffset;
+            unsigned long CurrentlyRemovedBytes = 0;
             unsigned long SectionBytesRemoved = 0;
+            SectionOffsetTable* Table = FindSectionTable (&SectionTables, Sec);
+            unsigned OffsetIdx = 0;
 
-            /* Build offset adjustment map for this section */
-            /* Key: old offset -> value: bytes removed before this offset */
-            unsigned long* OffsetAdjustments = xmalloc(sizeof(unsigned long) * 65536);
-            unsigned long AdjustmentCount = 0;
-            unsigned long CurrentAdjustment = 0;
-
-            /* First pass: determine which fragments to remove and build adjustment map */
             F = Sec->FragRoot;
-            OldOffset = 0;
+            CurrentOffset = 0;
+            CurrentlyRemovedBytes = 0;
+
             while (F != 0) {
-                unsigned long FragEnd = OldOffset + F->Size;
-                int FragLive = 0;
-                unsigned long CheckOffset;
-
-                /* Check if any part of this fragment is in a live range */
-                for (CheckOffset = OldOffset; CheckOffset < FragEnd; ++CheckOffset) {
-                    if (IsOffsetLive (Sec, CheckOffset)) {
-                        FragLive = 1;
-                        break;
-                    }
-                }
-
-                if (!FragLive) {
-                    /* This fragment will be removed */
-                    CurrentAdjustment += F->Size;
-                }
-
-                /* Store adjustment for this offset */
-                if (AdjustmentCount < 65536) {
-                    OffsetAdjustments[AdjustmentCount++] = CurrentAdjustment;
-                }
-
-                OldOffset = FragEnd;
-                F = F->Next;
-            }
-
-            /* Second pass: actually remove fragments and update offsets */
-            F = Sec->FragRoot;
-            OldOffset = 0;
-            NewOffset = 0;
-            while (F != 0) {
-                unsigned long FragEnd = OldOffset + F->Size;
+                unsigned long FragEnd = CurrentOffset + F->Size;
                 int FragLive = 0;
                 unsigned long CheckOffset;
 
                 Next = F->Next;
 
-                /* Check if any part of this fragment is in a live range */
-                for (CheckOffset = OldOffset; CheckOffset < FragEnd; ++CheckOffset) {
+                /* Check if fragment is live */
+                for (CheckOffset = CurrentOffset; CheckOffset < FragEnd; ++CheckOffset) {
                     if (IsOffsetLive (Sec, CheckOffset)) {
                         FragLive = 1;
                         break;
                     }
                 }
 
+                /* Update FinalOffset for all referenced offsets within this fragment's range */
+                if (Table != 0) {
+                    while (OffsetIdx < CollCount (&Table->Offsets)) {
+                        OffsetEntry* E = CollAt (&Table->Offsets, OffsetIdx);
+                        if (E->OrigOffset < FragEnd) {
+                            E->FinalOffset = E->OrigOffset - CurrentlyRemovedBytes;
+                            OffsetIdx++;
+                        } else {
+                            break;
+                        }
+                    }
+                }
+
                 if (FragLive) {
-                    /* Keep this fragment */
                     Prev = F;
-                    NewOffset += F->Size;
                     FragsKept++;
                 } else {
-                    /* Remove this fragment */
                     SectionBytesRemoved += F->Size;
                     TotalRemoved += F->Size;
+                    CurrentlyRemovedBytes += F->Size;
                     FragsRemoved++;
 
-                    /* Unlink from list */
+                    /* Unlink the fragment */
                     if (Prev == 0) {
                         Sec->FragRoot = Next;
                     } else {
                         Prev->Next = Next;
                     }
-
                     if (Sec->FragLast == F) {
                         Sec->FragLast = Prev;
                     }
                 }
 
-                OldOffset = FragEnd;
+                CurrentOffset = FragEnd;
                 F = Next;
             }
 
-            /* Update section size */
+            /* Process any remaining offsets after the last fragment */
+            if (Table != 0) {
+                while (OffsetIdx < CollCount (&Table->Offsets)) {
+                    OffsetEntry* E = CollAt (&Table->Offsets, OffsetIdx);
+                    E->FinalOffset = E->OrigOffset - CurrentlyRemovedBytes;
+                    OffsetIdx++;
+                }
+            }
+
             Sec->Size -= SectionBytesRemoved;
-
-            /* Export offset adjustment removed - not needed for cross-section references */
-
-            xfree(OffsetAdjustments);
         }
 
         /* Recalculate segment size */
-        unsigned long OldSegSize = Seg->Size;
         Seg->Size = 0;
         for (J = 0; J < CollCount (&Seg->Sections); ++J) {
             Section* Sec = CollAt (&Seg->Sections, J);
+
+            Sec->Fill = AlignCount (Seg->Size, Sec->Alignment);
+            Seg->Size += Sec->Fill;
+            Sec->Offs = Seg->Size;
             Seg->Size += Sec->Size;
         }
-        fprintf (stderr, "GC:   Segment '%s': old size 0x%lX (%lu), new size 0x%lX (%lu)\n",
-                SegName, OldSegSize, OldSegSize, Seg->Size, Seg->Size);
     }
 
+    /* ============================================================
+     * Phase 3: Update Expr offsets in ALL fragments
+     * ============================================================ */
+    for (I = 0; I < CollCount (&ObjDataList); ++I) {
+        ObjData* O = CollAt (&ObjDataList, I);
+
+        /* Update fragment expressions */
+        for (J = 0; J < CollCount (&O->Sections); ++J) {
+            Section* Sec = CollAt (&O->Sections, J);
+            Fragment* F = Sec->FragRoot;
+            while (F != 0) {
+                if (F->Type == FRAG_EXPR || F->Type == FRAG_SEXPR) {
+                    Section* RefSec = GetExprRefSection (F->Expr);
+                    if (RefSec != 0) {
+                        SectionOffsetTable* Table = FindSectionTable (&SectionTables, RefSec);
+                        if (Table != 0) {
+                            long RefOffset;
+                            if (GetSectionPlusLiteralOffset (F->Expr, RefSec, &RefOffset) && RefOffset >= 0) {
+                                int Idx = BinarySearchOffset (&Table->Offsets, (unsigned long)RefOffset);
+                                if (Idx >= 0) {
+                                    OffsetEntry* E = CollAt (&Table->Offsets, Idx);
+                                    if (E->OrigOffset == (unsigned long)RefOffset && E->FinalOffset != E->OrigOffset) {
+                                        fprintf (stderr, "GC: Rewrite 0x%lX -> 0x%lX\n",
+                                                 (unsigned long)RefOffset, E->FinalOffset);
+                                        UpdateSectionPlusLiteralOffset (F->Expr, (long)E->FinalOffset);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                F = F->Next;
+            }
+        }
+
+        /* Update export expressions */
+        for (J = 0; J < CollCount (&O->Exports); ++J) {
+            Export* Exp = CollAt (&O->Exports, J);
+            if (Exp->Expr != 0) {
+                Section* RefSec = GetExprRefSection (Exp->Expr);
+                if (RefSec != 0) {
+                    SectionOffsetTable* Table = FindSectionTable (&SectionTables, RefSec);
+                    if (Table != 0) {
+                        long RefOffset;
+                        if (GetSectionPlusLiteralOffset (Exp->Expr, RefSec, &RefOffset) && RefOffset >= 0) {
+                            int Idx = BinarySearchOffset (&Table->Offsets, (unsigned long)RefOffset);
+                            if (Idx >= 0) {
+                                OffsetEntry* E = CollAt (&Table->Offsets, Idx);
+                                if (E->OrigOffset == (unsigned long)RefOffset && E->FinalOffset != E->OrigOffset) {
+                                    fprintf (stderr, "GC: Rewrite export 0x%lX -> 0x%lX\n",
+                                             (unsigned long)RefOffset, E->FinalOffset);
+                                    UpdateSectionPlusLiteralOffset (Exp->Expr, (long)E->FinalOffset);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /* Free the offset tables */
+    for (I = 0; I < CollCount (&SectionTables); ++I) {
+        SectionOffsetTable* Table = CollAt (&SectionTables, I);
+        for (J = 0; J < CollCount (&Table->Offsets); ++J) {
+            OffsetEntry* E = CollAt (&Table->Offsets, J);
+            xfree (E);
+        }
+        DoneCollection (&Table->Offsets);
+        xfree (Table);
+    }
+    DoneCollection (&SectionTables);
+
     TotalBytesRemoved = TotalRemoved;
-    fprintf (stderr, "GC: Removed %u fragments (%lu bytes), kept %u fragments\n",
-             FragsRemoved, TotalRemoved, FragsKept);
 }
 
 
@@ -844,6 +1237,36 @@ static void AnalyzeExports (void)
                 WriteFound = 1;
                 fprintf (stderr, "GC: Found _write: live=%d, size=%u\n",
                          IsExportLive (E), E->Size);
+            }
+
+            /* Debug: check expression before calling GetExportSection */
+            if (E->Expr != 0) {
+                ExprNode* Expr = E->Expr;
+                if (Expr->Op == EXPR_SECTION && Expr->Obj != 0) {
+                    unsigned SecCount = CollCount (&Expr->Obj->Sections);
+                    if (Expr->V.SecNum >= SecCount) {
+                        fprintf (stderr, "GC: ERROR: Export '%s' has SecNum=%u but Obj has only %u sections\n",
+                                 SymName, Expr->V.SecNum, SecCount);
+                        continue;
+                    }
+                } else if (Expr->Op == EXPR_PLUS) {
+                    if (Expr->Left && Expr->Left->Op == EXPR_SECTION && Expr->Left->Obj != 0) {
+                        unsigned SecCount = CollCount (&Expr->Left->Obj->Sections);
+                        if (Expr->Left->V.SecNum >= SecCount) {
+                            fprintf (stderr, "GC: ERROR: Export '%s' (left) has SecNum=%u but Obj has only %u sections\n",
+                                     SymName, Expr->Left->V.SecNum, SecCount);
+                            continue;
+                        }
+                    }
+                    if (Expr->Right && Expr->Right->Op == EXPR_SECTION && Expr->Right->Obj != 0) {
+                        unsigned SecCount = CollCount (&Expr->Right->Obj->Sections);
+                        if (Expr->Right->V.SecNum >= SecCount) {
+                            fprintf (stderr, "GC: ERROR: Export '%s' (right) has SecNum=%u but Obj has only %u sections\n",
+                                     SymName, Expr->Right->V.SecNum, SecCount);
+                            continue;
+                        }
+                    }
+                }
             }
 
             Sec = GetExportSection (E, &Offset);
@@ -898,7 +1321,7 @@ static void ReportSegmentSizes (void)
 static void Cleanup (void)
 /* Free all allocated memory and unmark exports */
 {
-    unsigned I, J;
+    unsigned I;
 
     /* Unmark all exports - use LiveExports collection which only has valid exports */
     for (I = 0; I < CollCount (&LiveExports); ++I) {
