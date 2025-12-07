@@ -505,3 +505,38 @@ void CollSort (Collection* C,
         QuickSort (C, 0, C->Count-1, Compare, Data);
     }
 }
+
+
+
+unsigned CollLowerBound (Collection *C,
+                     void* Key,
+                     int (*Compare) (void*, const void*, const void*),
+                     void* Data)
+{
+    int Lo = 0;
+    int Hi = (int)C->Count;
+    while (Lo < Hi) {
+        int Mid = (Lo + Hi) / 2;
+        if (Compare (Data, CollAt (C, Mid), Key) < 0) {
+            Lo = Mid + 1;
+        } else {
+            Hi = Mid;
+        }
+    }
+    return (unsigned)Lo;
+}
+
+
+
+unsigned CollBinarySearch (Collection *C,
+                             void* Key,
+                             int (*Compare) (void*, const void*, const void*),
+                             void* Data)
+{
+    unsigned Cand = CollLowerBound (C, Key, Compare, Data);
+    if (Cand < C->Count && Compare (Data, CollAt (C, Cand), Key) == 0) {
+        return Cand;
+    } else {
+        return (unsigned)-1;
+    }
+}

@@ -7,6 +7,7 @@ all:
 	../../cc65/cc65-2.19/bin/cl65 -S ./src.c
 	../../da65nes c.nes > c.s
 	../../da65nes c_gc.nes > c_gc.s
+	../../da65nes c_gc.nes > c_gc_orig.s
 
 	sed -i 's/L..../Lxxxx/g' c.s
 	sed -i 's/L..../Lxxxx/g' c_gc.s
@@ -14,3 +15,5 @@ all:
 	sed -i 's/^Lxxxx:/      /' c_gc.s
 	grep -v 'brk' c.s > c.s.tmp && mv c.s.tmp c.s
 	grep -v 'brk' c_gc.s > c_gc.s.tmp && mv c_gc.s.tmp c_gc.s
+
+	diff -u c.s c_gc.s > diff.txt

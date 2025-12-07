@@ -7354,6 +7354,3 @@ void cc65_free_typedata (cc65_dbginfo Handle, const cc65_typedata* data)
 
     /* Nothing to do */
 }
-
-
-

@@ -11,13 +11,8 @@
 	.importzp	tmp1, tmp2, tmp3, tmp4, ptr1, ptr2, ptr3, ptr4
 	.macpack	longbranch
 	.forceimport	__STARTUP__
-	.import		_cprintf
+	.import		_cputc
 	.export		_main
-
-.segment	"RODATA"
-
-L000008:
-	.byte	$48,$45,$4C,$4C,$4F,$00
 
 ; ---------------------------------------------------------------
 ; int __near__ main (void)
@@ -29,14 +24,11 @@ L000008:
 
 .segment	"CODE"
 
-	lda     #<(L000008)
-	ldx     #>(L000008)
-	jsr     pushax
-	ldy     #$02
-	jsr     _cprintf
-	jmp     L00000A
-L00000A:
-	jmp     L00000A
+	lda     #$48
+	jsr     _cputc
+	jmp     L000009
+L000009:
+	jmp     L000009
 	ldx     #$00
 	lda     #$00
 	jmp     L000006

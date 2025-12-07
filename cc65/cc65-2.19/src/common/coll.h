@@ -296,7 +296,15 @@ void CollSort (Collection* C,
 ** are pointers to objects.
 */
 
+unsigned CollLowerBound (Collection *C,
+                     void* Key,
+                     int (*Compare) (void*, const void*, const void*),
+                     void* Data);
 
+unsigned CollBinarySearch (Collection *C,
+                           void* Key,
+                           int (*Compare) (void*, const void*, const void*),
+                           void* Data);
 
 /* End of coll.h */
 
