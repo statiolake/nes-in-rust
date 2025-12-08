@@ -37,6 +37,11 @@ extern "C" fn _Unwind_Resume() {
     loop {}
 }
 
+#[no_mangle]
+extern "C" fn write() {
+    loop {}
+}
+
 pub mod prelude;
 #[prelude_import]
 #[allow(unused)]

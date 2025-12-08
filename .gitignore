@@ -1,2 +1,8 @@
 *.o
 *.nes
+
+# mrustc build artifacts
+.obj
+mrustc-master/bin
+mrustc-master/rustc-1.29.0-src
+mrustc-master/rustc-1.29.0-src.tar.gz
