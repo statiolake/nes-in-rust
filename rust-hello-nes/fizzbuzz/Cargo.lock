@@ -14,7 +14,7 @@ name = "core"
 version = "0.1.0"
 
 [[package]]
-name = "welcome"
+name = "fizzbuzz"
 version = "0.1.0"
 dependencies = [
  "cc65",

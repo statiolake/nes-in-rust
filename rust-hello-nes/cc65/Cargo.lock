@@ -12,11 +12,3 @@ dependencies = [
 [[package]]
 name = "core"
 version = "0.1.0"
-
-[[package]]
-name = "welcome"
-version = "0.1.0"
-dependencies = [
- "cc65",
- "core",
-]

@@ -1,10 +1,93 @@
---- c.s	2025-12-07 19:55:38.147940538 +0000
-+++ c_gc.s	2025-12-07 19:55:38.150428306 +0000
+--- c.s	2025-12-08 08:59:46.332257641 +0000
++++ c_gc.s	2025-12-08 08:59:46.336534531 +0000
 @@ -1,6 +1,6 @@
  ; da65 V2.18 - Debian 2.19-2
- ; Created:    2025-12-07 19:55:38
--; Input file: /tmp/tmp.YzXzFccbM8
-+; Input file: /tmp/tmp.Ocp5xLxxxx
+ ; Created:    2025-12-08 08:59:45
+-; Input file: /tmp/tmp.sINGDTLWCS
++; Input file: /tmp/tmp.EGx2UqpB53
  ; Page:       1
  
  
+@@ -113,7 +113,7 @@
+         rts
+ 
+         adc     #$80
+-        lda     #$93
++        lda     #$6A
+         ldx     #$88
+         jsr     Lxxxx
+         ldy     #$02
+@@ -603,13 +603,13 @@
+ 
+         ldy     #$00
+         beq     Lxxxx
+-        lda     #$60
++        lda     #$37
+         ldx     #$89
+         jmp     Lxxxx
+ 
+         rts
+ 
+-        lda     #$60
++        lda     #$37
+         sta     $0A
+         lda     #$89
+         sta     $0B
+@@ -711,16 +711,6 @@
+ 
+         lda     $02
+         sec
+-        sbc     #$04
+-        sta     $02
+-        bcc     Lxxxx
+-        rts
+-
+-        dec     $03
+-        rts
+-
+-        lda     $02
+-        sec
+         sbc     #$06
+         sta     $02
+         bcc     Lxxxx
+@@ -742,16 +732,6 @@
+         tax
+         dey
+         lda     ($02),y
+-        inc     $02
+-        beq     Lxxxx
+-        inc     $02
+-        beq     Lxxxx
+-        rts
+-
+-        inc     $02
+-        inc     $03
+-        rts
+-
+         clc
+         eor     #$FF
+         adc     #$01
+@@ -880,14 +860,6 @@
+         inc     $03
+         rts
+ 
+-        ldy     #$01
+-        lda     ($02),y
+-        sta     $0B
+-        dey
+-        lda     ($02),y
+-        sta     $0A
+-        jmp     Lxxxx
+-
+         lda     $73
+         bne     Lxxxx
+         rts
+@@ -1300,7 +1272,7 @@
+         bne     Lxxxx
+         rts
+ 
+-        inc     $87,x
++        cmp     a:$87
+         and     $80,x
+         .byte   $80
+         .byte   $5C

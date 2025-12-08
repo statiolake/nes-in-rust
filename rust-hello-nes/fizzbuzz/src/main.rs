@@ -9,18 +9,30 @@ use cc65::{cprintf, get_screen_size, goto_xy};
 
 fn print_at_center<const N: usize>(line: u8, s: &[u8; N]) {
     let (width, _) = get_screen_size();
-
     let padding = (width - N as u8) / 2;
 
     goto_xy(padding, line);
     cprintf!(b"%s\0", s);
 }
 
+fn fizz_buzz(n: u8) {
+    let mut i = 1;
+    while i <= n {
+        goto_xy(0, i - 1);
+        match (i % 3, i % 5) {
+            (0, 0) => cprintf!(b"FizzBuzz\n\0"),
+            (0, _) => cprintf!(b"Fizz\n\0"),
+            (_, 0) => cprintf!(b"Buzz\n\0"),
+            _ => cprintf!(b"%d\n\0", i),
+        }
+        i += 1;
+    }
+}
+
 #[start]
 fn start(_argc: isize, _argv: *const *const u8) -> isize {
-    print_at_center(5, b"HELLO NES FROM RUST!\0");
-    print_at_center(15, b"ADVENT CALENDAR 2025\0");
-    print_at_center(20, b"STATIOLAKE\0");
+    let (_, height) = get_screen_size();
+    fizz_buzz(height);
 
     loop {}
 }

@@ -37,18 +37,38 @@ GC: Processing export callmain
 GC:   -> Marking pushax as live
 GC:   -> Marking _main as live
 GC: Processing export _main
-GC:   -> Marking _cputc as live
-GC: Processing export _cputc
-GC:   -> Marking putchar as live
-GC:   -> Marking setcursor as live
-GC:   -> Marking ppubuf_put as live
-GC: Processing export ppubuf_put
-GC:   -> Marking ppubuf_waitempty as live
-GC:   -> Marking ppubuf_wait as live
-GC: Processing export ppubuf_wait
-GC: Processing export ppubuf_waitempty
-GC: Processing export setcursor
-GC: Processing export putchar
+GC:   -> Marking _cprintf as live
+GC: Processing export _cprintf
+GC:   -> Marking ptr1 as live
+GC:   -> Marking _vcprintf as live
+GC:   -> Marking addysp as live
+GC: Processing export addysp
+GC: Processing export _vcprintf
+GC:   -> Marking __printf as live
+GC: Processing export __printf
+GC:   -> Marking regbank as live
+GC:   -> Marking popax as live
+GC:   -> Marking ptr2 as live
+GC:   -> Marking decsp6 as live
+GC:   -> Marking sreg as live
+GC:   -> Marking tmp1 as live
+GC:   -> Marking _strlower as live
+GC:   -> Marking _strlen as live
+GC: Processing export _strlen
+GC: Processing export _strlower
+GC:   -> Marking ctypemaskdirect as live
+GC: Processing export ctypemaskdirect
+GC:   -> Marking __ctypeidx as live
+GC:   -> Marking __ctype as live
+GC: Processing export __ctype
+GC: Processing export __ctypeidx
+GC: Processing export tmp1
+GC: Processing export sreg
+GC: Processing export decsp6
+GC: Processing export ptr2
+GC: Processing export popax
+GC: Processing export regbank
+GC: Processing export ptr1
 GC: Processing export pushax
 GC: Processing export initlib
 GC: Processing export sp
@@ -57,18 +77,12 @@ GC: Processing export __SRAM_START__
 GC: Processing export copydata
 GC:   -> Marking __DATA_LOAD__ as live
 GC: WARNING: Export __DATA_LOAD__ has no section information
-GC:   -> Marking ptr1 as live
 GC:   -> Marking __DATA_RUN__ as live
 GC: WARNING: Export __DATA_RUN__ has no section information
-GC:   -> Marking ptr2 as live
 GC:   -> Marking __DATA_SIZE__ as live
 GC: WARNING: Export __DATA_SIZE__ has no section information
-GC:   -> Marking tmp1 as live
-GC: Processing export tmp1
 GC: Processing export __DATA_SIZE__
-GC: Processing export ptr2
 GC: Processing export __DATA_RUN__
-GC: Processing export ptr1
 GC: Processing export __DATA_LOAD__
 GC: Processing export zerobss
 GC:   -> Marking __BSS_RUN__ as live
@@ -79,6 +93,16 @@ GC: Processing export __BSS_SIZE__
 GC: Processing export __BSS_RUN__
 GC: Processing export _cputcxy
 GC:   -> Marking gotoxy as live
+GC:   -> Marking putchar as live
+GC:   -> Marking setcursor as live
+GC:   -> Marking ppubuf_put as live
+GC: Processing export ppubuf_put
+GC:   -> Marking ppubuf_waitempty as live
+GC:   -> Marking ppubuf_wait as live
+GC: Processing export ppubuf_wait
+GC: Processing export ppubuf_waitempty
+GC: Processing export setcursor
+GC: Processing export putchar
 GC: Processing export gotoxy
 GC:   -> Marking popa as live
 GC: Processing export popa
@@ -87,38 +111,168 @@ GC: Processing export ppuinit
 GC: Processing export __CONSTRUCTOR_TABLE__
 GC: Processing export __CONSTRUCTOR_COUNT__
 GC: Collecting dead export ranges
-GC: Collected 0 dead export ranges
+GC:   Dead export 'decsp4' at 0x0-0xD (size 13)
+GC:   Dead export 'incsp2' at 0x8-0x16 (size 14)
+GC:   Dead export 'popptr1' at 0x0-0xE (size 14)
+GC: Collected 3 dead export ranges
 GC: Removing dead code
 GC:   Shifted Offset for Section CODE: 0 -> 0
-GC:   Shifted Offset for Section CODE: 0 -> 0
+GC:   Shifted Offset for Section CODE: f3 -> f3
+GC:   Shifted Offset for Section ONCE: 0 -> 0
+GC:   Shifted Offset for Section RODATA: 0 -> 0
+GC:   Shifted Offset for Section RODATA: b -> b
+GC:   Shifted Offset for Section CODE: 4 -> 4
 GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section ONCE: 0 -> 0
+GC:   Shifted Offset for Section ONCE: 30 -> 30
+GC:   Shifted Offset for Section CODE: 1 -> 1
 GC:   Shifted Offset for Section ONCE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 0 -> 0
-GC:   Shifted Offset for Section CODE: 5 -> 5
+GC:   Shifted Offset for Section CODE: 0 -> 0
+GC:   Shifted Offset for Section CODE: 0 -> 0
+GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 2f -> 2f
 GC:   Shifted Offset for Section CODE: 0 -> 0
-GC:   Shifted Offset for Section ONCE: 0 -> 0
+GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 5 -> 5
 GC:   Shifted Offset for Section CODE: c -> c
 GC:   Shifted Offset for Section CODE: 2c -> 2c
-GC:   Shifted Offset for Section ONCE: 0 -> 0
-GC:   Shifted Offset for Section ONCE: 30 -> 30
 GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 4 -> 4
 GC:   Shifted Offset for Section CODE: 0 -> 0
 GC:   Shifted Offset for Section CODE: 0 -> 0
+GC:   Shifted Offset for Section CODE: 0 -> 0
+GC:   Shifted Offset for Section CODE: 0 -> 0
+GC:   Shifted Offset for Section CODE: 4a -> 4a
+GC:   Shifted Offset for Section ONCE: 0 -> 0
+GC:   Shifted Offset for Section RODATA: 0 -> 0
 GC:   Shifted Offset for Section ZEROPAGE: 0 -> 0
+GC:   Shifted Offset for Section ZEROPAGE: 2 -> 2
 GC:   Shifted Offset for Section ZEROPAGE: 8 -> 8
 GC:   Shifted Offset for Section ZEROPAGE: a -> a
 GC:   Shifted Offset for Section ZEROPAGE: 10 -> 10
-GC:   Shifted Offset for Section RODATA: 0 -> 0
+GC:   Shifted Offset for Section ZEROPAGE: 14 -> 14
 GC: Adjusting expressions in Section CODE
-GC: WARNING: Could not find original offset for Section CODE + 8
-GC: WARNING: Could not find original offset for Section CODE + 8
-GC: WARNING: Could not find original offset for Section CODE + 18
+GC: WARNING: Could not find original offset for Section CODE + 15
+GC: WARNING: Could not find original offset for Section CODE + 15
+GC: WARNING: Could not find original offset for Section CODE + 25
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: WARNING: Could not find original offset for Section BSS + 11
+GC: WARNING: Could not find original offset for Section BSS + 6
+GC: WARNING: Could not find original offset for Section CODE + 172
+GC: WARNING: Could not find original offset for Section DATA + 0
+GC: WARNING: Could not find original offset for Section BSS + 16
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section BSS + 16
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section CODE + 33
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section BSS + 18
+GC: WARNING: Could not find original offset for Section BSS + 18
+GC: WARNING: Could not find original offset for Section BSS + 19
+GC: WARNING: Could not find original offset for Section BSS + 18
+GC: WARNING: Could not find original offset for Section CODE + 11
+GC: WARNING: Could not find original offset for Section BSS + 12
+GC: WARNING: Could not find original offset for Section CODE + 172
+GC: WARNING: Could not find original offset for Section BSS + 39
+GC: WARNING: Could not find original offset for Section BSS + 41
+GC: WARNING: Could not find original offset for Section DATA + 0
+GC: WARNING: Could not find original offset for Section CODE + 158
+GC: WARNING: Could not find original offset for Section CODE + 158
+GC: WARNING: Could not find original offset for Section BSS + 0
+GC: WARNING: Could not find original offset for Section DATA + 1
+GC: WARNING: Could not find original offset for Section DATA + 2
+GC: WARNING: Could not find original offset for Section DATA + 0
+GC: WARNING: Could not find original offset for Section CODE + 0
+GC: WARNING: Could not find original offset for Section BSS + 0
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 14
+GC: WARNING: Could not find original offset for Section CODE + 294
+GC: WARNING: Could not find original offset for Section BSS + 7
+GC: WARNING: Could not find original offset for Section BSS + 7
+GC: WARNING: Could not find original offset for Section BSS + 8
+GC: WARNING: Could not find original offset for Section BSS + 9
+GC: WARNING: Could not find original offset for Section BSS + 10
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 427
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section BSS + 11
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section CODE + 500
+GC: WARNING: Could not find original offset for Section CODE + 86
+GC: WARNING: Could not find original offset for Section BSS + 12
+GC: WARNING: Could not find original offset for Section BSS + 14
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section CODE + 539
+GC: WARNING: Could not find original offset for Section CODE + 86
+GC: WARNING: Could not find original offset for Section BSS + 14
+GC: WARNING: Could not find original offset for Section BSS + 16
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 545
+GC: WARNING: Could not find original offset for Section BSS + 18
+GC: WARNING: Could not find original offset for Section BSS + 39
+GC: WARNING: Could not find original offset for Section CODE + 4
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section BSS + 19
+GC: WARNING: Could not find original offset for Section CODE + 837
+GC: WARNING: Could not find original offset for Section BSS + 9
+GC: WARNING: Could not find original offset for Section BSS + 8
+GC: WARNING: Could not find original offset for Section BSS + 17
+GC: WARNING: Could not find original offset for Section CODE + 56
+GC: WARNING: Could not find original offset for Section BSS + 17
+GC: WARNING: Could not find original offset for Section BSS + 19
+GC: WARNING: Could not find original offset for Section BSS + 18
+GC: WARNING: Could not find original offset for Section CODE + 217
+GC: WARNING: Could not find original offset for Section CODE + 837
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section CODE + 294
+GC: WARNING: Could not find original offset for Section CODE + 56
+GC: WARNING: Could not find original offset for Section BSS + 10
+GC: WARNING: Could not find original offset for Section BSS + 14
+GC: WARNING: Could not find original offset for Section CODE + 148
+GC: WARNING: Could not find original offset for Section CODE + 217
+GC: WARNING: Could not find original offset for Section CODE + 837
+GC: WARNING: Could not find original offset for Section BSS + 16
+GC: WARNING: Could not find original offset for Section BSS + 10
+GC: WARNING: Could not find original offset for Section CODE + 74
+GC: WARNING: Could not find original offset for Section BSS + 39
+GC: WARNING: Could not find original offset for Section CODE + 837
+GC: WARNING: Could not find original offset for Section CODE + 45
+GC: WARNING: Could not find original offset for Section CODE + 230
+GC: WARNING: Could not find original offset for Section CODE + 837
+GC: WARNING: Could not find original offset for Section BSS + 10
+GC: WARNING: Could not find original offset for Section CODE + 148
+GC: WARNING: Could not find original offset for Section CODE + 148
+GC: WARNING: Could not find original offset for Section CODE + 45
+GC: WARNING: Could not find original offset for Section CODE + 230
+GC: WARNING: Could not find original offset for Section BSS + 39
+GC: WARNING: Could not find original offset for Section CODE + 837
+GC: WARNING: Could not find original offset for Section CODE + 294
+GC: WARNING: Could not find original offset for Section BSS + 39
+GC: WARNING: Could not find original offset for Section BSS + 41
+GC: WARNING: Could not find original offset for Section BSS + 14
+GC: WARNING: Could not find original offset for Section BSS + 14
+GC: WARNING: Could not find original offset for Section BSS + 41
+GC: WARNING: Could not find original offset for Section BSS + 41
+GC: WARNING: Could not find original offset for Section BSS + 12
+GC: WARNING: Could not find original offset for Section BSS + 41
+GC: WARNING: Could not find original offset for Section BSS + 12
+GC: WARNING: Could not find original offset for Section BSS + 7
+GC: WARNING: Could not find original offset for Section CODE + 182
+GC: WARNING: Could not find original offset for Section CODE + 193
+GC: WARNING: Could not find original offset for Section BSS + 7
+GC: WARNING: Could not find original offset for Section CODE + 182
+GC: WARNING: Could not find original offset for Section CODE + 294
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
 GC: Adjusting expressions in Section CODE
 GC: WARNING: Could not find original offset for Section DATA + 0
 GC: WARNING: Could not find original offset for Section DATA + 1
@@ -127,9 +281,25 @@ GC: Adjusting expressions in Section CODE
 GC: WARNING: Could not find original offset for Section DATA + 0
 GC: Adjusting expressions in Section CODE
 GC: Adjusting expressions in Section CODE
+GC: WARNING: Could not find original offset for Section BSS + 0
+GC: WARNING: Could not find original offset for Section BSS + 0
+GC: Adjusting expressions in Section CODE
 GC:   Adjusted Expr in fragment at Section CODE + 47 to new offset 47
 GC: WARNING: Could not find original offset for Section CODE + 40
 GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: WARNING: Could not find original offset for Section CODE + 0
+GC: WARNING: Could not find original offset for Section CODE + 144
+GC: WARNING: Could not find original offset for Section CODE + 92
+GC: WARNING: Could not find original offset for Section CODE + 0
 GC: Adjusting expressions in Section CODE
 GC: Adjusting expressions in Section CODE
 GC: Adjusting expressions in Section CODE
@@ -140,19 +310,37 @@ GC: WARNING: Could not find original offset for Section BSS + 0
 GC: WARNING: Could not find original offset for Section BSS + 0
 GC: Adjusting expressions in Section CODE
 GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
 GC: WARNING: Could not find original offset for Section CODE + 15
 GC: WARNING: Could not find original offset for Section CODE + 44
 GC: Adjusting expressions in Section CODE
 GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
+GC: WARNING: Could not find original offset for Section DATA + 6
+GC: WARNING: Could not find original offset for Section DATA + 7
+GC: WARNING: Could not find original offset for Section DATA + 6
+GC: WARNING: Could not find original offset for Section CODE + 46
+GC: WARNING: Could not find original offset for Section DATA + 7
+GC: WARNING: Could not find original offset for Section DATA + 0
+GC: WARNING: Could not find original offset for Section DATA + 1
+GC: WARNING: Could not find original offset for Section DATA + 0
+GC: WARNING: Could not find original offset for Section DATA + 1
+GC: Adjusting expressions in Section CODE
+GC: Adjusting expressions in Section CODE
 GC: Live CODE symbols:
-GC:   Live: _main (size=19)
+GC:   Live: _main (size=26)
+GC:   Live: __printf (size=0)
+GC:   Live: addysp (size=1)
 GC:   Live: callmain (size=23)
 GC:   Live: donelib (size=12)
 GC:   Live: copydata (size=0)
+GC:   Live: _cprintf (size=0)
 GC:   Live: putchar (size=0)
-GC:   Live: _cputc (size=2)
 GC:   Live: _cputcxy (size=0)
+GC:   Live: ctypemaskdirect (size=0)
+GC:   Live: decsp6 (size=13)
 GC:   Live: gotoxy (size=0)
+GC:   Live: popax (size=8)
 GC:   Live: popa (size=12)
 GC:   Live: ppubuf_flush (size=132)
 GC:   Live: ppubuf_put (size=32)
@@ -160,12 +348,15 @@ GC:   Live: ppubuf_wait (size=7)
 GC:   Live: ppubuf_waitempty (size=5)
 GC:   Live: pushax (size=22)
 GC:   Live: setcursor (size=15)
+GC:   Live: _strlen (size=0)
+GC:   Live: _strlower (size=0)
+GC:   Live: _vcprintf (size=0)
 GC:   Live: zerobss (size=0)
 GC: Phase 7 - Final segment sizes
-GC:   CODE: 493 bytes
-GC:   RODATA: 32 bytes
-GC:   BSS: 1 bytes
-GC:   DATA: 41 bytes
+GC:   CODE: 1953 bytes
+GC:   RODATA: 205 bytes
+GC:   BSS: 45 bytes
+GC:   DATA: 52 bytes
 GC:   ZEROPAGE: 26 bytes
 GC:   ONCE: 108 bytes
 GC:   HEADER: 16 bytes

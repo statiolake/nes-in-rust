@@ -3,8 +3,8 @@
 
 int main(void)
 {
-    // cprintf("hello");
-    cputc('h');
+    cprintf("hello");
+    // cputc('h');
 
     while (1) {}
 

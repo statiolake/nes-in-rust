@@ -1,7 +1,6 @@
 [package]
-name = "welcome"
+name = "cc65"
 version = "0.1.0"
 
 [dependencies]
 core = { path = "../core" }
-cc65 = { path = "../cc65" }

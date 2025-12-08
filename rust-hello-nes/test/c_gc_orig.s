@@ -1,14 +1,16 @@
 ; da65 V2.18 - Debian 2.19-2
-; Created:    2025-12-07 19:55:38
-; Input file: /tmp/tmp.TfrsVrAFFi
+; Created:    2025-12-08 08:59:45
+; Input file: /tmp/tmp.xYWVBTTZ8U
 ; Page:       1
 
 
         .setcpu "6502"
 
+L004F           := $004F
 L2020           := $2020
 L2121           := $2121
-L6004           := $6004
+L6000           := $6000
+L6007           := $6007
 L6040           := $6040
 L8000:  sei
         cld
@@ -24,15 +26,15 @@ L800F:  sta     $0200,x
         sta     $0400,x
         inx
         bne     L800F
-        jsr     L8293
-        jsr     L80FF
+        jsr     L8847
+        jsr     L84C6
         lda     #$00
         ldx     #$08
         sta     $02
         stx     $03
         jsr     L805D
-        jsr     L80DC
-        jsr     L80F3
+        jsr     L84A3
+        jsr     L84BA
         jmp     L8000
 
         pha
@@ -45,7 +47,7 @@ L800F:  sta     $0200,x
         inc     $6B
         bne     L8044
         inc     $6C
-L8044:  jsr     L81AC
+L8044:  jsr     L86A4
         lda     #$20
         sta     $2006
         lda     #$00
@@ -63,7 +65,7 @@ L805D:  ldy     #$02
         beq     L8068
         lda     #$C7
         ldx     #$80
-        jmp     L6004
+        jmp     L6007
 
 L8068:  rts
 
@@ -73,7 +75,7 @@ L8068:  rts
         sta     $68
         sta     $69
         sta     $6A
-        jmp     L8154
+        jmp     L8545
 
 L807A:  lda     #$A8
         sta     $2000
@@ -103,7 +105,7 @@ L80AA:  lda     $2002
         lda     #$00
         sta     $2006
         ldx     #$00
-L80BB:  lda     L82B6,x
+L80BB:  lda     L8917,x
         sta     $2007
         inx
         cpx     #$20
@@ -111,120 +113,766 @@ L80BB:  lda     L82B6,x
         rts
 
         adc     #$80
-L80C9:  lda     #$48
-        jsr     L8131
-        jmp     L80D1
+L80C9:  lda     #$6A
+        ldx     #$88
+        jsr     L8731
+        ldy     #$02
+        jsr     L84F3
+        jmp     L80D8
 
-L80D1:  jmp     L80D1
+L80D8:  jmp     L80D8
 
         ldx     #$00
         lda     #$00
-        jmp     L80DB
+        jmp     L80E2
 
-L80DB:  rts
+L80E2:  rts
 
-L80DC:  lda     $6000
-        ldx     $6001
-        jsr     L8234
-        lda     $6002
-        ldx     $6003
-        jsr     L8234
+L80E3:  ldy     #$00
+        lda     ($18),y
+L80E7:  inc     $18
+        bne     L80ED
+        inc     $19
+L80ED:  rts
+
+L80EE:  lda     $603F
+L80F1:  sta     $603A
+        jsr     L818F
+        lda     #$3A
+        ldx     #$60
+        jsr     L8731
+        jsr     L8728
+        jmp     L6000
+
+L8104:  lda     $16
+        sec
+        sbc     #$02
+        sta     $16
+        bcs     L810F
+        dec     $17
+L810F:  rts
+
+L8110:  lda     $6044
+        bne     L8126
+        jsr     L812D
+        jmp     L849C
+
+L811B:  lda     $6044
+        bne     L8126
+        jsr     L812D
+        jmp     L8496
+
+L8126:  jsr     L812D
+        sta     $04
+        stx     $05
+L812D:  jsr     L8104
+        ldy     #$01
+        lda     ($16),y
+        tax
+        dey
+        lda     ($16),y
+        rts
+
+L8139:  ldy     #$00
+        sty     $0A
+        sty     $0B
+L813F:  lda     ($18),y
+        sec
+        sbc     #$30
+        bcc     L8172
+        cmp     #$0A
+        bcs     L8172
+        jsr     L80E7
+        pha
+        lda     $0A
+        ldx     $0B
+        asl     $0A
+        rol     $0B
+        asl     $0A
+        rol     $0B
+        adc     $0A
+        sta     $0A
+        txa
+        adc     $0B
+        sta     $0B
+        asl     $0A
+        rol     $0B
+        pla
+        adc     $0A
+        sta     $0A
+        bcc     L813F
+        inc     $0B
+        bcs     L813F
+L8172:  lda     $0A
+        ldx     $0B
+        rts
+
+L8177:  ldy     $6046
+        inc     $6046
+        sta     $6047,y
+        rts
+
+L8181:  lda     #$47
+        ldx     #$60
+        clc
+        adc     $6046
+        bcc     L818C
+        inx
+L818C:  jmp     L8731
+
+L818F:  lda     $1A
+        ldx     $1B
+        jmp     L8731
+
+L8196:  jsr     L80EE
+L8199:  inc     L6040
+        bne     L8196
+        inc     $6041
+        bne     L8196
+        rts
+
+L81A4:  jsr     L818F
+        lda     $605B
+        ldx     $605C
+        jsr     L8731
+        lda     $605D
+        ldx     $605E
+        jsr     L8731
+        jmp     L6000
+
+L81BC:  sty     $0A
+        jsr     L85BF
+        jsr     L8181
+        lda     $0A
+        jmp     L85EF
+
+L81C9:  sty     $0A
+        jsr     L85BF
+        jsr     L8181
+        lda     $0A
+        jmp     L8630
+
+L81D6:  pha
+        ldy     #$05
+L81D9:  lda     $16,y
+        sta     $6034,y
+        dey
+        bpl     L81D9
+        pla
+        sta     $16
+        stx     $17
+        jsr     L8590
+        sta     $18
+        stx     $19
+        jsr     L8590
+        sta     $1A
+        stx     $1B
+        lda     #$00
+        tay
+        sta     ($1A),y
+        iny
+        sta     ($1A),y
+        iny
+        lda     ($1A),y
+        sta     $6001
+        iny
+        lda     ($1A),y
+        sta     $6002
+L8209:  lda     $18
+        sta     $0A
+        lda     $19
+        sta     $0B
+        ldy     #$00
+L8213:  lda     ($18),y
+        beq     L8222
+        cmp     #$25
+        beq     L8222
+        iny
+        bne     L8213
+        inc     $19
+        bne     L8213
+L8222:  tya
+        clc
+        adc     $18
+        sta     $18
+        bcc     L822C
+        inc     $19
+L822C:  sec
+        sbc     $0A
+        sta     $0C
+        lda     $19
+        sbc     $0B
+        sta     $0D
+        ora     $0C
+        beq     L8260
+        jsr     L8573
+        ldy     #$05
+        lda     $1B
+        sta     ($02),y
+        dey
+        lda     $1A
+        sta     ($02),y
+        dey
+        lda     $0B
+        sta     ($02),y
+        dey
+        lda     $0A
+        sta     ($02),y
+        dey
+        lda     $0D
+        sta     ($02),y
+        dey
+        lda     $0C
+        sta     ($02),y
+        jsr     L6000
+L8260:  jsr     L80E3
+        tax
+        bne     L8271
+        ldx     #$05
+L8268:  lda     $6034,x
+        sta     $16,x
+        dex
+        bpl     L8268
+        rts
+
+L8271:  cmp     #$25
+        bne     L827E
+        lda     ($18),y
+        cmp     #$25
+        bne     L8284
+        jsr     L80E7
+L827E:  jsr     L80F1
+        jmp     L8209
+
+L8284:  lda     #$00
+        ldx     #$0B
+L8288:  sta     $603B,x
+        dex
+        bpl     L8288
+L828E:  lda     ($18),y
+        cmp     #$2D
+        bne     L8299
+        stx     $603B
+        beq     L82B2
+L8299:  cmp     #$2B
+        bne     L82A2
+        stx     $603C
+        beq     L82B2
+L82A2:  cmp     #$20
+        bne     L82AB
+        stx     $603D
+        beq     L82B2
+L82AB:  cmp     #$23
+        bne     L82B8
+        stx     $603E
+L82B2:  jsr     L80E7
+        jmp     L828E
+
+L82B8:  ldx     #$20
+        cmp     #$30
+        bne     L82C4
+        tax
+        jsr     L80E7
+        lda     ($18),y
+L82C4:  stx     $603F
+        cmp     #$2A
+        bne     L82D4
+        jsr     L80E7
+        jsr     L812D
+        jmp     L82D7
+
+L82D4:  jsr     L8139
+L82D7:  sta     L6040
+        stx     $6041
+        sty     $6042
+        sty     $6043
+        lda     ($18),y
+        cmp     #$2E
+        bne     L8304
+        jsr     L80E7
+        lda     ($18),y
+        cmp     #$2A
+        bne     L82FB
+        jsr     L80E7
+        jsr     L812D
+        jmp     L82FE
+
+L82FB:  jsr     L8139
+L82FE:  sta     $6042
+        stx     $6043
+L8304:  lda     ($18),y
+        cmp     #$7A
+        beq     L8323
+        cmp     #$68
+        beq     L8323
+        cmp     #$74
+        beq     L8323
+        cmp     #$6A
+        beq     L831E
+        cmp     #$4C
+        beq     L831E
+        cmp     #$6C
+        bne     L8329
+L831E:  lda     #$FF
+        sta     $6044
+L8323:  jsr     L80E7
+        jmp     L8304
+
+L8329:  sty     $6046
+        ldx     #$47
+        stx     $605B
+        ldx     #$60
+        stx     $605C
+        jsr     L80E7
+        cmp     #$63
+        bne     L834B
+        jsr     L812D
+        sta     $6047
+        lda     #$00
+        sta     $6048
+        jmp     L8428
+
+L834B:  cmp     #$64
+        beq     L8353
+        cmp     #$69
+        bne     L8380
+L8353:  ldx     #$00
+        lda     $603D
+        beq     L835C
+        ldx     #$20
+L835C:  lda     $603C
+        beq     L8363
+        ldx     #$2B
+L8363:  stx     $6045
+        jsr     L811B
+        ldy     $05
+        bmi     L8378
+        ldy     $6045
+        beq     L8378
+        sty     $6047
+        inc     $6046
+L8378:  ldy     #$0A
+        jsr     L81BC
+        jmp     L8428
+
+L8380:  cmp     #$6E
+        bne     L8399
+        jsr     L812D
+        sta     $0A
+        stx     $0B
+        ldy     #$00
+        lda     ($1A),y
+        sta     ($0A),y
+        iny
+        lda     ($1A),y
+        sta     ($0A),y
+        jmp     L8209
+
+L8399:  cmp     #$6F
+        bne     L83C4
+        jsr     L811B
+        ldy     $603E
+        beq     L83BC
+        pha
+        stx     $12
+        ora     $12
+        ora     $04
+        ora     $05
+        ora     $6042
+        ora     $6043
+        beq     L83BC
+        lda     #$30
+        jsr     L8177
+        pla
+L83BC:  ldy     #$08
+        jsr     L81BC
+        jmp     L8428
+
+L83C4:  cmp     #$70
+        bne     L83D5
+        ldx     #$00
+        stx     $6044
+        inx
+        stx     $603E
+        lda     #$78
+        bne     L83FC
+L83D5:  cmp     #$73
+        bne     L83E5
+        jsr     L812D
+        sta     $605B
+        stx     $605C
+        jmp     L8428
+
+L83E5:  cmp     #$75
+        bne     L83F4
+        jsr     L8110
+        ldy     #$0A
+        jsr     L81C9
+        jmp     L8428
+
+L83F4:  cmp     #$78
+        beq     L83FC
+        cmp     #$58
+        bne     L8425
+L83FC:  pha
+        lda     $603E
+        beq     L840C
+        lda     #$30
+        jsr     L8177
+        lda     #$58
+        jsr     L8177
+L840C:  jsr     L8110
+        ldy     #$10
+        jsr     L81C9
+        pla
+        cmp     #$78
+        bne     L8422
+        lda     $605B
+        ldx     $605C
+        jsr     L87A6
+L8422:  jmp     L8428
+
+L8425:  jmp     L8209
+
+L8428:  lda     $605B
+        ldx     $605C
+        jsr     L8790
+        sta     $605D
+        stx     $605E
+        lda     $6042
+        ora     $6043
+        beq     L8454
+        ldx     $6042
+        cpx     $605D
+        lda     $6043
+        tay
+        sbc     $605E
+        bcs     L8454
+        stx     $605D
+        sty     $605E
+L8454:  sec
+        lda     L6040
+        sbc     $605D
+        tax
+        lda     $6041
+        sbc     $605E
+        bcs     L8467
+        lda     #$00
+        tax
+L8467:  eor     #$FF
+        sta     $6041
+        txa
+        eor     #$FF
+        sta     L6040
+        lda     $603B
+        bne     L847A
+        jsr     L8199
+L847A:  jsr     L81A4
+        lda     $603B
+        beq     L8485
+        jsr     L8199
+L8485:  jmp     L8209
+
+        iny
+L8489:  pha
+        clc
+        tya
+        adc     $02
+        sta     $02
+        bcc     L8494
+        inc     $03
+L8494:  pla
+        rts
+
+L8496:  ldy     #$FF
+        cpx     #$80
+        bcs     L849E
+L849C:  ldy     #$00
+L849E:  sty     $04
+        sty     $05
+        rts
+
+L84A3:  lda     $6003
+        ldx     $6004
+        jsr     L8731
+        lda     $6005
+        ldx     $6006
+        jsr     L8731
         ldy     #$04
         jmp     L80C9
 
-L80F3:  ldy     #$00
-        beq     L80FE
-        lda     #$D6
-        ldx     #$82
-        jmp     L6004
+L84BA:  ldy     #$00
+        beq     L84C5
+        lda     #$37
+        ldx     #$89
+        jmp     L6007
 
-L80FE:  rts
+L84C5:  rts
 
-L80FF:  lda     #$D6
+L84C6:  lda     #$37
         sta     $0A
-        lda     #$82
+        lda     #$89
         sta     $0B
         lda     #$00
         sta     $0C
         lda     #$60
         sta     $0D
-        ldx     #$D6
+        ldx     #$CB
         lda     #$FF
         sta     $12
         ldy     #$00
-L8117:  inx
-        beq     L8127
-L811A:  lda     ($0A),y
+L84DE:  inx
+        beq     L84EE
+L84E1:  lda     ($0A),y
         sta     ($0C),y
         iny
-        bne     L8117
+        bne     L84DE
         inc     $0B
         inc     $0D
-        bne     L8117
-L8127:  inc     $12
-        bne     L811A
+        bne     L84DE
+L84EE:  inc     $12
+        bne     L84E1
         rts
 
+L84F3:  sty     $605F
+        dey
+        dey
+        tya
+        clc
+        adc     $02
+        sta     $0A
+        ldx     $03
+        bcc     L8503
+        inx
+L8503:  stx     $0B
+        ldy     #$01
+        lda     ($0A),y
+        tax
+        dey
+        lda     ($0A),y
+        jsr     L8731
+        lda     $0A
+        ldx     $0B
+        jsr     L8817
+        ldy     $605F
+        jmp     L8489
+
         pha
-        jsr     L8164
+        jsr     L8580
         pla
-L8131:  cmp     #$0D
-        bne     L813B
+L8522:  cmp     #$0D
+        bne     L852C
         lda     #$00
         sta     $69
-        beq     L8154
-L813B:  cmp     #$0A
-        beq     L8152
-        jsr     L815B
+        beq     L8545
+L852C:  cmp     #$0A
+        beq     L8543
+        jsr     L854C
         ldy     $69
         iny
         cpy     #$20
-        bne     L814D
+        bne     L853E
         inc     $6A
         ldy     #$00
-L814D:  sty     $69
-        jmp     L8154
+L853E:  sty     $69
+        jmp     L8545
 
-L8152:  inc     $6A
-L8154:  ldy     $69
+L8543:  inc     $6A
+L8545:  ldy     $69
         ldx     $6A
-        jmp     L824A
+        jmp     L8747
 
-L815B:  ora     $68
+L854C:  ora     $68
         ldy     $63
         ldx     $62
-        jmp     L818C
+        jmp     L8684
 
-L8164:  jsr     L8174
+        cpx     #$00
+        bne     L856E
+L8559:  lsr     a
+        tax
+        lda     L8897,x
+        bcc     L8565
+        lsr     a
+        lsr     a
+        lsr     a
+        lsr     a
+        clc
+L8565:  and     #$0F
+        tax
+        lda     L888C,x
+        ldx     #$00
+        rts
+
+L856E:  sec
+        lda     #$00
+        tax
+        rts
+
+L8573:  lda     $02
+        sec
+        sbc     #$06
+        sta     $02
+        bcc     L857D
+        rts
+
+L857D:  dec     $03
+        rts
+
+L8580:  jsr     L866C
         sta     $6A
-        jsr     L8174
+        jsr     L866C
         sta     $69
         tay
         ldx     $6A
-        jmp     L824A
+        jmp     L8747
 
-L8174:  ldy     #$00
+L8590:  ldy     #$01
+        lda     ($02),y
+        tax
+        dey
+        lda     ($02),y
+L8598:  clc
+        eor     #$FF
+        adc     #$01
+        pha
+        txa
+        eor     #$FF
+        adc     #$00
+        tax
+        lda     $04
+        eor     #$FF
+        adc     #$00
+        sta     $04
+        lda     $05
+        eor     #$FF
+        adc     #$00
+        sta     $05
+        pla
+        rts
+
+        lda     #$00
+        tax
+        ldy     #$00
+        sty     $04
+        sty     $05
+L85BF:  pha
+        jsr     L8573
+        ldy     #$03
+        lda     $05
+        sta     ($02),y
+        dey
+        lda     $04
+        sta     ($02),y
+        dey
+        txa
+        sta     ($02),y
+        pla
+        dey
+        sta     ($02),y
+        rts
+
+L85D7:  sta     $12
+        jsr     L8590
+        sta     $0C
+        stx     $0D
+        sta     $0E
+        stx     $0F
+        jsr     L8678
+        jsr     L8590
+        sta     $04
+        stx     $05
+        rts
+
+L85EF:  jsr     L85D7
+        ldx     $05
+        ldy     $12
+        cpy     #$0A
+        bne     L8633
+        lda     $04
+        ora     $0B
+        ora     $0A
+        bne     L8613
+        cpx     #$80
+        bne     L8613
+        ldy     #$0B
+L8608:  lda     L8880,y
+        sta     ($0C),y
+        dey
+        bpl     L8608
+        jmp     L8667
+
+L8613:  txa
+        bpl     L8633
+        lda     #$2D
+        ldy     #$00
+        sta     ($0C),y
+        inc     $0C
+        bne     L8622
+        inc     $0D
+L8622:  lda     $0A
+        ldx     $0B
+        jsr     L8598
+        sta     $0A
+        stx     $0B
+        jmp     L8633
+
+L8630:  jsr     L85D7
+L8633:  lda     #$00
+        pha
+L8636:  ldy     #$20
+        lda     #$00
+L863A:  asl     $0A
+        rol     $0B
+        rol     $04
+        rol     $05
+        rol     a
+        cmp     $12
+        bcc     L864B
+        sbc     $12
+        inc     $0A
+L864B:  dey
+        bne     L863A
+        tay
+        lda     L8870,y
+        pha
+        lda     $0A
+        ora     $0B
+        ora     $04
+        ora     $05
+        bne     L8636
+        ldy     #$00
+L865F:  pla
+        sta     ($0C),y
+        beq     L8667
+        iny
+        bne     L865F
+L8667:  lda     $0E
+        ldx     $0F
+        rts
+
+L866C:  ldy     #$00
         lda     ($02),y
         inc     $02
-        beq     L817D
+        beq     L8675
         rts
 
-L817D:  inc     $03
+L8675:  inc     $03
         rts
 
-L8180:  lda     $73
-        bne     L8180
+L8678:  lda     $73
+        bne     L8678
         rts
 
-L8185:  lda     #$FF
-L8187:  cmp     $73
-        beq     L8187
+L867D:  lda     #$FF
+L867F:  cmp     $73
+        beq     L867F
         rts
 
-L818C:  sta     $76
+L8684:  sta     $76
         sty     $74
         stx     $75
-        jsr     L8185
+        jsr     L867D
         ldy     $71
         lda     $74
         sta     $0200,y
@@ -237,14 +885,14 @@ L818C:  sta     $76
         inc     $73
         rts
 
-L81AC:  ldy     $73
-        bne     L81B1
+L86A4:  ldy     $73
+        bne     L86A9
         rts
 
-L81B1:  ldx     $72
+L86A9:  ldx     $72
         lda     #$0E
-        sta     $6029
-L81B8:  lda     $0200,x
+        sta     $6060
+L86B0:  lda     $0200,x
         sta     $2006
         lda     $0300,x
         sta     $2006
@@ -252,7 +900,7 @@ L81B8:  lda     $0200,x
         sta     $2007
         inx
         dey
-        beq     L822B
+        beq     L8723
         lda     $0200,x
         sta     $2006
         lda     $0300,x
@@ -261,7 +909,7 @@ L81B8:  lda     $0200,x
         sta     $2007
         inx
         dey
-        beq     L822B
+        beq     L8723
         lda     $0200,x
         sta     $2006
         lda     $0300,x
@@ -270,7 +918,7 @@ L81B8:  lda     $0200,x
         sta     $2007
         inx
         dey
-        beq     L822B
+        beq     L8723
         lda     $0200,x
         sta     $2006
         lda     $0300,x
@@ -279,7 +927,7 @@ L81B8:  lda     $0200,x
         sta     $2007
         inx
         dey
-        beq     L822B
+        beq     L8723
         lda     $0200,x
         sta     $2006
         lda     $0300,x
@@ -288,23 +936,26 @@ L81B8:  lda     $0200,x
         sta     $2007
         inx
         dey
-        beq     L822B
-        dec     $6029
-        bne     L81B8
-L822B:  stx     $72
+        beq     L8723
+        dec     $6060
+        bne     L86B0
+L8723:  stx     $72
         sty     $73
         rts
 
+L8728:  lda     #$01
+        jmp     L872F
+
         lda     #$00
-        ldx     #$00
-L8234:  pha
+L872F:  ldx     #$00
+L8731:  pha
         lda     $02
         sec
         sbc     #$02
         sta     $02
-        bcs     L8240
+        bcs     L873D
         dec     $03
-L8240:  ldy     #$01
+L873D:  ldy     #$01
         txa
         sta     ($02),y
         pla
@@ -312,16 +963,16 @@ L8240:  ldy     #$01
         sta     ($02),y
         rts
 
-L824A:  tya
+L8747:  tya
         clc
-        adc     L8259,x
+        adc     L8756,x
         sta     $62
-        lda     L8276,x
+        lda     L8773,x
         adc     #$00
         sta     $63
         rts
 
-L8259:  jsr     L6040
+L8756:  jsr     L6040
         .byte   $80
         ldy     #$C0
         cpx     #$00
@@ -336,7 +987,7 @@ L8259:  jsr     L6040
         jsr     L6040
         .byte   $80
         .byte   $A0
-L8276:  jsr     L2020
+L8773:  jsr     L2020
         jsr     L2020
         jsr     L2121
         and     ($21,x)
@@ -356,28 +1007,257 @@ L8276:  jsr     L2020
         .byte   $23
         .byte   $23
         .byte   $23
-L8293:  lda     #$29
+L8790:  sta     $0C
+        stx     $0D
+        ldx     #$00
+        ldy     #$00
+L8798:  lda     ($0C),y
+        beq     L87A4
+        iny
+        bne     L8798
+        inc     $0D
+        inx
+        bne     L8798
+L87A4:  tya
+        rts
+
+L87A6:  sta     $0A
+        stx     $0B
+        sta     $0C
+        stx     $0D
+        ldy     #$00
+L87B0:  lda     ($0A),y
+        beq     L87C8
+        jsr     L8559
+        and     #$02
+        beq     L87C1
+        lda     ($0A),y
+        adc     #$20
+        sta     ($0A),y
+L87C1:  iny
+        bne     L87B0
+        inc     $0B
+        bne     L87B0
+L87C8:  lda     $0C
+        ldx     $0D
+        rts
+
+        jsr     L8590
+        sta     $0C
+        eor     #$FF
+        sta     $6032
+        txa
+        sta     $0D
+        eor     #$FF
+        sta     $6033
+        jsr     L8678
+        jsr     L8590
+        sta     $0E
+        stx     $0F
+        ldy     #$00
+        sty     $12
+        lda     ($0E),y
+        clc
+        adc     $0C
+        sta     ($0E),y
+        iny
+        lda     ($0E),y
+        adc     $0D
+        sta     ($0E),y
+L87FB:  inc     $6032
+        beq     L8811
+L8800:  ldy     $12
+        lda     ($0A),y
+        iny
+        bne     L8809
+        inc     $0B
+L8809:  sty     $12
+        jsr     L8522
+        jmp     L87FB
+
+L8811:  inc     $6033
+        bne     L8800
+        rts
+
+L8817:  sta     $0A
+        stx     $0B
+        lda     #$00
+        sta     $602C
+        sta     $602D
+        ldy     #$01
+        lda     ($02),y
+        tax
+        dey
+        lda     ($02),y
+        jsr     L8731
+        ldy     #$02
+        lda     #$2C
+        sta     ($02),y
+        iny
+        .byte   $A9
+L8836:  rts
+
+        sta     ($02),y
+        lda     $0A
+        ldx     $0B
+        jsr     L81D6
+        lda     $602C
+        ldx     $602D
+        rts
+
+L8847:  lda     #$34
         sta     $0A
         lda     #$60
         sta     $0B
         lda     #$00
         tay
         ldx     #$00
-        beq     L82AC
-L82A2:  sta     ($0A),y
+        beq     L8860
+L8856:  sta     ($0A),y
         iny
-        bne     L82A2
+        bne     L8856
         inc     $0B
         dex
-        bne     L82A2
-L82AC:  cpy     #$01
-        beq     L82B5
+        bne     L8856
+L8860:  cpy     #$2D
+        beq     L8869
         sta     ($0A),y
         iny
-        bne     L82AC
-L82B5:  rts
+        bne     L8860
+L8869:  rts
 
-L82B6:  .byte   $0F
+        pha
+        eor     $4C
+        jmp     L004F
+
+L8870:  bmi     L88A3
+        .byte   $32
+        .byte   $33
+        .byte   $34
+        and     $36,x
+        .byte   $37
+        sec
+        and     $4241,y
+        .byte   $43
+        .byte   $44
+        eor     $46
+L8880:  and     $3132
+        .byte   $34
+        .byte   $37
+        .byte   $34
+        sec
+        .byte   $33
+        rol     $34,x
+        sec
+        brk
+L888C:  brk
+        ora     ($02,x)
+        .byte   $0C
+        ora     #$0A
+        bpl     L88D4
+        bvc     L8836
+        .byte   $D0
+L8897:  ror     $66
+        ror     $66
+        ldx     $88
+        dey
+        ror     $66
+        ror     $66
+        .byte   $66
+L88A3:  ror     $66
+        ror     $66
+        ora     #$00
+        brk
+        brk
+        brk
+        brk
+        brk
+        brk
+        .byte   $33
+        .byte   $33
+        .byte   $33
+        .byte   $33
+        .byte   $33
+        brk
+        brk
+        brk
+        bvc     L890E
+        eor     $25,x
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $02
+        brk
+        brk
+        rti
+
+        .byte   $44
+        .byte   $44
+        .byte   $14
+        ora     ($11),y
+        ora     ($11),y
+        ora     ($11),y
+        ora     ($11),y
+        .byte   $11
+L88D4:  ora     ($00,x)
+        bvs     L893E
+        ror     $66
+        ror     $A6
+        dey
+        dey
+        ror     $66
+        ror     $66
+        ror     $66
+        ror     $66
+        ror     $09
+        brk
+        brk
+        brk
+        brk
+        brk
+        brk
+        brk
+        .byte   $33
+        .byte   $33
+        .byte   $33
+        .byte   $33
+        .byte   $33
+        brk
+        brk
+        brk
+        bvc     L894E
+        eor     $25,x
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $22
+        .byte   $02
+        brk
+        brk
+        rti
+
+        .byte   $44
+        .byte   $44
+        .byte   $14
+        ora     ($11),y
+        .byte   $11
+L890E:  ora     ($11),y
+        ora     ($11),y
+        ora     ($11),y
+        ora     ($00,x)
+        .byte   $70
+L8917:  .byte   $0F
         .byte   $14
         .byte   $3B
         and     $2D38,x
@@ -386,7 +1266,7 @@ L82B6:  .byte   $0F
         clc
         php
         and     $01,x
-        bpl     L82EF
+        bpl     L8950
         and     $0F1A,x
         .byte   $14
         .byte   $3B
@@ -396,1670 +1276,36 @@ L82B6:  .byte   $0F
         clc
         php
         and     $01,x
-        bpl     L82FF
-        and     a:$1A,x
+        bpl     L8960
+        and     $4C1A,x
         brk
         brk
         brk
-        sta     $6012
-        stx     $6013
-        sta     $6019
-        stx     $601A
-L82E6:  dey
+        brk
+        brk
+        brk
+L893E:  sta     $6015
+        stx     $6016
+        sta     $601C
+        stx     $601D
+L894A:  dey
         lda     LFFFF,y
-        sta     $6023
+L894E:  .byte   $8D
+        .byte   $26
+L8950:  rts
+
         dey
-        .byte   $B9
-L82EF:  .byte   $FF
-        .byte   $FF
-        sta     $6022
-        sty     $6025
+        lda     LFFFF,y
+        sta     $6025
+        sty     $6028
         jsr     LFFFF
         ldy     #$FF
-        bne     L82E6
+L8960:  bne     L894A
         rts
 
-L82FF:  brk
         brk
         brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
-        brk
+        cmp     a:$87
         brk
         brk
         brk

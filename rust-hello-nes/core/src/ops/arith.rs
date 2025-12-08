@@ -115,7 +115,7 @@ macro_rules! add_impl {
 }
 
 // add_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-add_impl! { usize u8 }
+add_impl! { usize u8 i16 }
 
 /// The subtraction operator `-`.
 ///
@@ -216,7 +216,7 @@ macro_rules! sub_impl {
 }
 
 // sub_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-sub_impl! { usize u8 }
+sub_impl! { usize u8 i16 }
 
 /// The multiplication operator `*`.
 ///
@@ -339,7 +339,7 @@ macro_rules! mul_impl {
 }
 
 // mul_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-mul_impl! { usize u8 }
+mul_impl! { usize u8 i16 }
 
 /// The division operator `/`.
 ///
@@ -703,7 +703,7 @@ macro_rules! add_assign_impl {
 }
 
 // add_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-add_assign_impl! { usize u8 }
+add_assign_impl! { usize u8 i16 }
 
 /// The subtraction assignment operator `-=`.
 ///
@@ -762,7 +762,7 @@ macro_rules! sub_assign_impl {
 }
 
 // sub_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-sub_assign_impl! { usize u8 }
+sub_assign_impl! { usize u8 i16 }
 
 /// The multiplication assignment operator `*=`.
 ///
@@ -812,7 +812,7 @@ macro_rules! mul_assign_impl {
 }
 
 // mul_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-mul_assign_impl! { usize u8 }
+mul_assign_impl! { usize u8 i16 }
 
 /// The division assignment operator `/=`.
 ///
@@ -861,7 +861,7 @@ macro_rules! div_assign_impl {
 }
 
 // div_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-div_assign_impl! { usize u8 }
+div_assign_impl! { usize u8 i16 }
 
 /// The remainder assignment operator `%=`.
 ///
@@ -914,4 +914,4 @@ macro_rules! rem_assign_impl {
 }
 
 // rem_assign_impl! { usize u8 u16 u32 isize i8 i16 i32 }
-rem_assign_impl! { usize u8 }
+rem_assign_impl! { usize u8 i16 }
