@@ -2557,32 +2557,36 @@ namespace {
             // }
             m_of << ";\n";
 
-            // for emulating linkage name
+            // for emulating external linkage name
             if (item.m_linkage.name != "") {
-                emit_function_header(p, item, params);
-                ::HIR::TypeRef  tmp;
-
-                const auto& ret_ty = monomorphise_fcn_return(tmp, item, params);
-                if ( ret_ty == ::HIR::TypeRef::new_unit() )
-                {
-                    m_of << " { ";
-                }
-                else
-                {
-                    m_of << " { return ";
-                }
-                m_of << item.m_linkage.name << "(";
-                bool first = true;
-                for (unsigned int i = 0; i < item.m_args.size(); i ++)
-                {
-                    if (!first)
-                        m_of << ", ";
-                    first = false;
-                    m_of << "arg" << i;
-                }
-                m_of << "); }\n";
-
-                m_of << ";\n";
+                m_of
+                    << "#define "
+                    << Trans_Mangle(p)
+                    << " " << item.m_linkage.name << "\n";
+                // emit_function_header(p, item, params);
+                // ::HIR::TypeRef  tmp;
+                //
+                // const auto& ret_ty = monomorphise_fcn_return(tmp, item, params);
+                // if ( ret_ty == ::HIR::TypeRef::new_unit() )
+                // {
+                //     m_of << " { ";
+                // }
+                // else
+                // {
+                //     m_of << " { return ";
+                // }
+                // m_of << item.m_linkage.name << "(";
+                // bool first = true;
+                // for (unsigned int i = 0; i < item.m_args.size(); i ++)
+                // {
+                //     if (!first)
+                //         m_of << ", ";
+                //     first = false;
+                //     m_of << "arg" << i;
+                // }
+                // m_of << "); }\n";
+                //
+                // m_of << ";\n";
             }
 
             m_mir_res = nullptr;

@@ -36,4 +36,5 @@ for arg in "${args_to_process[@]}"; do
 done
 
 # exec ../cc65/cc65-2.19/bin/cl65 -t nes -Os -Wl --gc-sections "${filtered_args[@]}"
-exec ../cc65/cc65-2.19/bin/cl65 -t nes -Os "${filtered_args[@]}"
+#exec ../cc65/cc65-2.19/bin/cl65 -t nes -Os "${filtered_args[@]}"
+exec cl65 -t nes -Os "${filtered_args[@]}"
