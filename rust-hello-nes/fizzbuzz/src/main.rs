@@ -7,23 +7,15 @@ extern crate cc65;
 
 use cc65::{cprintf, get_screen_size, goto_xy};
 
-fn print_at_center<const N: usize>(line: u8, s: &[u8; N]) {
-    let (width, _) = get_screen_size();
-    let padding = (width - N as u8) / 2;
-
-    goto_xy(padding, line);
-    cprintf!(b"%s\0", s);
-}
-
 fn fizz_buzz(n: u8) {
     let mut i = 1;
     while i <= n {
         goto_xy(0, i - 1);
         match (i % 3, i % 5) {
-            (0, 0) => cprintf!(b"FizzBuzz\n\0"),
-            (0, _) => cprintf!(b"Fizz\n\0"),
-            (_, 0) => cprintf!(b"Buzz\n\0"),
-            _ => cprintf!(b"%d\n\0", i),
+            (0, 0) => cprintf!(b"FizzBuzz\0"),
+            (0, _) => cprintf!(b"Fizz\0"),
+            (_, 0) => cprintf!(b"Buzz\0"),
+            _ => cprintf!(b"%d\0", i),
         }
         i += 1;
     }
